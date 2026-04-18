@@ -133,11 +133,75 @@ Explicit non-goals — agents MUST NOT build these. See `.planning/research/FEAT
 
 ## Traceability
 
-Populated by roadmapper: maps each REQ-ID to its owning phase and success criterion.
+Maps each REQ-ID to its owning phase and primary success criterion. Coverage: **56/56 v1 REQs mapped** + **7/7 stretch REQs mapped**. No orphans, no duplicates.
 
 | REQ-ID | Phase | Success Criterion |
 |--------|-------|-------------------|
-| (pending roadmapper) | | |
+| FND-01 | Phase 1 — Foundation & Smoke (H0–H2) | venv + `mlx_lm.lora --help` responds |
+| FND-02 | Phase 1 — Foundation & Smoke (H0–H2) | 50-iter bench logs sec/iter + peak-mem; E2B fallback if >20 GB **(kill-point)** |
+| FND-03 | Phase 1 — Foundation & Smoke (H0–H2) | Next.js 15 + AI SDK v6 + Sentry boots; `runtime='nodejs'` on child_process routes |
+| FND-04 | Phase 1 — Foundation & Smoke (H0–H2) | Opus 4.7 + GPT-5 + Gemini 2.5 Pro `generateText` hellos pass |
+| FND-05 | Phase 1 — Foundation & Smoke (H0–H2) | Forked LLMEval builds for iOS 18 w/ increased-memory-limit entitlement |
+| FND-06 | Phase 1 — Foundation & Smoke (H0–H2) | iPhone 17 deploy + first ~3 GB base-weight download |
+| FND-07 | Phase 1 — Foundation & Smoke (H0–H2) | Same prompt generates before and after airplane mode toggle |
+| FND-08 | Phase 1 — Foundation & Smoke (H0–H2) | devicectl copy <3 s + `loadLoRAWeights` swap <2 s, behavior change **(kill-point)** |
+| FND-09 | Phase 1 — Foundation & Smoke (H0–H2) | `ToolRegistry` actor + JSContext with no cross-request leaks |
+| FND-10 | Phase 1 — Foundation & Smoke (H0–H2) | `GemmaToolParser` regex-captures tool-call + rejects malformed |
+| FND-11 | Phase 1 — Foundation & Smoke (H0–H2) | End-to-end hand-written JS tool round-trip on device **(kill-point)** |
+| ORC-01 | Phase 2 — Orchestrator Harness (H3) | `/api/pipeline` merges parallel worker streams into one SSE |
+| ORC-02 | Phase 2 — Orchestrator Harness (H3) | Coordinator never works; workers return via `task-notification` |
+| ORC-03 | Phase 2 — Orchestrator Harness (H3) | 5×4 `AgentCard` grid renders live `useChat({onData})` events |
+| ORC-04 | Phase 2 — Orchestrator Harness (H3) | `/api/train` streams `data-train` parts from `mlx_lm` child process to Recharts |
+| ORC-05 | Phase 2 — Orchestrator Harness (H3) | Sentry `ai.agent` + `training.sft/grpo` spans land in dashboard |
+| SWR-01 | Phase 3 — Discovery + Tool Design (H4) | Supabase `llms*.txt` chunked into `CORPUS` (~500-token windows) |
+| SWR-02 | Phase 3 — Discovery + Tool Design (H4) | 4 parallel workers emit `DynamicToolSpec` with ≥3 trajectories each |
+| SWR-03 | Phase 3 — Discovery + Tool Design (H4) | Schema well-formedness gate passes |
+| SWR-04 | Phase 3 — Discovery + Tool Design (H4) | `acorn` parse gate passes (no auto-fix) |
+| SWR-05 | Phase 3 — Discovery + Tool Design (H4) | `node:vm` + `worker_threads` sandbox exec with 2 s / 64 MB caps |
+| SWR-06 | Phase 3 — Discovery + Tool Design (H4) | 10-input fuzz: none throw, ≥8 JSON-serializable |
+| SWR-07 | Phase 3 — Discovery + Tool Design (H4) | Trajectory self-consistency check passes |
+| SWR-08 | Phase 3 — Discovery + Tool Design (H4) | `adapter-tools.json` ≥8 validated tools (cap 12) **(kill-point)** |
+| DAT-01 | Phase 4 — Data + Eval Gen (H5) | 500 grounded Q&A under `p-limit(15)`, stratified |
+| DAT-02 | Phase 4 — Data + Eval Gen (H5) | 800 single + 200 multi + 100 parallel/dep + 50 refusal trajectories |
+| DAT-03 | Phase 4 — Data + Eval Gen (H5) | Every `<\|tool_call\|>` passes `jsonschema.validate` — reject, don't patch |
+| DAT-04 | Phase 4 — Data + Eval Gen (H5) | GPT-5 4-dim Likert ≥4 judge-gate; rejects regenerate |
+| DAT-05 | Phase 4 — Data + Eval Gen (H5) | Gemini 20% cross-judge + >1-pt disagreement log |
+| DAT-06 | Phase 4 — Data + Eval Gen (H5) | MinHash 0.7 + cosine 0.92 dedup before JSONL emission |
+| DAT-07 | Phase 4 — Data + Eval Gen (H5) | ≥30 examples per unique tool name enforced |
+| DAT-08 | Phase 4 — Data + Eval Gen (H5) | `training.jsonl` in mlx-lm `tools` format **(kill-point)** |
+| DAT-09 | Phase 4 — Data + Eval Gen (H5) | Deterministic 70/30 doc-hash split, no overlap (hash-verified) |
+| DAT-10 | Phase 4 — Data + Eval Gen (H5) | 70-item `eval.jsonl` on 30% split (40/10/15/5) |
+| TRN-01 | Phase 5 — Train Model A (H6) | SFT 400-iter completes in ≤12 min wall-clock |
+| TRN-02 | Phase 5 — Train Model A (H6) | GRPO 150-iter completes in ≤5 min with judge-jury reward |
+| TRN-03 | Phase 5 — Train Model A (H6) | Loss + reward stream to same Recharts chart at 5-step cadence |
+| TRN-04 | Phase 5 — Train Model A (H6) | Grad clip + 100-iter ckpt + NaN revert; SFT-only fallback **(kill-point)** |
+| TRN-05 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `fuse.sh` emits `adapter.safetensors`; no-fuse fallback also verified |
+| TRN-06 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `devicectl` copy of adapter + tools to iPhone `/Documents/` in <5 s |
+| TRN-07 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `chokidar` watcher updates adapter-name status pill on device |
+| DEV-01 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `ModelState` actor one-time base init + <2 s runtime swap |
+| DEV-02 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `adapter-tools.json` re-registers into `ToolRegistry` on every swap |
+| DEV-03 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `ChatView` renders user / assistant / tool-call message types |
+| DEV-04 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `OnlineMonitor` pill always visible (green ONLINE / red OFFLINE) |
+| DEV-05 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | `requiresNetwork:true` + offline → in-band error payload, no JSContext dispatch |
+| DEV-06 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | RLS answer + schema tool call + graceful offline refusal all pass **(kill-point)** |
+| DEV-07 | Phase 6 — Fuse, Deploy, Verify, Cassette (H7) | 90-s Tier-3 cassette triple-backed before H8 begins **(NEVER CUT)** |
+| EVL-01 | Phase 7 — Three-Way Eval (H8) | 3-way harness runs 70 items in parallel (on-device via USB-C shim + cloud) |
+| EVL-02 | Phase 7 — Three-Way Eval (H8) | Opus+Gemini jury: 0–4 Likert × 4 dims, temp 0, shuffled, normalized |
+| EVL-03 | Phase 7 — Three-Way Eval (H8) | BFCL-AST strict match on tool-call items |
+| EVL-04 | Phase 7 — Three-Way Eval (H8) | 3-way bar chart renders Base < Tuned < Teacher to 1 decimal |
+| EVL-05 | Phase 7 — Three-Way Eval (H8) | Latency stopwatch: on-device TTLT vs cloud RTT, labeled |
+| EVL-06 | Phase 7 — Three-Way Eval (H8) | Scoreboard transitions auto-advance |
+| POL-01 | Phase 8 — Polish & Pre-Cache (H9) | Airplane/Wi-Fi/BT/Cell off + Guided Access locked before on-stage reveal |
+| POL-02 | Phase 8 — Polish & Pre-Cache (H9) | USB-C → HDMI → capture card → OBS mirror holds signal in airplane mode |
+| STR-01 | Phase 8 — Polish & Pre-Cache (H9) | `ToolCallBubble` renders inline tool invocations *(stretch, cuttable)* |
+| STR-02 | Phase 8 — Polish & Pre-Cache (H9) | Audience-pick pre-cache for Vercel AI SDK → Zod → Hono *(stretch, cuttable)* |
+| STR-03 | Phase 8 — Polish & Pre-Cache (H9) | Distillation Sankey viz shows N→M→trained→lift *(stretch, cuttable)* |
+| STR-04 | Phase 8 — Polish & Pre-Cache (H9) | Sentry `gen_ai` dashboard loaded as secondary screen *(stretch, cuttable)* |
+| STR-05 | Phase 8 — Polish & Pre-Cache (H9) | Live Model B trains in demo in ≤17 min + hot-swap at 3:15 *(stretch, cuttable)* |
+| STR-06 | Phase 8 — Polish & Pre-Cache (H9) | Judge-disagreement spot-check log captures >1-pt divergences *(stretch, cuttable)* |
+| STR-07 | Phase 8 — Polish & Pre-Cache (H9) | H10 dry-run #1 recorded as second cassette w/ live-train leg *(stretch, cuttable)* |
+
+**Phase 9 — Dry-Run + Pre-Flight (H10–H11)** owns no individual REQ-IDs; it is a rehearsal/ops phase that exercises Phases 1–8 end-to-end.
 
 ---
 
@@ -145,6 +209,6 @@ Populated by roadmapper: maps each REQ-ID to its owning phase and success criter
 
 - Every v1 requirement traces to exactly one `F##` feature in FEATURES.md and at least one PRD section. No invented capabilities.
 - Requirements are atomic, testable, and either (a) produce a concrete artifact (JSONL, `.safetensors`, `adapter-tools.json`, screen capture) or (b) produce an observable demo behavior.
-- Kill-point requirements (FND-02, FND-08, FND-11, SWR-08, TRN-04, DEV-06, DEV-07) have explicit escape hatches baked into their text — if the primary path fails, the fallback path is named.
+- Kill-point requirements (FND-02, FND-08, FND-11, SWR-08, DAT-08, TRN-04, DEV-06, DEV-07) have explicit escape hatches baked into their text — if the primary path fails, the fallback path is named.
 
-*Last updated: 2026-04-18 after initialization. Source: `PRD_SPEC.md` via `.planning/research/FEATURES.md`.*
+*Last updated: 2026-04-18 after roadmap creation. Source: `PRD_SPEC.md` via `.planning/research/FEATURES.md`.*
