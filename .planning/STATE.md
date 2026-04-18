@@ -11,11 +11,11 @@
 
 ## Current Position
 
-- **Current phase:** 6 — Fuse, Deploy, Verify, Cassette — planned, ready to execute
-- **Current plan:** (none running)
-- **Status:** Phase 6 planned (3 plans, 2 waves); Phases 4-5 planned earlier
-- **Phase progress:** Phase 6 `[----------] 0%` (0/3 plans)
-- **Overall progress:** `[###-------] 3 / 9 phases` (Phase 3 complete, 4-6 planned)
+- **Current phase:** 5 — Train Model A — not yet planned
+- **Current plan:** (none running — Phase 4 complete)
+- **Status:** Phase 4 complete (5/5 plans, 92 tests); Phase 5 next
+- **Phase progress:** Phase 4 `[##########] 100%` (5/5 plans)
+- **Overall progress:** `[####------] 4 / 9 phases` (Phase 4 complete)
 
 ## Performance Metrics
 

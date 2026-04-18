@@ -23,7 +23,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 - [ ] **Phase 1 — Foundation & Smoke (H0–H2)** — Verify env, micro-bench, iPhone base deploy, adapter hot-swap, JSContext tool round-trip.
 - [ ] **Phase 2 — Orchestrator Harness (H3)** — Coordinator/Worker AI-SDK-v6 skeleton with merged SSE stream, agent grid, and train-pipe.
 - [x] **Phase 3 — Discovery + Tool Design (H4)** — Supabase corpus + 4-worker tool-design swarm → validated `adapter-tools.json`. ✓ 2026-04-18
-- [ ] **Phase 4 — Data + Eval Gen (H5)** — 500 QA + 1,150 trajectories + 70-item eval set, judge-gated, deduped, stratified.
+- [x] **Phase 4 — Data + Eval Gen (H5)** — 500 QA + 1,150 trajectories + 70-item eval set, judge-gated, deduped, stratified. ✓ 2026-04-18
 - [ ] **Phase 5 — Train Model A (H6)** — SFT 400-iter + GRPO 150-iter on MLX, loss/reward live-streamed, NaN-safe.
 - [ ] **Phase 6 — Fuse, Deploy, Verify, Cassette (H7)** — Fuse adapter → `devicectl` → on-device verify → **Tier-3 cassette recorded**.
 - [ ] **Phase 7 — Three-Way Eval (H8)** — Base vs Tuned vs Teacher scoreboard + latency stopwatch.
@@ -186,7 +186,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 | 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
 | 2. Orchestrator Harness | 3/3 | Code-complete (human gate pending) | 2026-04-18 |
 | 3. Discovery + Tool Design | 5/5 | Complete | 2026-04-18 |
-| 4. Data + Eval Gen | 0/5 | Planned (3 waves) | - |
+| 4. Data + Eval Gen | 5/5 | Complete | 2026-04-18 |
 | 5. Train Model A | 0/4 | Planned (3 waves) | - |
 | 6. Fuse, Deploy, Verify, Cassette | 0/3 | Planned (2 waves) | - |
 | 7. Three-Way Eval | 0/? | Not started | - |
