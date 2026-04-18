@@ -68,7 +68,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 **Plans**: 3 plans across 2 waves
   - [ ] 02-01-pipeline-coordinator-worker-PLAN.md — /api/pipeline + coordinator/worker harness + ai.agent spans (ORC-01, ORC-02, ORC-05) · wave 1
   - [ ] 02-02-train-subprocess-loss-chart-PLAN.md — /api/train child_process + readline + LossChart + training.sft/grpo spans (ORC-04, ORC-05) · wave 1
-  - [ ] 02-03-agent-grid-demo-page-PLAN.md — useChat onData router + 5x4 AgentGrid + demo page (ORC-03) · wave 2
+  - [x] 02-03-agent-grid-demo-page-PLAN.md — useChat onData router + 5x4 AgentGrid + demo page (ORC-03) · wave 2
 **UI hint**: yes
 
 ### Phase 3 — Discovery + Tool Design (H4)
@@ -176,7 +176,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
-| 2. Orchestrator Harness | 0/3 | Planned (2 waves) | - |
+| 2. Orchestrator Harness | 3/3 | Code-complete (human gate pending) | 2026-04-18 |
 | 3. Discovery + Tool Design | 0/5 | Planned (3 waves) | - |
 | 4. Data + Eval Gen | 0/? | Not started | - |
 | 5. Train Model A | 0/4 | Planned (3 waves) | - |

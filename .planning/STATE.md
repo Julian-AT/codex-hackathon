@@ -11,11 +11,11 @@
 
 ## Current Position
 
-- **Current phase:** 3 — Discovery + Tool Design (H4) — ready to execute
-- **Current plan:** (none running — 5 plans across 3 waves queued)
-- **Status:** planned (Phases 1, 2, 3 have PLAN.md files; awaiting execution)
-- **Phase progress:** `[----------] 0%`
-- **Overall progress:** `[----------] 0 / 9 phases`
+- **Current phase:** 2 — Orchestrator Harness — all 3 plans executed (02-03 awaits human-verify checkpoint)
+- **Current plan:** (none running — 02-03 shipped; checkpoint deferred to user)
+- **Status:** Phase 2 code-complete (Plans 02-01, 02-02, 02-03 all landed); Phase 3 plans queued
+- **Phase progress:** Phase 2 `[##########] 100%` (3/3 plans)
+- **Overall progress:** `[##--------] 2 / 9 phases` (Phase 2 complete pending human gate)
 
 ## Performance Metrics
 
@@ -29,6 +29,9 @@
 - Roadmap locks 9-phase H0–H11 split verbatim from `research/SUMMARY.md §5`.
 - v1 REQ coverage = 100% (56/56); stretch (7) concentrated in Phase 8.
 - Kill-point phases: 1, 5, 6 with explicit fallback-tier demotion rules.
+- AI SDK v6: useChat imported from `@ai-sdk/react` + `DefaultChatTransport` from `ai` (hooks moved out of `ai` root in v6).
+- `(demo)` route group owns `/`; Phase 1 `app/page.tsx` deleted to resolve duplicate-route collision.
+- Tailwind not wired in Phase 1 scaffold — demo UI uses inline styles; `data-cols`/`data-rows` attrs mirror grid geometry for tests.
 
 ### Active Todos
 - Run `/gsd-plan-phase 1` to decompose Phase 1 into executable plans.
@@ -47,8 +50,9 @@
 
 ## Session Continuity
 
-- Last session end: 2026-04-18 roadmap creation.
-- Next session resume point: `/gsd-plan-phase 1` to plan Phase 1 (Foundation & Smoke).
-- Critical next artifact: `.planning/phases/01-foundation-smoke-tests/01-CONTEXT.md` + plan files.
+- Last session end: 2026-04-18 H3 — Plan 02-03 shipped; demo page live at `/`.
+- Stopped at: Task 3 human-verify checkpoint deferred to user.
+- Next session resume point: user runs `pnpm next build && pnpm next start`, verifies grid populates on Smoke click + loss line renders on SFT click; then `/gsd-next` advances to Phase 3.
+- Critical next artifact: Phase 3 execution (`.planning/phases/03-discovery-tool-design/` plans already exist).
 
-*Last updated: 2026-04-18 at roadmap creation.*
+*Last updated: 2026-04-18T11:43Z at Plan 02-03 completion.*
