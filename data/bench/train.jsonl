@@ -1,0 +1,16 @@
+{"messages":[{"role":"user","content":"What is 2+2?"},{"role":"assistant","content":"2+2 equals 4."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 5+7?"},{"role":"assistant","content":"5+7 equals 12."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 9-3?"},{"role":"assistant","content":"9-3 equals 6."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 8*6?"},{"role":"assistant","content":"8*6 equals 48."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 81/9?"},{"role":"assistant","content":"81/9 equals 9."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 12+15?"},{"role":"assistant","content":"12+15 equals 27."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 100-37?"},{"role":"assistant","content":"100-37 equals 63."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 7*7?"},{"role":"assistant","content":"7*7 equals 49."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 144/12?"},{"role":"assistant","content":"144/12 equals 12."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 25+25?"},{"role":"assistant","content":"25+25 equals 50."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 64-16?"},{"role":"assistant","content":"64-16 equals 48."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 11*11?"},{"role":"assistant","content":"11*11 equals 121."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 200/4?"},{"role":"assistant","content":"200/4 equals 50."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 13+19?"},{"role":"assistant","content":"13+19 equals 32."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 50-22?"},{"role":"assistant","content":"50-22 equals 28."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 6*9?"},{"role":"assistant","content":"6*9 equals 54."}],"tools":[]}

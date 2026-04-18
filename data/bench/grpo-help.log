@@ -1,0 +1,110 @@
+usage: mlx_lm_lora.train [-h] [--model MODEL] [--train] [--data DATA]
+                         [--train-type {lora,dora,full}]
+                         [--train-mode {normal,dpo,orpo,grpo}]
+                         [--optimizer {adam,adamw}] [--mask-prompt]
+                         [--num-layers NUM_LAYERS] [--batch-size BATCH_SIZE]
+                         [--iters ITERS] [--epoch EPOCH]
+                         [--val-batches VAL_BATCHES]
+                         [--learning-rate LEARNING_RATE]
+                         [--steps-per-report STEPS_PER_REPORT]
+                         [--steps-per-eval STEPS_PER_EVAL]
+                         [--resume-adapter-file RESUME_ADAPTER_FILE]
+                         [--adapter-path ADAPTER_PATH]
+                         [--save-every SAVE_EVERY] [--test]
+                         [--test-batches TEST_BATCHES]
+                         [--max-seq-length MAX_SEQ_LENGTH] [-c CONFIG]
+                         [--grad-checkpoint] [--wandb WANDB] [--seed SEED]
+                         [--beta BETA] [--reward-scaling REWARD_SCALING]
+                         [--dpo-loss-type {sigmoid,hinge,ipo,dpop}]
+                         [--delta DELTA]
+                         [--reference-model-path REFERENCE_MODEL_PATH]
+                         [--group-size GROUP_SIZE]
+                         [--max-completion-length MAX_COMPLETION_LENGTH]
+                         [--epsilon EPSILON] [--epsilon-high EPSILON_HIGH]
+                         [--use-chat-template] [--use-prompt]
+                         [--temperature TEMPERATURE]
+                         [--reward-weights REWARD_WEIGHTS]
+
+LoRA or QLoRA finetuning.
+
+options:
+  -h, --help            show this help message and exit
+  --model MODEL         The path to the local model directory or Hugging Face
+                        repo.
+  --train               Do training
+  --data DATA           Directory with {train, valid, test}.jsonl files or the
+                        name of a Hugging Face dataset (e.g., 'mlx-
+                        community/wikisql')
+  --train-type {lora,dora,full}
+                        Type of fine-tuning to perform: lora, dora, or full.
+  --train-mode {normal,dpo,orpo,grpo}
+                        Training mode: normal, dpo, orpo, or grpo, default is
+                        normal
+  --optimizer {adam,adamw}
+                        Optimizer to use for training: adam or adamw
+  --mask-prompt         Mask the prompt in the loss when training
+  --num-layers NUM_LAYERS
+                        Number of layers to fine-tune. Default is 16, use -1
+                        for all.
+  --batch-size BATCH_SIZE
+                        Minibatch size.
+  --iters ITERS         Iterations to train for.
+  --epoch EPOCH         Epochs to train for. Ignored if --iters is provided.
+  --val-batches VAL_BATCHES
+                        Number of validation batches, -1 uses the entire
+                        validation set.
+  --learning-rate LEARNING_RATE
+                        Adam learning rate.
+  --steps-per-report STEPS_PER_REPORT
+                        Number of training steps between loss reporting.
+  --steps-per-eval STEPS_PER_EVAL
+                        Number of training steps between validations.
+  --resume-adapter-file RESUME_ADAPTER_FILE
+                        Load path to resume training from the given fine-tuned
+                        weights.
+  --adapter-path ADAPTER_PATH
+                        Save/load path for the fine-tuned weights.
+  --save-every SAVE_EVERY
+                        Save the model every N iterations.
+  --test                Evaluate on the test set after training
+  --test-batches TEST_BATCHES
+                        Number of test set batches, -1 uses the entire test
+                        set.
+  --max-seq-length MAX_SEQ_LENGTH
+                        Maximum sequence length.
+  -c CONFIG, --config CONFIG
+                        A YAML configuration file with the training options
+  --grad-checkpoint     Use gradient checkpointing to reduce memory use.
+  --wandb WANDB         WandB project name to report training metrics.
+                        Disabled if None.
+  --seed SEED           The PRNG seed
+  --beta BETA           Temperature parameter for ORPO training.
+  --reward-scaling REWARD_SCALING
+                        Reward scaling factor for ORPO training, not
+                        implemented.
+  --dpo-loss-type {sigmoid,hinge,ipo,dpop}
+                        DPO loss type: 'sigmoid', 'hinge', 'ipo', or 'dpop'.
+  --delta DELTA         Delta parameter for DPOP loss type.
+  --reference-model-path REFERENCE_MODEL_PATH
+                        Path to reference model weights. If None, uses the
+                        same model.
+  --group-size GROUP_SIZE
+                        Number of generations.
+  --max-completion-length MAX_COMPLETION_LENGTH
+                        Maximum length of the prompt. If the prompt is longer
+                        than this value, it will be truncated left.
+  --epsilon EPSILON     The Epsilon for numerical stability.
+  --epsilon-high EPSILON_HIGH
+                        Upper-bound epsilon value for clipping. If not
+                        specified, it defaults to the same value as the lower-
+                        bound specified in argument epsilon.
+  --use-chat-template   If the model is a Chat model, use the Chat template.
+  --use-prompt          Rather to use the prompt from the R1 paper.
+  --temperature TEMPERATURE
+                        Temperature for sampling. The higher the temperature,
+                        the more random the completions.
+  --reward-weights REWARD_WEIGHTS
+                        Weights for each reward function. Must match the
+                        number of reward functions and be in this format [0.1,
+                        0.2, 0.3, 0.4, 0.5]. If not given, all rewards are
+                        weighted equally with weight `1.0`.

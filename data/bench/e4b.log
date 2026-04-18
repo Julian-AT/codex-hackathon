@@ -1,0 +1,23 @@
+=== Micro-bench: unsloth/gemma-4-E4B-it-UD-MLX-4bit ===
+Loading pretrained model
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 160632.92it/s]
+Loading datasets
+Training
+Trainable parameters: 0.103% (7.725M/7518.069M)
+Starting training..., iters: 50
+Calculating loss...:   0%|          | 0/2 [00:00<?, ?it/s]Calculating loss...:  50%|█████     | 1/2 [00:01<00:01,  1.72s/it]Calculating loss...: 100%|██████████| 2/2 [00:01<00:00,  1.18it/s]Calculating loss...: 100%|██████████| 2/2 [00:01<00:00,  1.03it/s]
+Iter 1: Val loss 7.080, Val took 1.954s
+Iter 5: Train loss 3.940, Learning Rate 1.000e-05, It/sec 0.941, Tokens/sec 66.276, Trained Tokens 352, Peak mem 6.311 GB
+Iter 10: Train loss 0.663, Learning Rate 1.000e-05, It/sec 2.314, Tokens/sec 163.381, Trained Tokens 705, Peak mem 6.311 GB
+Iter 15: Train loss 0.479, Learning Rate 1.000e-05, It/sec 2.289, Tokens/sec 164.826, Trained Tokens 1065, Peak mem 6.311 GB
+Iter 20: Train loss 0.374, Learning Rate 1.000e-05, It/sec 2.264, Tokens/sec 165.267, Trained Tokens 1430, Peak mem 6.311 GB
+Iter 25: Train loss 0.310, Learning Rate 1.000e-05, It/sec 2.277, Tokens/sec 157.130, Trained Tokens 1775, Peak mem 6.311 GB
+Iter 30: Train loss 0.201, Learning Rate 1.000e-05, It/sec 2.285, Tokens/sec 167.693, Trained Tokens 2142, Peak mem 6.311 GB
+Iter 35: Train loss 0.153, Learning Rate 1.000e-05, It/sec 2.285, Tokens/sec 158.154, Trained Tokens 2488, Peak mem 6.311 GB
+Iter 40: Train loss 0.122, Learning Rate 1.000e-05, It/sec 2.287, Tokens/sec 161.026, Trained Tokens 2840, Peak mem 6.311 GB
+Iter 45: Train loss 0.099, Learning Rate 1.000e-05, It/sec 2.290, Tokens/sec 158.945, Trained Tokens 3187, Peak mem 6.311 GB
+Calculating loss...:   0%|          | 0/2 [00:00<?, ?it/s]Calculating loss...:  50%|█████     | 1/2 [00:00<00:00,  4.34it/s]Calculating loss...: 100%|██████████| 2/2 [00:00<00:00,  4.32it/s]Calculating loss...: 100%|██████████| 2/2 [00:00<00:00,  4.32it/s]
+Iter 50: Val loss 0.412, Val took 0.470s
+Iter 50: Train loss 0.102, Learning Rate 1.000e-05, It/sec 2.303, Tokens/sec 165.838, Trained Tokens 3547, Peak mem 6.311 GB
+Saved final weights to data/bench/adapter-50iter/adapters.safetensors.
+=== Elapsed: 32 s ===

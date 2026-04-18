@@ -1,0 +1,4 @@
+{"messages":[{"role":"user","content":"What is 99/3?"},{"role":"assistant","content":"99/3 equals 33."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 17+14?"},{"role":"assistant","content":"17+14 equals 31."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 40-18?"},{"role":"assistant","content":"40-18 equals 22."}],"tools":[]}
+{"messages":[{"role":"user","content":"What is 15*4?"},{"role":"assistant","content":"15*4 equals 60."}],"tools":[]}
