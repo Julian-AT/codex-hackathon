@@ -11,9 +11,9 @@
 
 ## Current Position
 
-- **Current phase:** 1 — Foundation & Smoke (H0–H2)
-- **Current plan:** (none — phase not yet planned)
-- **Status:** planning
+- **Current phase:** 3 — Discovery + Tool Design (H4) — ready to execute
+- **Current plan:** (none running — 5 plans across 3 waves queued)
+- **Status:** planned (Phases 1, 2, 3 have PLAN.md files; awaiting execution)
 - **Phase progress:** `[----------] 0%`
 - **Overall progress:** `[----------] 0 / 9 phases`
 

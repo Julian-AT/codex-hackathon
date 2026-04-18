@@ -375,22 +375,25 @@ Why 5 plans and not the 3–4 common for earlier phases: this phase has **one ha
 
 All A-items are tagged `[ASSUMED]` against training knowledge or reasonable Phase-1 inheritance. The planner / discuss-phase should confirm A1 and A5 explicitly as they cross phase boundaries.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does the Phase 2 harness expose a hook for child spans under `ai.agent`, or is Sentry tracing flat?**
    - What we know: Phase 2 ships `ai.agent` spans via `Sentry.vercelAIIntegration()`.
    - What's unclear: Whether gate-level spans will nest cleanly or need manual `Sentry.startSpan`.
    - Recommendation: Try implicit nesting first; fall back to manual spans if the flame-graph is ugly.
+   - RESOLVED: try implicit nest first; if it doesn't parent correctly, wrap with `Sentry.startSpan({op:'ai.agent'})` explicitly in 03-04 Task 1.
 
 2. **Should `/api/discover` stream to the existing demo page or a dedicated discovery page?**
    - What we know: Phase 2 has `/app/pipeline/page.tsx` with the 5×4 grid.
    - What's unclear: Whether the demo narrative benefits from a separate "Swarm is designing tools" panel.
    - Recommendation: Reuse the grid with a route param `?pipeline=discovery`. Keep surface area small.
+   - RESOLVED: new `/app/discover` page consumes `/api/discover`; Phase 2 page untouched.
 
 3. **Can we commit `data/corpus.json` (4 MB) to git without pre-commit hook complaint?**
    - What we know: Repo is on main with clean status.
    - What's unclear: Size thresholds / LFS config.
    - Recommendation: Commit as plain JSON; gzip if push is slow.
+   - RESOLVED: commit as plain JSON under `data/corpus.json`; if pre-commit complains, gzip and load via `fs.createReadStream` + `zlib`.
 
 ## State of the Art
 

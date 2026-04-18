@@ -2,8 +2,8 @@
 phase: 03-discovery-tool-design
 plan: 05
 type: execute
-wave: 1
-depends_on: []
+wave: 2
+depends_on: [02]
 files_modified:
   - lib/tools/hand-written-supabase.ts
   - lib/tools/hand-written-supabase.test.ts
@@ -156,18 +156,25 @@ Each tool MUST ship with exactly 3 example trajectories whose stated `result` ex
 
        Similarly for `supabase_migration_filename`: implement snake_case conversion and zero-padded date formatting manually from `args.timestampMs`; do NOT call `Date`. Use raw integer arithmetic: `year = Math.floor(ms / 31557600000) + 1970` (approximate) — actually because `Date` is NOT banned as an identifier (only `Date.now` member access is banned), you MAY use `new Date(args.timestampMs).getUTCFullYear()` etc. Verify with Gate 2 — if rejected, hand-roll the formatter.
 
-    2. After authoring the TS file, serialize to `data/adapter-tools.fallback.json`:
+    2. After authoring the TS file, serialize to `data/adapter-tools.fallback.json` in the SAME shape the swarm path writes (03-04 `writeManifest`), differing only in `source` and meta values. This keeps Phase 4 consumer logic uniform across both provenance paths:
        ```ts
        // scripts/dump-fallback-tools.ts (or inline in package.json script)
        import { writeFile } from 'node:fs/promises';
        import { HAND_WRITTEN_SUPABASE_TOOLS } from '../lib/tools/hand-written-supabase.js';
-       await writeFile(
-         'data/adapter-tools.fallback.json',
-         JSON.stringify({ tools: HAND_WRITTEN_SUPABASE_TOOLS, source: 'hand-written', count: HAND_WRITTEN_SUPABASE_TOOLS.length }, null, 2),
-         'utf8',
-       );
+       const body = {
+         tools: HAND_WRITTEN_SUPABASE_TOOLS,
+         source: 'fallback' as const,
+         count: HAND_WRITTEN_SUPABASE_TOOLS.length,
+         generatedAt: new Date(0).toISOString(), // epoch marker distinguishes fallback provenance
+         meta: {
+           rawCandidates: 0,
+           dedupedCandidates: 0,
+           gateFailures: { schema: 0, parse: 0, sandbox: 0, fuzz: 0, trajectory: 0 },
+         },
+       };
+       await writeFile('data/adapter-tools.fallback.json', JSON.stringify(body, null, 2), 'utf8');
        ```
-       Or run `node --experimental-strip-types -e "..."` once; commit the resulting JSON.
+       Or run `node --experimental-strip-types -e "..."` once; commit the resulting JSON. Canonical `source` value is `'fallback'` (matches 03-04 `ManifestMeta` union `'swarm' | 'fallback'`); integration test in 03-04 asserts `written.source === 'fallback'`.
 
     3. Commit both files.
   </action>

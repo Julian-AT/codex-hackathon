@@ -173,6 +173,7 @@ Route module conventions (PRD §13, Phase 2):
        import { writeFile, copyFile, mkdir } from 'node:fs/promises';
        import path from 'node:path';
        import type { DynamicToolSpec, GateName } from './types.js';
+       import { DYNAMIC_TOOL_SPEC_SCHEMA } from './worker.js';
 
        export const MANIFEST_PATH = path.resolve('data/adapter-tools.json');
        export const FALLBACK_PATH = path.resolve('data/adapter-tools.fallback.json');
@@ -188,6 +189,11 @@ Route module conventions (PRD §13, Phase 2):
          source: 'swarm' | 'fallback',
          meta: ManifestMeta,
        ): Promise<void> {
+         // INFO 7: enforce Phase 4 contract at write-time — every tool must
+         // round-trip the canonical Zod schema before landing on disk.
+         for (const tool of tools) {
+           DYNAMIC_TOOL_SPEC_SCHEMA.parse(tool);
+         }
          await mkdir(path.dirname(MANIFEST_PATH), { recursive: true });
          const body = {
            tools,
@@ -355,7 +361,7 @@ Route module conventions (PRD §13, Phase 2):
        ```
   </action>
   <verify>
-    <automated>cd /Users/julianschmidt/Documents/GitHub/codex-hackathon && npx tsc --noEmit && grep -E "export async function designToolsSwarm" lib/discovery/swarm.ts && grep -E "chunks\\.filter\\(_c, idx\\) => idx % workerCount === i\\)" lib/discovery/swarm.ts && grep -E "export async function runDiscoveryPipeline" lib/discovery/pipeline.ts && grep -E "class KillPointError" lib/discovery/pipeline.ts && grep -E "copyFallback" lib/discovery/pipeline.ts && grep -E "survivors\\.length < killMin" lib/discovery/pipeline.ts</automated>
+    <automated>cd /Users/julianschmidt/Documents/GitHub/codex-hackathon && npx tsc --noEmit && grep -E "export async function designToolsSwarm" lib/discovery/swarm.ts && grep -E "idx % workerCount === i" lib/discovery/swarm.ts && grep -E "export async function runDiscoveryPipeline" lib/discovery/pipeline.ts && grep -E "class KillPointError" lib/discovery/pipeline.ts && grep -E "copyFallback" lib/discovery/pipeline.ts && grep -E "survivors\\.length < killMin" lib/discovery/pipeline.ts</automated>
   </verify>
   <acceptance_criteria>
     - `grep -E "Promise\\.all" lib/discovery/swarm.ts` succeeds (parallel fan-out).
@@ -519,7 +525,7 @@ Route module conventions (PRD §13, Phase 2):
     5. Commit `data/adapter-tools.json`.
   </action>
   <verify>
-    <automated>cd /Users/julianschmidt/Documents/GitHub/codex-hackathon && npx tsc --noEmit && npx vitest run lib/discovery/pipeline.test.ts 2>&1 | tail -30 && test -f data/adapter-tools.json && node -e "const j = require('./data/adapter-tools.json'); if (!Array.isArray(j.tools)) process.exit(1); if (j.tools.length < 4) process.exit(2); if (!['swarm','fallback'].includes(j.source)) process.exit(3); console.log('manifest ok:', j.source, j.count);"</automated>
+    <automated>cd /Users/julianschmidt/Documents/GitHub/codex-hackathon && npx tsc --noEmit && npx vitest run lib/discovery/pipeline.test.ts 2>&1 | tail -30 && test -f data/adapter-tools.json && node -e "const j = require('./data/adapter-tools.json'); if (!Array.isArray(j.tools)) process.exit(1); if (!['swarm','fallback'].includes(j.source)) process.exit(3); const ok = (j.tools.length >= 8) || (j.source === 'fallback' && j.tools.length === 8); if (!ok) { console.error('manifest rejected: source=' + j.source + ' count=' + j.tools.length + ' (require >=8 on swarm, exactly 8 on fallback; no silent 4-7 landing)'); process.exit(2); } console.log('manifest ok:', j.source, j.count);"</automated>
   </verify>
   <acceptance_criteria>
     - `grep -E "export const runtime = 'nodejs'" app/api/discover/route.ts` succeeds (hard constraint).
@@ -528,8 +534,9 @@ Route module conventions (PRD §13, Phase 2):
     - `grep -E "data-task-notification" app/api/discover/route.ts` succeeds (persistent terminal events).
     - `grep -E "data-agent-status" app/api/discover/route.ts` succeeds (transient progress pings).
     - `npx vitest run lib/discovery/pipeline.test.ts` both tests pass.
-    - `data/adapter-tools.json` exists with `source` in `{'swarm','fallback'}` and `tools.length >= 4`.
-    - On fallback path: `count === 8`. On swarm path: `count >= 8` (or documented soft-failure <8 if retry couldn't reach floor).
+    - `data/adapter-tools.json` exists with `source` in `{'swarm','fallback'}`.
+    - Manifest MUST satisfy `(tools.length >= 8) || (source === 'fallback' && tools.length === 8)`. Any silent landing with 4 <= count < 8 on the swarm path is REJECTED — if the retry arm cannot lift survivors to the floor, the pipeline must fall through to the kill-point / fallback path, not ship a partial swarm manifest.
+    - On fallback path: `count === 8` exactly. On swarm path: `count >= 8` (cap 12).
   </acceptance_criteria>
   <done>SWR-02 + SWR-08 land end-to-end. `/api/discover` streams live worker + gate progress via the Phase 2 harness; `data/adapter-tools.json` is on disk for Phase 4; kill-point fallback is proven to work by the integration test.</done>
 </task>

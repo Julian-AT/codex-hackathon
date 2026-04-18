@@ -84,9 +84,9 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
   - SWR-08 <4 validated tools after retry → copy hand-written fallback manifest and narrate as Tier 2 (NEVER CUT).
 **Plans**: 5 plans across 3 waves
   - [ ] 03-01-corpus-fetch-chunk-PLAN.md — Supabase corpus fetch + chunking + shared types (SWR-01) · wave 1
-  - [ ] 03-02-validator-gates-PLAN.md — 5-gate validator: schema / acorn parse / node:vm sandbox / fuzz / trajectory (SWR-03..SWR-07) · wave 1
-  - [ ] 03-05-fallback-hand-written-tools-PLAN.md — 8 hand-written Supabase tools + fallback manifest (SWR-08 kill-point safety net) · wave 1
+  - [ ] 03-02-validator-gates-PLAN.md — 5-gate validator: schema / acorn parse / node:vm sandbox / fuzz / trajectory (SWR-03..SWR-07) · wave 2
   - [ ] 03-03-tool-design-worker-PLAN.md — generateObject tool-design worker with Zod DynamicToolSpec schema (SWR-02) · wave 2
+  - [ ] 03-05-fallback-hand-written-tools-PLAN.md — 8 hand-written Supabase tools + fallback manifest (SWR-08 kill-point safety net) · wave 2
   - [ ] 03-04-swarm-pipeline-manifest-PLAN.md — 4-worker swarm + dedupe + gates + retry + manifest write + /api/discover (SWR-02, SWR-08) · wave 3
 
 ### Phase 4 — Data + Eval Gen (H5)
