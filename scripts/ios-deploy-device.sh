@@ -10,8 +10,8 @@ set -euo pipefail
 #   - IPHONE_UDID env var OR first device from `xcrun devicectl list devices` will be used
 #   - BUNDLE_ID env var (default: com.hackathon.SpecialistApp)
 
-BUNDLE_ID="${BUNDLE_ID:-com.hackathon.SpecialistApp}"
-SCHEME="${SCHEME:-SpecialistApp}"
+BUNDLE_ID="${BUNDLE_ID:-mlx.LLMEval}"
+SCHEME="${SCHEME:-LLMEval}"
 XCPROJ="${XCPROJ:-ios/_upstream/mlx-swift-examples.xcodeproj}"
 
 echo "[deploy] listing devices"
