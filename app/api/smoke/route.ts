@@ -1,5 +1,4 @@
 import { generateText } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 
@@ -8,29 +7,13 @@ import { google } from '@ai-sdk/google';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// Pin the Anthropic baseURL so local `ANTHROPIC_BASE_URL` (e.g. Claude Code
-// proxy on localhost:4141) never shadows the real endpoint for smoke tests.
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-  baseURL: 'https://api.anthropic.com/v1',
-});
-
-// Plan 01-01 step 5: Anthropic alias drifts. Primary was `claude-opus-4-5`;
-// at H0 the public API only recognizes `claude-opus-4-7`. If this 404s, swap
-// to `claude-opus-4-latest` — DO NOT silently retry; surface the failure.
-const ANTHROPIC_ALIAS = 'claude-opus-4-7';
 const OPENAI_ALIAS = 'gpt-5';
 const GOOGLE_ALIAS = 'gemini-2.5-pro';
 
 export async function GET() {
   const prompt = 'Reply with the single word: pong.';
 
-  const [a, o, g] = await Promise.allSettled([
-    generateText({
-      model: anthropic(ANTHROPIC_ALIAS),
-      prompt,
-      experimental_telemetry: { isEnabled: true, functionId: 'smoke.anthropic' },
-    }),
+  const [o, g] = await Promise.allSettled([
     generateText({
       model: openai(OPENAI_ALIAS),
       prompt,
@@ -61,7 +44,6 @@ export async function GET() {
   };
 
   return Response.json({
-    anthropic: summarize(a, ANTHROPIC_ALIAS),
     openai: summarize(o, OPENAI_ALIAS),
     google: summarize(g, GOOGLE_ALIAS),
   });

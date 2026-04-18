@@ -11,18 +11,12 @@
 
 import { ToolLoopAgent as Agent, stepCountIs } from 'ai';
 import type { UIMessageStreamWriter } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
 import pLimit from 'p-limit';
 
 import { createSpawnWorkerTool } from '@/lib/coordinator/spawnWorker';
 
-// Pin baseURL — shell may export ANTHROPIC_BASE_URL to a local proxy.
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-  baseURL: 'https://api.anthropic.com/v1',
-});
-
-const COORDINATOR_MODEL = 'claude-opus-4-7';
+const COORDINATOR_MODEL = 'gpt-5';
 const COORDINATOR_STEP_CAP = 8; // PITFALLS P10 — equivalent to stepCountIs(8)
 const COORDINATOR_WORKER_CONCURRENCY = 15; // PITFALLS P22
 
@@ -40,7 +34,7 @@ export function createCoordinator(
 ) {
   const limiter = pLimit(COORDINATOR_WORKER_CONCURRENCY);
   return new Agent({
-    model: anthropic(COORDINATOR_MODEL),
+    model: openai(COORDINATOR_MODEL),
     instructions: SYSTEM,
     stopWhen: stepCountIs(COORDINATOR_STEP_CAP),
     tools: {

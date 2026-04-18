@@ -3,7 +3,7 @@
 // Keeping the enum closed here lets coordinator zod schema stay in lockstep.
 
 import { generateText } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 
 export const WORKER_ROLES = [
@@ -16,14 +16,7 @@ export const WORKER_ROLES = [
 
 export type WorkerRole = (typeof WORKER_ROLES)[number];
 
-// Pin Anthropic baseURL — local shell may export ANTHROPIC_BASE_URL pointing at
-// a proxy (see MEMORY notes), which would silently capture our calls.
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-  baseURL: 'https://api.anthropic.com/v1',
-});
-
-const ANTHROPIC_ALIAS = 'claude-opus-4-7';
+const OPENAI_ALIAS = 'gpt-5';
 const GOOGLE_ALIAS = 'gemini-2.5-pro';
 
 export type RoleResult = {
@@ -35,7 +28,7 @@ export type RoleResult = {
  * runRole: Phase-2 stub. Calls an LLM with the given prompt and returns text.
  * Phases 3/4/5 will specialize each role with its own toolset + system prompt.
  *
- * On Anthropic 429 (PITFALLS P22) falls over to Gemini 2.5 Pro once.
+ * On OpenAI 429 (PITFALLS P22) falls over to Gemini 2.5 Pro once.
  */
 export async function runRole(
   role: WorkerRole,
@@ -45,7 +38,7 @@ export async function runRole(
   const system = `You are a ${role} worker in a coordinator/worker pipeline. Reply concisely.`;
   try {
     const r = await generateText({
-      model: anthropic(ANTHROPIC_ALIAS),
+      model: openai(OPENAI_ALIAS),
       system,
       prompt,
       abortSignal: signal,
