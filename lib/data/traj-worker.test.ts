@@ -73,9 +73,9 @@ function makeSingleTurnResponse() {
       userQuery: 'What TypeScript type maps to PostgreSQL text column type?',
       toolCall: {
         name: 'supabase_column_type_mapper',
-        arguments: { postgresType: 'text' },
+        arguments: JSON.stringify({ postgresType: 'text' }),
       },
-      toolResult: { tsType: 'string' },
+      toolResult: JSON.stringify({ tsType: 'string' }),
       assistantAnswer: 'The PostgreSQL text type maps to TypeScript string type. This mapping is used when generating type definitions from your database schema.',
     },
   };
@@ -89,7 +89,10 @@ function makeMultiTurnResponse() {
         {
           role: 'assistant' as const,
           content: 'Let me check that for you.',
-          toolCall: { name: 'supabase_column_type_mapper', arguments: { postgresType: 'text' } },
+          toolCall: {
+            name: 'supabase_column_type_mapper',
+            arguments: JSON.stringify({ postgresType: 'text' }),
+          },
         },
         { role: 'tool' as const, content: '{"tsType":"string"}', toolCallId: 'call_0' },
         { role: 'assistant' as const, content: 'The text type maps to string in TypeScript.' },
@@ -97,7 +100,10 @@ function makeMultiTurnResponse() {
         {
           role: 'assistant' as const,
           content: 'Let me look that up.',
-          toolCall: { name: 'supabase_column_type_mapper', arguments: { postgresType: 'boolean' } },
+          toolCall: {
+            name: 'supabase_column_type_mapper',
+            arguments: JSON.stringify({ postgresType: 'boolean' }),
+          },
         },
         { role: 'tool' as const, content: '{"tsType":"boolean"}', toolCallId: 'call_1' },
         { role: 'assistant' as const, content: 'Boolean maps to boolean in TypeScript.' },
@@ -111,12 +117,18 @@ function makeParallelDepResponse() {
     object: {
       userQuery: 'Parse this connection string and also map the text column type for me.',
       toolCalls: [
-        { name: 'supabase_connection_string_parser', arguments: { url: 'postgres://user@localhost/db' } },
-        { name: 'supabase_column_type_mapper', arguments: { postgresType: 'text' } },
+        {
+          name: 'supabase_connection_string_parser',
+          arguments: JSON.stringify({ url: 'postgres://user@localhost/db' }),
+        },
+        {
+          name: 'supabase_column_type_mapper',
+          arguments: JSON.stringify({ postgresType: 'text' }),
+        },
       ],
       toolResults: [
-        { host: 'localhost', port: 5432, database: 'db', user: 'user' },
-        { tsType: 'string' },
+        JSON.stringify({ host: 'localhost', port: 5432, database: 'db', user: 'user' }),
+        JSON.stringify({ tsType: 'string' }),
       ],
       assistantAnswer: 'The connection string points to localhost:5432/db as user. The text column maps to TypeScript string type.',
       dependency: 'parallel' as const,

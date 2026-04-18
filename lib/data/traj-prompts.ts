@@ -15,9 +15,12 @@ export const SINGLE_TURN_SCHEMA = z.object({
   userQuery: z.string().min(10),
   toolCall: z.object({
     name: z.string(),
-    arguments: z.record(z.string(), z.any()),
+    arguments: z
+      .string()
+      .describe('JSON string: object of tool arguments per the tool parameter schema'),
   }),
-  toolResult: z.any(),
+  // JSON string so OpenAI structured output does not use untyped z.any()
+  toolResult: z.string().describe('JSON string: simulated tool return payload'),
   assistantAnswer: z.string().min(20),
 });
 
@@ -27,13 +30,16 @@ export const MULTI_TURN_SCHEMA = z.object({
       z.object({
         role: z.enum(['user', 'assistant', 'tool']),
         content: z.string(),
-        toolCall: z
-          .object({
+        toolCall: z.union([
+          z.object({
             name: z.string(),
-            arguments: z.record(z.string(), z.any()),
-          })
-          .optional(),
-        toolCallId: z.string().optional(),
+            arguments: z
+              .string()
+              .describe('JSON string: object of tool arguments per the tool parameter schema'),
+          }),
+          z.null(),
+        ]),
+        toolCallId: z.union([z.string(), z.null()]),
       }),
     )
     .min(4)
@@ -46,12 +52,16 @@ export const PARALLEL_DEP_SCHEMA = z.object({
     .array(
       z.object({
         name: z.string(),
-        arguments: z.record(z.string(), z.any()),
+        arguments: z
+          .string()
+          .describe('JSON string: object of tool arguments per the tool parameter schema'),
       }),
     )
     .min(2)
     .max(4),
-  toolResults: z.array(z.any()).min(2),
+  toolResults: z
+    .array(z.string().describe('JSON string: each element is one tool return payload'))
+    .min(2),
   assistantAnswer: z.string().min(20),
   dependency: z.enum(['parallel', 'dependent']),
 });
@@ -103,8 +113,8 @@ export function buildSingleTurnPrompt(
     '',
     'Respond with:',
     '1. A natural user query (userQuery)',
-    '2. The exact tool call with name and arguments (toolCall)',
-    '3. A plausible tool result (toolResult)',
+    '2. The exact tool call: name plus arguments as a JSON string (toolCall)',
+    '3. A plausible tool result as a JSON string (toolResult)',
     '4. The assistant\'s final answer incorporating the result (assistantAnswer)',
   ].join('\n');
 
@@ -133,9 +143,12 @@ export function buildMultiTurnPrompt(
     '- Each tool call MUST conform to its parameter schema exactly.',
     '- Use ONLY valid enum values where specified.',
     '- Tool responses should be plausible results.',
-    '- Each turn must have role (user/assistant/tool), content, and optionally toolCall/toolCallId.',
-    '- Assistant turns that call a tool must include a toolCall object.',
-    '- Tool turns must include a toolCallId matching the previous assistant turn.',
+    '- Each turn must have role, content, toolCall, and toolCallId.',
+    '- If a field is not used in that turn, set it to null. Never omit keys.',
+    '- Assistant turns that call a tool must include a toolCall object and toolCallId must be null.',
+    '- Assistant turns that do not call a tool must set toolCall to null.',
+    '- Tool turns must include toolCallId matching the previous assistant call and set toolCall to null.',
+    '- User turns must set both toolCall and toolCallId to null.',
     '- The conversation should feel natural, not forced.',
   ].join('\n');
 
@@ -149,7 +162,8 @@ export function buildMultiTurnPrompt(
     chunkContext(chunks),
     '[/CONTEXT]',
     '',
-    'Return an array of turns. Each turn has: role, content, and optionally toolCall (for assistant) or toolCallId (for tool responses).',
+    'Return an array of turns. Each turn MUST include role, content, toolCall, and toolCallId.',
+    'Use null for unused fields. toolCall is only for assistant tool-call turns. toolCallId is only for tool response turns.',
   ].join('\n');
 
   return { system, user };
@@ -198,8 +212,8 @@ export function buildParallelDepPrompt(
     '',
     'Return:',
     '1. A natural user query (userQuery)',
-    '2. An array of 2 tool calls with name and arguments (toolCalls)',
-    '3. An array of 2 tool results (toolResults, matching the order of toolCalls)',
+    '2. An array of 2 tool calls; each arguments field is a JSON string (serialized object) (toolCalls)',
+    '3. An array of 2 tool results as JSON strings (toolResults, same order as toolCalls)',
     '4. The assistant\'s final answer synthesizing both results (assistantAnswer)',
     `5. The dependency type: "${depType}"`,
   ].join('\n');

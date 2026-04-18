@@ -7,7 +7,7 @@
  */
 
 import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
@@ -19,14 +19,16 @@ import type {
 } from './types';
 import { samplePersona, sampleDifficulty, makeRng } from './personas';
 import { validateToolCall } from './schema-gate';
+import { normalizeToolArguments } from '../tool-args';
+import { createBatchCheckpointWriter } from './checkpoint';
 import {
   QA_RESPONSE_SCHEMA,
   buildQASystemPrompt,
   buildQAUserPrompt,
 } from './qa-prompts';
 
-const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gemini-3.1-flash-lite';
-const MODEL = google(DATA_GEN_MODEL);
+const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gpt-5-mini';
+const MODEL = openai(DATA_GEN_MODEL);
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                      */
@@ -69,6 +71,7 @@ export async function generateQABatch(
   const rng = makeRng(seed);
   const examples: TrainingExample[] = [];
   const meta: DataGenMeta[] = [];
+  const checkpoint = await createBatchCheckpointWriter('qa');
   let rejected = 0;
   let done = 0;
 
@@ -128,7 +131,10 @@ export async function generateQABatch(
       /* Schema-gate: validate any tool_calls (DAT-03 reject-never-patch) */
       if (result.toolCalls && result.toolCalls.length > 0) {
         for (const tc of result.toolCalls) {
-          const validation = validateToolCall(tc.name, tc.arguments);
+          const validation = validateToolCall(
+            tc.name,
+            normalizeToolArguments(tc.arguments),
+          );
           if (!validation.valid) {
             if (attempt < maxRetries) {
               return generateOne(
@@ -158,7 +164,7 @@ export async function generateQABatch(
           type: 'function' as const,
           function: {
             name: tc.name,
-            arguments: JSON.stringify(tc.arguments),
+            arguments: JSON.stringify(normalizeToolArguments(tc.arguments)),
           },
         }));
         messages.push({
@@ -180,13 +186,17 @@ export async function generateQABatch(
         messages.push({ role: 'assistant', content: result.answer });
       }
 
-      examples.push({ messages, tools });
-      meta.push({
+      const example = { messages, tools };
+      const metaEntry = {
         persona: persona.id,
         difficulty,
         sourceChunks: chunkIds,
         generator: DATA_GEN_MODEL,
-      });
+      } satisfies DataGenMeta;
+
+      examples.push(example);
+      meta.push(metaEntry);
+      await checkpoint.record(example, metaEntry);
     } catch (err: unknown) {
       const status = (err as { statusCode?: number })?.statusCode;
       if (status === 429 && attempt < maxRetries) {
@@ -202,6 +212,7 @@ export async function generateQABatch(
   };
 
   await Promise.all(assignments.map((a) => limit(() => generateOne(a))));
+  await checkpoint.close();
 
   return { examples, meta, rejected };
 }

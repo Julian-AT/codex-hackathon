@@ -96,7 +96,7 @@ describe('generateQABatch', () => {
 
     expect(result.meta.length).toBe(result.examples.length);
     for (const m of result.meta) {
-      expect(m.generator).toBe('gemini-3.1-flash-lite');
+      expect(m.generator).toBe('gpt-5-mini');
       expect(['easy', 'medium', 'hard']).toContain(m.difficulty);
     }
   });
@@ -131,7 +131,7 @@ describe('generateQABatch', () => {
         toolCalls: [
           {
             name: 'totally_fake_tool',
-            arguments: { foo: 'bar' },
+            arguments: JSON.stringify({ foo: 'bar' }),
           },
         ],
       },

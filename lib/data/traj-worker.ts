@@ -11,7 +11,7 @@
  * Plan 04-04, Task 2.
  */
 
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import pLimit from 'p-limit';
 import * as Sentry from '@sentry/nextjs';
@@ -19,6 +19,8 @@ import * as Sentry from '@sentry/nextjs';
 import type { Chunk, DynamicToolSpec, TrainingExample, ChatMessage, DataGenMeta } from './types';
 import { samplePersona, sampleDifficulty, makeRng } from './personas';
 import { validateToolCall } from './schema-gate';
+import { normalizeToolArguments, toolResultToMessageContent } from '../tool-args';
+import { createBatchCheckpointWriter } from './checkpoint';
 import {
   SINGLE_TURN_SCHEMA,
   MULTI_TURN_SCHEMA,
@@ -30,8 +32,8 @@ import {
   buildRefusalPrompt,
 } from './traj-prompts';
 
-const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gemini-3.1-flash-lite';
-const MODEL = google(DATA_GEN_MODEL);
+const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gpt-5-mini';
+const MODEL = openai(DATA_GEN_MODEL);
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                      */
@@ -152,7 +154,10 @@ async function generateSingleTurn(
     const obj = result.object;
 
     // Validate tool call via schema-gate (DAT-03)
-    const validation = validateToolCall(obj.toolCall.name, obj.toolCall.arguments);
+    const validation = validateToolCall(
+      obj.toolCall.name,
+      normalizeToolArguments(obj.toolCall.arguments),
+    );
     if (!validation.valid) {
       lastError = `Schema-gate rejected: ${validation.errors?.join(', ')}`;
       continue;
@@ -171,14 +176,16 @@ async function generateSingleTurn(
             type: 'function',
             function: {
               name: obj.toolCall.name,
-              arguments: JSON.stringify(obj.toolCall.arguments),
+              arguments: JSON.stringify(
+                normalizeToolArguments(obj.toolCall.arguments),
+              ),
             },
           },
         ],
       },
       {
         role: 'tool',
-        content: JSON.stringify(obj.toolResult),
+        content: toolResultToMessageContent(obj.toolResult),
         tool_call_id: 'call_0',
         name: obj.toolCall.name,
       },
@@ -246,7 +253,10 @@ async function generateMultiTurn(
     let allValid = true;
     for (const turn of obj.turns) {
       if (turn.toolCall) {
-        const validation = validateToolCall(turn.toolCall.name, turn.toolCall.arguments);
+        const validation = validateToolCall(
+          turn.toolCall.name,
+          normalizeToolArguments(turn.toolCall.arguments),
+        );
         if (!validation.valid) {
           lastError = `Schema-gate rejected tool_call in turn: ${validation.errors?.join(', ')}`;
           allValid = false;
@@ -273,7 +283,9 @@ async function generateMultiTurn(
               type: 'function',
               function: {
                 name: turn.toolCall.name,
-                arguments: JSON.stringify(turn.toolCall.arguments),
+                arguments: JSON.stringify(
+                  normalizeToolArguments(turn.toolCall.arguments),
+                ),
               },
             },
           ],
@@ -354,7 +366,10 @@ async function generateParallelDep(
     // Validate ALL tool calls
     let allValid = true;
     for (const tc of obj.toolCalls) {
-      const validation = validateToolCall(tc.name, tc.arguments);
+      const validation = validateToolCall(
+        tc.name,
+        normalizeToolArguments(tc.arguments),
+      );
       if (!validation.valid) {
         lastError = `Schema-gate rejected: ${validation.errors?.join(', ')}`;
         allValid = false;
@@ -369,7 +384,7 @@ async function generateParallelDep(
       type: 'function' as const,
       function: {
         name: tc.name,
-        arguments: JSON.stringify(tc.arguments),
+        arguments: JSON.stringify(normalizeToolArguments(tc.arguments)),
       },
     }));
 
@@ -387,7 +402,7 @@ async function generateParallelDep(
     for (let i = 0; i < obj.toolCalls.length; i++) {
       messages.push({
         role: 'tool',
-        content: JSON.stringify(obj.toolResults[i]),
+        content: toolResultToMessageContent(obj.toolResults[i]),
         tool_call_id: `call_${i}`,
         name: obj.toolCalls[i].name,
       });
@@ -483,6 +498,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
 
   const examples: TrainingExample[] = [];
   const metaList: DataGenMeta[] = [];
+  const checkpoint = await createBatchCheckpointWriter('traj');
   let rejected = 0;
   let done = 0;
   const byType: Record<string, number> = {
@@ -512,6 +528,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
         if (result) {
           examples.push(result.example);
           metaList.push(result.meta);
+          await checkpoint.record(result.example, result.meta);
           byType.singleTurn++;
         } else {
           rejected++;
@@ -536,6 +553,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
         if (result) {
           examples.push(result.example);
           metaList.push(result.meta);
+          await checkpoint.record(result.example, result.meta);
           byType.multiTurn++;
         } else {
           rejected++;
@@ -560,6 +578,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
         if (result) {
           examples.push(result.example);
           metaList.push(result.meta);
+          await checkpoint.record(result.example, result.meta);
           byType.parallelDep++;
         } else {
           rejected++;
@@ -581,6 +600,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
         const result = await generateRefusal(chunks, tools, persona, difficulty);
         examples.push(result.example);
         metaList.push(result.meta);
+        await checkpoint.record(result.example, result.meta);
         byType.refusal++;
         done++;
         onProgress?.(done, total, 'refusal');
@@ -590,6 +610,7 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
 
   // Execute all tasks through shared p-limit
   await Promise.all(tasks.map((t) => t()));
+  await checkpoint.close();
 
   return { examples, meta: metaList, rejected, byType };
 }

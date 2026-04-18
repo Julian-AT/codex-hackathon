@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { MockLanguageModelV3 } from 'ai/test';
-import { toolDesignWorker, DYNAMIC_TOOL_SPEC_SCHEMA } from './worker';
+import {
+  toolDesignWorker,
+  DYNAMIC_TOOL_SPEC_DISK_SCHEMA,
+  DYNAMIC_TOOL_SPEC_SCHEMA,
+} from './worker';
 import type { Chunk } from './types';
 
 const fakeCorpus: Chunk[] = [
@@ -40,10 +44,35 @@ const fakeSpec = {
   ],
 };
 
+/** Same tool as fakeSpec but parameters / trajectory args are JSON strings (LLM wire). */
+const fakeWireSpec = {
+  tools: [
+    {
+      type: 'function' as const,
+      function: {
+        name: 'rls_policy_template',
+        description: 'Emit a Supabase RLS policy template for a table/role/op.',
+        parameters: JSON.stringify(fakeSpec.tools[0].function.parameters),
+      },
+      meta: {
+        ...fakeSpec.tools[0].meta,
+        trajectories: fakeSpec.tools[0].meta.trajectories.map((tr) => ({
+          userPrompt: tr.userPrompt,
+          call: {
+            name: tr.call.name,
+            arguments: JSON.stringify(tr.call.arguments),
+          },
+          result: JSON.stringify(tr.result),
+        })),
+      },
+    },
+  ],
+};
+
 function makeMockModel() {
   return new MockLanguageModelV3({
     doGenerate: async () => ({
-      content: [{ type: 'text', text: JSON.stringify(fakeSpec) }],
+      content: [{ type: 'text', text: JSON.stringify(fakeWireSpec) }],
       finishReason: { unified: 'stop', raw: 'stop' },
       usage: {
         inputTokens: {
@@ -85,7 +114,13 @@ describe('toolDesignWorker (mocked)', () => {
     for (const t of out) expect(t.meta.sourceWorker).toBe('tool-design-7');
   });
 
-  it('DYNAMIC_TOOL_SPEC_SCHEMA accepts the fake spec (Zod parse)', () => {
-    expect(() => DYNAMIC_TOOL_SPEC_SCHEMA.parse(fakeSpec)).not.toThrow();
+  it('DYNAMIC_TOOL_SPEC_DISK_SCHEMA accepts the fake spec (Zod parse)', () => {
+    expect(() =>
+      DYNAMIC_TOOL_SPEC_DISK_SCHEMA.parse(fakeSpec.tools[0]),
+    ).not.toThrow();
+  });
+
+  it('DYNAMIC_TOOL_SPEC_SCHEMA accepts wire-format tools { tools: [...] }', () => {
+    expect(() => DYNAMIC_TOOL_SPEC_SCHEMA.parse(fakeWireSpec)).not.toThrow();
   });
 });

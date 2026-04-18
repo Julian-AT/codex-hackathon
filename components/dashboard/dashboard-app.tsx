@@ -157,6 +157,7 @@ export function DashboardApp() {
     adapterLog,
     adapterError,
     runAdapterAction,
+    runDemoScenario,
   } = useDemoStream();
 
   const [productUrl, setProductUrl] = useState('https://supabase.com');
@@ -168,13 +169,14 @@ export function DashboardApp() {
   const metrics = useMemo(() => latestTrainMetrics(train), [train]);
   const scoreboardRows = useMemo(() => evalRows(evalResult?.models), [evalResult]);
 
-  const busy = pipelineStatus === 'streaming' || pipelineStatus === 'submitted';
+  const busy =
+    pipelineStatusDisplay === 'Streaming' || pipelineStatusDisplay === 'Submitted';
   const activeAgents = Object.keys(agents).length;
   const completedTasks = notificationRows.filter(([, item]) => item.status === 'ok').length;
   const failedTasks = notificationRows.filter(([, item]) => item.status === 'err').length;
 
   const runPipeline = () => {
-    sendMessage({ text: buildPipelinePrompt(productUrl) });
+    runDemoScenario(productUrl);
   };
 
   return (

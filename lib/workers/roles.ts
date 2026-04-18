@@ -4,7 +4,6 @@
 
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { google } from '@ai-sdk/google';
 
 export const WORKER_ROLES = [
   'discovery',
@@ -17,7 +16,7 @@ export const WORKER_ROLES = [
 export type WorkerRole = (typeof WORKER_ROLES)[number];
 
 const OPENAI_ALIAS = 'gpt-5';
-const GOOGLE_ALIAS = 'gemini-3.1-flash-lite';
+const OPENAI_FALLBACK_ALIAS = 'gpt-5-mini';
 
 export type RoleResult = {
   text: string;
@@ -28,7 +27,7 @@ export type RoleResult = {
  * runRole: Phase-2 stub. Calls an LLM with the given prompt and returns text.
  * Phases 3/4/5 will specialize each role with its own toolset + system prompt.
  *
- * On OpenAI 429 (PITFALLS P22) falls over to Gemini 2.5 Pro once.
+ * On OpenAI 429 (PITFALLS P22) falls over to gpt-5-mini once.
  */
 export async function runRole(
   role: WorkerRole,
@@ -49,7 +48,7 @@ export async function runRole(
     const err = e as { statusCode?: number; name?: string };
     if (err?.statusCode === 429) {
       const r = await generateText({
-        model: google(GOOGLE_ALIAS),
+        model: openai(OPENAI_FALLBACK_ALIAS),
         system,
         prompt,
         abortSignal: signal,

@@ -1,13 +1,13 @@
 /**
  * Judge-jury quality gate — DAT-04 + DAT-05.
  * GPT-5 judges ALL examples on 4 Likert dimensions (faithfulness, toolCorrectness,
- * naturalness, grounding). Gemini 2.5 Pro cross-checks a 20% random sample.
+ * naturalness, grounding). GPT-5 mini cross-checks a 20% random sample.
  *
- * Jury score = GPT-5 (primary). Gemini is cross-check only.
+ * Jury score = GPT-5 (primary). Secondary judge is cross-check only.
  * Examples with ANY dimension < 4 are rejected.
  * Disagreements > 1 Likert point on any dimension are logged.
  *
- * Anti-leakage: judge (GPT-5 + Gemini) != generator (Opus 4.7). PRD §7.2 #4.
+ * Anti-leakage: judges (GPT-5 + GPT-5 mini) != generator (Opus 4.7). PRD §7.2 #4.
  * Temperature 0 for all judge calls.
  *
  * Plan 04-05, Task 1.
@@ -15,7 +15,6 @@
 
 import { generateObject } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { google } from '@ai-sdk/google';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
 import { z } from 'zod';
@@ -60,10 +59,10 @@ Rate each dimension as an integer 1-5. Be strict — only rate 4 or 5 if the exa
 
 export async function judgeExample(
   example: TrainingExample,
-  judgeModel: 'gpt-5' | 'gemini-3.1-flash-lite',
+  judgeModel: 'gpt-5' | 'gpt-5-mini',
 ): Promise<JudgeScore> {
   const model =
-    judgeModel === 'gpt-5' ? openai('gpt-5') : google('gemini-3.1-flash-lite');
+    judgeModel === 'gpt-5' ? openai('gpt-5') : openai('gpt-5-mini');
   const formatted = formatExampleForJudge(example);
 
   const { object } = await Sentry.startSpan(
@@ -86,7 +85,7 @@ export async function judgeExample(
 }
 
 /* ------------------------------------------------------------------ */
-/*  Jury (GPT-5 on ALL + Gemini on 20% sample)                        */
+/*  Jury (GPT-5 on ALL + GPT-5 mini on 20% sample)                    */
 /* ------------------------------------------------------------------ */
 
 export interface JuryResult {
@@ -95,7 +94,7 @@ export interface JuryResult {
     exampleIndex: number;
     dimension: string;
     gpt5Score: number;
-    geminiScore: number;
+    secondaryScore: number;
   }>;
   accepted: TrainingExample[];
   rejected: TrainingExample[];
@@ -105,13 +104,14 @@ export async function judgeJury(
   examples: TrainingExample[],
   opts: {
     concurrency?: number;
-    geminiSampleRate?: number;
+    /** Fraction of examples to also score with GPT-5 mini (cross-judge). */
+    secondaryJudgeSampleRate?: number;
     seed?: string;
   } = {},
 ): Promise<JuryResult> {
   const {
     concurrency = 15,
-    geminiSampleRate = 0.2,
+    secondaryJudgeSampleRate = 0.2,
     seed = 'jury-v1',
   } = opts;
   const limit = pLimit(concurrency);
@@ -130,17 +130,17 @@ export async function judgeJury(
     ),
   );
 
-  // Gemini judges 20% random sample
-  const geminiIndices = examples
+  // GPT-5 mini judges a random sample (cross-check)
+  const secondaryIndices = examples
     .map((_, i) => i)
-    .filter(() => rng() < geminiSampleRate);
+    .filter(() => rng() < secondaryJudgeSampleRate);
 
-  if (geminiIndices.length > 0) {
+  if (secondaryIndices.length > 0) {
     await Promise.all(
-      geminiIndices.map((i) =>
+      secondaryIndices.map((i) =>
         limit(async () => {
-          const geminiScore = await judgeExample(examples[i], 'gemini-3.1-flash-lite');
-          scores.get(i)!.push(geminiScore);
+          const secondaryScore = await judgeExample(examples[i], 'gpt-5-mini');
+          scores.get(i)!.push(secondaryScore);
           // Check for disagreements > 1 Likert point
           const gpt5Score = gpt5Scores.find((s) => s.index === i)!.score;
           for (const dim of [
@@ -149,13 +149,13 @@ export async function judgeJury(
             'naturalness',
             'grounding',
           ] as const) {
-            const diff = Math.abs(gpt5Score[dim] - geminiScore[dim]);
+            const diff = Math.abs(gpt5Score[dim] - secondaryScore[dim]);
             if (diff > 1) {
               disagreements.push({
                 exampleIndex: i,
                 dimension: dim,
                 gpt5Score: gpt5Score[dim],
-                geminiScore: geminiScore[dim],
+                secondaryScore: secondaryScore[dim],
               });
             }
           }

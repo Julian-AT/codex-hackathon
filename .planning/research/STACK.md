@@ -196,13 +196,12 @@ IOS_BUNDLE_ID=com.yourorg.specialistapp
 ```ts
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
-import { google } from '@ai-sdk/google';
 
 // Teacher / generator
 export const teacher = anthropic('claude-opus-4-5-20250929'); // use provider's current Opus 4.7 alias
-// Judges
+// Judges / lightweight generation
 export const gpt5   = openai('gpt-5');
-export const gemini = google('gemini-3.1-flash-lite');
+export const dataGenMini = openai('gpt-5-mini');
 ```
 
 > Model ID strings: confidence MEDIUM. Verify the exact provider alias at H0 with a `generateText({ model: teacher, prompt: 'hi', maxTokens: 2 })` smoke test. Providers change aliases without warning.

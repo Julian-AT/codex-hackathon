@@ -51,7 +51,7 @@ export async function POST(_req: Request) {
               buildNotificationPart('data-gen', {
                 taskId: 'data-gen',
                 status: 'err',
-                summary: msg.slice(0, 400),
+                summary: `${msg.slice(0, 320)} Partial checkpoints saved in data/checkpoints/.`,
               }),
             );
           }

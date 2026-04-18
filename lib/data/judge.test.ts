@@ -10,11 +10,7 @@ vi.mock('ai', () => ({
 }));
 
 vi.mock('@ai-sdk/openai', () => ({
-  openai: vi.fn(() => 'mocked-openai-model'),
-}));
-
-vi.mock('@ai-sdk/google', () => ({
-  google: vi.fn(() => 'mocked-google-model'),
+  openai: vi.fn((id: string) => `mocked-openai:${id}`),
 }));
 
 vi.mock('@sentry/nextjs', () => ({
@@ -66,7 +62,7 @@ describe('judgeExample', () => {
     expect(score.judge).toBe('gpt-5');
   });
 
-  it('uses google model for gemini-3.1-flash-lite', async () => {
+  it('uses openai gpt-5-mini for secondary judge', async () => {
     const ai = await import('ai');
     vi.mocked(ai.generateObject).mockResolvedValueOnce({
       object: {
@@ -80,10 +76,10 @@ describe('judgeExample', () => {
     const { judgeExample } = await import('./judge.js');
     const score = await judgeExample(
       makeExample('Edge functions?'),
-      'gemini-3.1-flash-lite',
+      'gpt-5-mini',
     );
 
-    expect(score.judge).toBe('gemini-3.1-flash-lite');
+    expect(score.judge).toBe('gpt-5-mini');
     expect(score.faithfulness).toBe(3);
   });
 });
@@ -113,7 +109,7 @@ describe('judgeJury', () => {
     ];
     const result = await judgeJury(examples, {
       concurrency: 2,
-      geminiSampleRate: 0,
+      secondaryJudgeSampleRate: 0,
       seed: 'test-accept',
     });
 
@@ -156,7 +152,7 @@ describe('judgeJury', () => {
     ];
     const result = await judgeJury(examples, {
       concurrency: 2,
-      geminiSampleRate: 0,
+      secondaryJudgeSampleRate: 0,
       seed: 'test-reject',
     });
 
@@ -164,7 +160,7 @@ describe('judgeJury', () => {
     expect(result.accepted.length).toBe(2);
   });
 
-  it('detects disagreements when GPT-5 and Gemini differ by > 1', async () => {
+  it('detects disagreements when GPT-5 and GPT-5 mini differ by > 1', async () => {
     const ai = await import('ai');
     let callCount = 0;
     vi.mocked(ai.generateObject).mockImplementation(async () => {
@@ -180,7 +176,7 @@ describe('judgeJury', () => {
           },
         } as never;
       }
-      // Gemini call (second) -- disagrees on faithfulness by 2 points
+      // GPT-5 mini call (second) -- disagrees on faithfulness by 2 points
       return {
         object: {
           faithfulness: 3,
@@ -195,7 +191,7 @@ describe('judgeJury', () => {
     const examples = [makeExample('Test disagreement')];
     const result = await judgeJury(examples, {
       concurrency: 2,
-      geminiSampleRate: 1.0, // sample ALL examples with Gemini
+      secondaryJudgeSampleRate: 1.0,
       seed: 'test-disagree',
     });
 
@@ -203,6 +199,6 @@ describe('judgeJury', () => {
     const disagree = result.disagreements[0];
     expect(disagree.dimension).toBe('faithfulness');
     expect(disagree.gpt5Score).toBe(5);
-    expect(disagree.geminiScore).toBe(3);
+    expect(disagree.secondaryScore).toBe(3);
   });
 });

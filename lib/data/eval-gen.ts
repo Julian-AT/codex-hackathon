@@ -16,6 +16,7 @@ import pLimit from 'p-limit';
 import { z } from 'zod';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
 import type { EvalItem, ToolCall } from './types';
+import { normalizeToolArguments } from '../tool-args';
 
 /* ------------------------------------------------------------------ */
 /*  Schemas                                                            */
@@ -32,7 +33,9 @@ const EVAL_TOOL_SCHEMA = z.object({
     .array(
       z.object({
         name: z.string(),
-        arguments: z.record(z.string(), z.any()),
+        arguments: z
+          .string()
+          .describe('JSON string: object of tool arguments per the tool parameter schema'),
       }),
     )
     .min(1),
@@ -127,7 +130,10 @@ const generateToolItem = async (
     (tc, i) => ({
       id: `eval_call_${idx}_${i}`,
       type: 'function' as const,
-      function: { name: tc.name, arguments: JSON.stringify(tc.arguments) },
+      function: {
+        name: tc.name,
+        arguments: JSON.stringify(normalizeToolArguments(tc.arguments)),
+      },
     }),
   );
   return {

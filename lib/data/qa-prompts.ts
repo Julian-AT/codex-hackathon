@@ -29,7 +29,12 @@ export const QA_RESPONSE_SCHEMA = z.object({
     .array(
       z.object({
         name: z.string(),
-        arguments: z.record(z.string(), z.any()),
+        // JSON string (object), not z.record(z.any()) — OpenAI response_format requires typed additionalProperties
+        arguments: z
+          .string()
+          .describe(
+            'JSON string: one JSON object of tool arguments matching that tool’s parameter schema, e.g. {"tableName":"profiles"}',
+          ),
       }),
     )
     .optional(),
@@ -70,7 +75,7 @@ export function buildQASystemPrompt(
     toolLines,
     '',
     'If the question naturally involves one of the listed tools, include a toolCalls array',
-    'with the tool name and correctly-formed arguments matching the tool schema.',
+    'with the tool name and arguments as a JSON string containing one object (keys/values per the tool schema).',
     'NEVER invent tool names or argument fields not in the schema.',
     'If no tool is relevant, omit toolCalls entirely.',
   ].join('\n');

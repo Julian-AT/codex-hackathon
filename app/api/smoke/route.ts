@@ -1,6 +1,5 @@
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { google } from '@ai-sdk/google';
 
 // HARD CONSTRAINT (PRD §13): child_process-using routes MUST be nodejs runtime.
 // This route doesn't spawn, but we cement the pattern here for downstream routes.
@@ -8,21 +7,21 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const OPENAI_ALIAS = 'gpt-5';
-const GOOGLE_ALIAS = 'gemini-3.1-flash-lite';
+const OPENAI_MINI_ALIAS = 'gpt-5-mini';
 
 export async function GET() {
   const prompt = 'Reply with the single word: pong.';
 
-  const [o, g] = await Promise.allSettled([
+  const [o, m] = await Promise.allSettled([
     generateText({
       model: openai(OPENAI_ALIAS),
       prompt,
       experimental_telemetry: { isEnabled: true, functionId: 'smoke.openai' },
     }),
     generateText({
-      model: google(GOOGLE_ALIAS),
+      model: openai(OPENAI_MINI_ALIAS),
       prompt,
-      experimental_telemetry: { isEnabled: true, functionId: 'smoke.google' },
+      experimental_telemetry: { isEnabled: true, functionId: 'smoke.openaiMini' },
     }),
   ]);
 
@@ -45,6 +44,6 @@ export async function GET() {
 
   return Response.json({
     openai: summarize(o, OPENAI_ALIAS),
-    google: summarize(g, GOOGLE_ALIAS),
+    openaiMini: summarize(m, OPENAI_MINI_ALIAS),
   });
 }

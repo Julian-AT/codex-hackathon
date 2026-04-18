@@ -58,7 +58,7 @@ export interface JudgeScore {
   toolCorrectness: Score;
   naturalness: Score;
   grounding: Score;
-  judge: 'gpt-5' | 'gemini-3.1-flash-lite';
+  judge: 'gpt-5' | 'gpt-5-mini';
 }
 
 export interface EvalItem {

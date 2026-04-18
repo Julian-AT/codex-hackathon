@@ -1,52 +1,70 @@
-<h1 align="center">Offline Specialist LLM Pipeline</h1>
+<h1 align="center">Offline Specialist-LLM Pipeline</h1>
 
 <p align="center">
-  <strong>Agentic product-to-model pipeline: discovery swarm, dynamic tool design, judge-gated data generation, local MLX fine-tuning, and offline iPhone inference in one demo system</strong>
+  <strong>Agentic product-to-model pipeline: discovery swarm, dynamic tool design, judge-gated data generation, local MLX fine-tuning, and offline iPhone inference in one deployable demo system</strong>
+</p>
+
+<p align="center">
+  <a href="assets/recording"><strong>Desktop control room recording</strong></a>
+  &nbsp;·&nbsp;
+  <a href="assets/recording_mobile.MP4"><strong>Offline iPhone recording</strong></a>
 </p>
 
 <p align="center">
   <a href="https://github.com/Julian-AT/codex-hackathon"><img src="https://img.shields.io/badge/OpenClaw-Hack__001-blue?style=flat-square" alt="OpenClaw Hack_001"></a>
-  <img src="https://img.shields.io/badge/Stack-Next.js_15_%C2%B7_AI_SDK_6_%C2%B7_MLX_Swift-black?style=flat-square" alt="Stack">
+  <img src="https://img.shields.io/badge/Stack-Next.js_15_·_AI_SDK_6_·_MLX_Swift-black?style=flat-square" alt="Stack">
   <img src="https://img.shields.io/badge/Training-mlx--lm_%2B_mlx--lm--lora-orange?style=flat-square" alt="Training">
-  <img src="https://img.shields.io/badge/Mobile-iPhone_offline-0F766E?style=flat-square" alt="Mobile">
+  <img src="https://img.shields.io/badge/Runtime-iPhone_offline-0F766E?style=flat-square" alt="iPhone offline">
+  <img src="https://img.shields.io/badge/Product-Supabase_specialist-111827?style=flat-square" alt="Supabase specialist">
 </p>
 
 ## Overview
 
-This project turns a product surface, currently **Supabase**, into a narrow specialist model that can run **fully offline on an iPhone**.
+This project takes a product surface, currently **Supabase**, and turns it into a narrow specialist model that can run **fully offline on an iPhone**.
 
-The system is intentionally end-to-end:
-
-- a visible **coordinator/worker swarm** discovers the product surface and designs tool contracts
-- a second pipeline generates **Q&A and tool-call trajectories**
-- a local **MLX LoRA training loop** fine-tunes a Gemma 4 MLX base model on a MacBook
-- the resulting adapter and its tool manifest are copied to a native **Swift + MLX** app
-- the phone answers questions and executes tool calls while in **airplane mode**
-
-The pitch thesis is simple:
-
-> Cloud AI asks you to trust it. This one does not have to, because it cannot phone home.
+The system is intentionally end-to-end. A visible coordinator/worker swarm discovers the product surface, designs callable tools, and synthesizes training data. A local MLX LoRA path fine-tunes the model on a MacBook. The resulting adapter and tool manifest are copied into a native Swift app, where the phone can answer specialist questions and execute bundled JavaScript tools while in **airplane mode**.
 
 ## The challenge
 
-Most "offline AI" demos quietly weaken the story with hidden retrieval, cloud fallback, or tiny web models. This repo goes after the harder version:
+Most offline-AI demos quietly weaken the story with hidden retrieval, cloud fallback, or tiny browser models. This project targets the harder version:
 
-- domain-specialized behavior, not just generic chat
-- agent-authored **dynamic JavaScript tools**, not hand-waved function calling
-- local training on a consumer Mac
-- native mobile inference, not a fragile browser path
-- an explicit **fallback ladder** so the demo still works under pressure
+- a specialist model, not generic chat
+- dynamic tools authored by the agent swarm itself
+- local training on consumer hardware
+- native mobile inference instead of a fragile web path
+- an explicit fallback ladder so the demo survives stage pressure
 
 ## Core capabilities
 
 | Track | What ships |
 | --- | --- |
-| **Swarm** | `/api/pipeline` coordinator/worker runtime, streamed worker status, live dashboard agent grid |
-| **Discovery** | product corpus ingestion plus validated `adapter-tools.json` generation |
+| **Swarm** | `/api/pipeline` coordinator/worker orchestration, worker status streaming, dashboard agent grid |
+| **Discovery** | product corpus ingestion, tool-design swarm, validation gates, `adapter-tools.json` emission |
 | **Data** | grounded Q&A, tool trajectories, eval-set generation, schema-gated tool-call examples |
-| **Training** | local `mlx_lm.lora` SFT path, optional GRPO stage, streamed loss/reward telemetry, rollback safeguards |
-| **Mobile runtime** | native Swift app, runtime adapter loading, tool-call parsing, JSContext tool execution, offline enforcement |
+| **Training** | local `mlx_lm.lora` SFT, optional GRPO path, streamed loss/reward telemetry, rollback safeguards |
+| **Mobile runtime** | Swift app, runtime adapter loading, tool-token parsing, `JavaScriptCore` tool execution, offline enforcement |
 | **Demo ops** | fuse, deploy, verify, and preflight scripts for the stage path |
+
+The README media flow mirrors the actual pitch surface: one desktop control-room run and one offline iPhone proof.
+
+<p align="center">
+  <a href="assets/Cap%202026-04-18%20at%2016.50.29.mp4"><strong>Watch the desktop swarm + training flow</strong></a>
+</p>
+
+<p align="center">
+  <a href="assets/recording_mobile.MP4"><strong>Watch the mobile offline proof</strong></a>
+</p>
+
+---
+
+## Product surface
+
+The main product is the dashboard: a clean operator surface that shows the **agent swarms**, **training telemetry**, **evaluation snapshot**, and **device handoff** in one view. The page is optimized to tell the story quickly during a pitch:
+
+1. Show the swarm fan-out.
+2. Show the local training curve.
+3. Show eval and deploy readiness.
+4. Cut to the iPhone recording for the offline proof.
 
 ## Implementation: how it actually works
 
@@ -54,12 +72,12 @@ Most "offline AI" demos quietly weaken the story with hidden retrieval, cloud fa
 
 ```mermaid
 flowchart TB
-  subgraph input ["Input"]
-    USER["Product target (Supabase)"]
-    DASH["Next.js control room"]
+  subgraph input [Input]
+    USER["Product target"]
+    DASH["Next.js dashboard"]
   end
 
-  subgraph swarm ["Agentic pipeline"]
+  subgraph swarm [Agentic pipeline]
     PIPE["POST /api/pipeline"]
     COORD["Coordinator"]
     DISC["Discovery workers"]
@@ -68,14 +86,14 @@ flowchart TB
     EVALGEN["Eval generation"]
   end
 
-  subgraph artifacts ["Artifacts"]
+  subgraph artifacts [Artifacts]
     CORPUS["Corpus chunks"]
     MANIFEST["adapter-tools.json"]
     TRAINJSON["training.jsonl"]
     EVALJSON["eval.jsonl"]
   end
 
-  subgraph training ["Local training + deploy"]
+  subgraph training [Training + deploy]
     TRAIN["POST /api/train"]
     MLX["mlx_lm.lora / mlx_lm_lora.train"]
     FUSE["scripts/fuse.sh"]
@@ -83,11 +101,12 @@ flowchart TB
     VERIFY["scripts/verify-device.sh"]
   end
 
-  subgraph device ["Offline iPhone runtime"]
-    IOS["Swift SpecialistApp"]
-    MODEL["ModelState + LoRA swap"]
+  subgraph device [Offline iPhone runtime]
+    IOS["SpecialistApp"]
+    MODEL["ModelState"]
+    PARSER["GemmaToolParser"]
     REG["ToolRegistry + JSContext"]
-    CHAT["Chat UI + ToolCallBubble"]
+    CHAT["ChatView + ToolCallBubble"]
   end
 
   USER --> DASH --> PIPE --> COORD
@@ -97,7 +116,7 @@ flowchart TB
   COORD --> EVALGEN --> EVALJSON
   DASH --> TRAIN --> MLX --> FUSE --> DEPLOY --> IOS
   DEPLOY --> VERIFY
-  IOS --> MODEL --> REG --> CHAT
+  IOS --> MODEL --> PARSER --> REG --> CHAT
   MANIFEST --> DEPLOY
   TRAINJSON --> TRAIN
   EVALJSON --> DASH
@@ -107,7 +126,7 @@ flowchart TB
 
 ```mermaid
 sequenceDiagram
-  participant U as Operator
+  participant OP as Operator
   participant UI as Dashboard
   participant P as /api/pipeline
   participant D as /api/data-gen
@@ -115,79 +134,94 @@ sequenceDiagram
   participant A as /api/adapter
   participant I as iPhone app
 
-  U->>UI: Start specialist pipeline
-  UI->>P: Run coordinator + workers
-  P-->>UI: Stream worker status + task notifications
-  U->>D: Generate training/eval data
-  D-->>UI: Emit corpus + generation progress
-  U->>T: Start SFT (and optional GRPO)
-  T-->>UI: Stream train loss / reward points
-  U->>A: Fuse + deploy adapter
-  A->>I: Copy adapter.safetensors + adapter-tools.json
+  OP->>UI: Start specialist pipeline
+  UI->>P: Coordinator fans out workers
+  P-->>UI: data-agent-status + task notifications
+  OP->>D: Generate training + eval data
+  D-->>UI: corpus / generation / judging / dedup progress
+  OP->>T: Run SFT and optional GRPO
+  T-->>UI: loss / reward telemetry
+  OP->>A: Fuse + deploy adapter
+  A->>I: Copy adapter + tools bundle
   I->>I: Load adapter, register tools, stay offline
-  U->>I: Ask Supabase question
-  I-->>U: Answer + optional on-device tool call
+  OP->>I: Ask Supabase question
+  I-->>OP: Answer + optional on-device tool call
 ```
+
+The flow is not just a static UI. The dashboard is backed by typed stream parts, coordinator/worker status, training telemetry, and adapter-action logs.
+
+### Discovery and tool-design swarm
+
+Discovery and tool design are separate but connected beats. The system fetches and chunks the product corpus, then fans out a **4-worker tool-design swarm** that proposes dynamic tool specs. Those tools are validated through schema, parse, sandbox, fuzz, and trajectory checks before they are written to `adapter-tools.json`.
+
+```mermaid
+flowchart LR
+  C["fetchCorpus()"]
+  S["designToolsSwarm()"]
+  V["validateTool()"]
+  M["writeManifest()"]
+
+  C --> S --> V --> M
+```
+
+### Data generation pipeline
+
+The data path combines:
+
+- grounded Q&A generation
+- single-turn and multi-turn tool trajectories
+- judge-gated acceptance
+- MinHash and embedding dedup
+- stratification checks
+- training/eval JSONL emission
+
+This gives the demo a believable "product-to-specialist-model" story instead of a thin chat mock.
 
 ### Training and mobile runtime
 
-The training side is deliberately narrow and reliable:
+The training side is deliberately narrow and stage-safe:
 
-- `scripts/train.sh` runs the SFT path for the MLX LoRA adapter
-- `scripts/grpo.sh` is available, but the system can ship an **SFT-only** adapter when the RL stage is not worth the risk
-- `/api/train` streams structured training points into the dashboard chart
-- supervisor and rollback utilities protect against divergence and preserve a shippable checkpoint
+- `scripts/train.sh` runs the SFT path
+- `scripts/grpo.sh` exists, but the system can still ship an SFT-only adapter
+- `/api/train` streams structured training telemetry into the dashboard
+- supervisor and rollback utilities preserve a shippable checkpoint under failure
 
-The mobile runtime is equally explicit:
+The iPhone runtime is equally explicit:
 
-- `ModelState.swift` owns base-model lifetime and adapter swaps
+- `ModelState.swift` owns model lifetime and adapter swaps
 - `GemmaToolParser.swift` intercepts streamed tool-call tokens
-- `ToolRegistry.swift` executes bundled JavaScript tool bodies in `JavaScriptCore`
-- `AdapterToolsLoader.swift` reloads `adapter-tools.json` on every adapter change
+- `ToolRegistry.swift` executes bundled JS tool bodies in `JavaScriptCore`
+- `AdapterToolsLoader.swift` reloads `adapter-tools.json` on swap
 - `ChatView.swift` and `ToolCallBubble.swift` expose tool activity in the UI
-
-### Why native iPhone instead of browser inference
-
-The project intentionally avoids a web runtime path for the final mobile experience. The product story depends on a real offline phone, stable local inference, adapter hot-swap, and controlled tool execution. That is why the stack uses:
-
-- **MLX** for training on macOS
-- **MLX Swift** for iPhone inference
-- **JavaScriptCore** for dynamic tool execution
-- **USB-C deploy + hot-swap** instead of cloud-hosted inference
-
-## Control room
-
-The dashboard is the operator surface for the demo:
-
-- live swarm state and task notifications
-- readiness summary and pipeline health
-- training chart with SFT and reward overlays
-- quick eval and adapter actions
-- deploy, verify, and preflight controls
-- links into observability and demo evidence
-
-This is not just a toy chat screen. It is meant to feel like a compact mission-control surface for getting from product target to mobile specialist model.
 
 ## Technology stack
 
 | Layer | Choices |
 | --- | --- |
-| **App** | Next.js 15 App Router, React 19, TypeScript |
-| **Agent runtime** | AI SDK v6, streamed UI message parts, coordinator/worker orchestration |
-| **Providers** | Google and OpenAI in the current demo path; Anthropic is optional and not required for the core flow |
-| **Validation** | Zod, AJV, `jsonschema`, `acorn`, `node:vm` |
-| **Training** | `mlx-lm`, `mlx-lm-lora`, shell wrappers under `scripts/` |
-| **Mobile** | SwiftUI, MLX Swift LM, JavaScriptCore, Network |
-| **Charts/UI** | shadcn/ui, Tailwind CSS v4, Recharts |
-| **Quality** | TypeScript, Vitest, shell verification |
+| App | Next.js 15 App Router, React 19, TypeScript |
+| Agent runtime | AI SDK v6, streamed UI message parts, coordinator/worker orchestration |
+| Providers | Google and OpenAI in the current demo path; Anthropic remains optional |
+| Validation | Zod, AJV, `jsonschema`, `acorn`, `node:vm` |
+| Training | `mlx-lm`, `mlx-lm-lora`, shell wrappers in `scripts/` |
+| Mobile | SwiftUI, MLX Swift LM, `JavaScriptCore`, `Network` |
+| UI | shadcn/ui, Tailwind CSS v4, Recharts |
+| Quality | TypeScript, Vitest, shell verification |
+
+## Reliability and demo safety
+
+- Typed stream contracts for worker status and task completion
+- Validation gates for dynamic tools before manifest emission
+- Rollback and fallback handling in the training path
+- Explicit deploy, verify, and preflight scripts for the on-stage flow
+- Tiered fallback structure: live path, prepared path, and prerecorded proof
 
 ## Prerequisites
 
 - Node 20+
 - `pnpm`
-- Python 3.12 with the MLX CLIs available for the training path
+- Python 3.12 with the MLX CLIs available for training
 - Xcode 16 and iOS 18+ for the device runtime
-- A physical iPhone for the full offline mobile demo
+- A physical iPhone for the full offline mobile proof
 - API keys for the generation and evaluation providers you want to use
 
 ## Setup
@@ -207,22 +241,16 @@ See [`.env.example`](.env.example) for the full list. The most important ones ar
 | Variable | Role |
 | --- | --- |
 | `OPENAI_API_KEY` | OpenAI judge / generation surfaces |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini discovery and data generation path |
-| `ANTHROPIC_API_KEY` | Optional compatibility path only; not needed for the Google/OpenAI demo path |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini discovery and data-generation path |
+| `ANTHROPIC_API_KEY` | Optional compatibility path |
 | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN` | Observability |
-| `EVAL_BASE_URL`, `EVAL_TUNED_URL` | External eval endpoints if you wire them |
+| `EVAL_BASE_URL`, `EVAL_TUNED_URL` | External eval endpoints if wired |
 | `NEXT_PUBLIC_IPHONE_UDID` | `devicectl` target |
 | `NEXT_PUBLIC_BUNDLE_ID` | App container target for adapter deploys |
 
 ## Fast demo path
 
-If you want the shortest route from repo to pitch:
-
-1. Start the control room.
-2. Run the data generation pipeline.
-3. Train the adapter with SFT.
-4. Stage and deploy the adapter to the phone.
-5. Verify the device and record the mobile proof.
+If you want the shortest path from repo to pitch:
 
 ```bash
 pnpm dev
@@ -234,7 +262,7 @@ bash scripts/verify-device.sh
 bash scripts/preflight-demo.sh
 ```
 
-## Key scripts
+## Scripts
 
 | Script | Purpose |
 | --- | --- |
@@ -243,7 +271,7 @@ bash scripts/preflight-demo.sh
 | `scripts/fuse.sh` | Build fused or adapter-only payloads |
 | `scripts/deploy-adapter.sh` | Copy adapter + tools to the iPhone app container |
 | `scripts/verify-device.sh` | Record device verification state |
-| `scripts/preflight-demo.sh` | Capture final demo checklist state |
+| `scripts/preflight-demo.sh` | Capture final preflight state |
 
 ## Project layout
 
@@ -255,35 +283,36 @@ app/
   api/eval/            Three-way eval entrypoint
   api/adapter/         Fuse and deploy actions
   (demo)/              Dashboard page, stream hooks, charts, agent cards
-components/dashboard/  Professional control-room UI
+components/dashboard/  Dashboard surface
 ios/SpecialistApp/     Offline iPhone app, adapter loading, tool runtime
-lib/discovery/         Corpus discovery workers
-lib/data/              QA/trajectory generation workers and schemas
+lib/discovery/         Corpus fetch, swarm, validation, manifest
+lib/data/              QA/trajectory generation and JSONL emission
 lib/training/          Supervisor, rollback, transforms
-lib/eval/              Eval harness types and runner
+lib/eval/              Eval harness
 scripts/               Train, fuse, deploy, verify, preflight helpers
-data/                  Generated datasets, adapter payloads, state artifacts
+data/                  Generated datasets, manifests, adapter artifacts
+assets/                README media and screen recordings
 ```
 
 ## Demo tiers
 
-The repo is built around an explicit fallback ladder:
-
 - **Tier 1**: live swarm, live training, live deploy, live offline phone
-- **Tier 2**: live swarm and training, pre-run deploy or evaluation surface
+- **Tier 2**: live swarm and training, prepared deploy/eval surface
 - **Tier 3**: prerecorded phone cassette with live narration
 
-That fallback structure is not accidental. It is part of the product discipline of making the offline story survive demo pressure.
+That fallback ladder is part of the product design, not an afterthought.
 
 ## Current focus
 
-The current target is a **Supabase specialist**. The architecture is intentionally reusable for other product surfaces, but the strongest path today is:
+The current specialist target is **Supabase**. The architecture is reusable for other product surfaces, but the strongest path right now is:
 
 - Supabase corpus discovery
 - Supabase tool manifest generation
 - Supabase training/eval data
-- Supabase-focused on-device proof
+- Supabase-focused offline mobile proof
+
+---
 
 <p align="center">
-  Built for <strong>OpenClaw Hack_001</strong> - Vienna - agents, training loops, and an airplane-mode iPhone
+  Built for <strong>OpenClaw Hack_001</strong> · Vienna · agent swarms, local fine-tuning, and an airplane-mode iPhone
 </p>

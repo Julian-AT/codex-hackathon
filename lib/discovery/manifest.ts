@@ -1,7 +1,7 @@
 import { writeFile, copyFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import type { DynamicToolSpec, GateName } from './types';
-import { DYNAMIC_TOOL_SPEC_SCHEMA } from './worker';
+import { DYNAMIC_TOOL_SPEC_DISK_SCHEMA } from './worker';
 
 export const MANIFEST_PATH = path.resolve('data/adapter-tools.json');
 export const FALLBACK_PATH = path.resolve('data/adapter-tools.fallback.json');
@@ -12,10 +12,8 @@ export interface ManifestMeta {
   gateFailures: Record<GateName, number>;
 }
 
-// Extract the per-tool Zod schema from the wrapper (which is { tools: [...] }).
-// This avoids the min(1)/max(8) array constraint on the wrapper and validates
-// each individual tool spec against the canonical shape.
-const TOOL_SCHEMA = DYNAMIC_TOOL_SPEC_SCHEMA.shape.tools.element;
+/** Persisted tool shape uses objects (not LLM wire strings). */
+const TOOL_SCHEMA = DYNAMIC_TOOL_SPEC_DISK_SCHEMA;
 
 export async function writeManifest(
   tools: DynamicToolSpec[],
