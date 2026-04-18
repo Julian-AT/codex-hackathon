@@ -507,20 +507,23 @@ From Phase 1 01-02-SUMMARY (50-iter SFT on the exact same model & config):
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does the user sign off on Path B (sanctioned `.py` carve-out) for true judge-jury GRPO?**
    - What we know: PRD §6.2 text says judge-jury. CLI cannot do it. CLAUDE.md + PRD §19.4 A05 require explicit sign-off for any .py authoring.
    - What's unclear: Is the narration commitment to "judge-jury reward" stronger than the zero-.py constraint?
    - Recommendation: Ask at `/gsd-discuss-phase 5` time. If unsure, default to Path A (ship in budget, narrate R1-format refinement honestly).
+   - **RESOLVED:** Path A locked — see 05-CONTEXT.md §"GRPO Reward Function — LOCKED: Path A" (zero-.py constraint wins; built-in R1 reward weights `[2.0,0.0,0.5,0.0]`).
 
 2. **Final GRPO iter count (150 vs adjusted)?**
    - What we know: PRD says 150. Our wall-clock math suggests 150 × 6 s/iter ≈ 15 min (overshoot).
    - What's unclear: Real sec/iter.
    - Recommendation: Wave 0 smoke 5 iters → projected → pick iter count that lands ≤ 4 min (leaving 1 min slack inside the 5-min TRN-02 budget).
+   - **RESOLVED:** Wave 0 smoke (plan 05-01 Task 3) locks `FINAL_GRPO_ITERS` from measured sec/iter — see 05-CONTEXT.md §"GRPO Iter Count — LOCKED".
 
 3. **Does Phase 4 produce a prompt-only eval set suitable for GRPO Path A, or does Phase 5 own the transform?**
    - Recommendation: Phase 5 owns it. A ~50-line transform script reading Phase 4's tool-call JSONL and emitting `{prompt: user_content, answer: expected_tool_name}` pairs. Plan it as a Wave 1 task.
+   - **RESOLVED:** Phase 5 owns the SFT→GRPO transform — see 05-CONTEXT.md §"Phase 4 Contract" (implemented in `lib/training/transformGrpoJsonl.ts` + `scripts/build-grpo-jsonl.ts`, plan 05-03).
 
 ---
 

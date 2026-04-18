@@ -323,7 +323,38 @@ curl -N -X POST http://localhost:3000/api/train -H 'content-type: application/js
 ```
 Expected: supervisor receives `grpo.skipped` line → emits `training.grpo_collapsed` span attr → stream ends cleanly.
 
-6. **Exercise NaN rollback** (synthetic — feed a fake stdout via a dry-run test). If Phase 1 venv is offline or time-constrained, it's acceptable to skip the live NaN test if the unit tests from 05-03 already cover the state-machine logic. Document the skip in e2e-notes.
+6. **Exercise NaN rollback** (MANDATORY — synthetic stdout feed, not skippable). Spawn a fake bash subprocess that emits real `Iter N: Train loss X, …` lines INCLUDING a `NaN` loss spike through the ACTUAL `TrainingSupervisor.ingest()` path (not a unit-test mock). Concrete procedure:
+
+```bash
+# Stage a numbered checkpoint the rollback can target
+mkdir -p data/training/model-a-adapter
+printf 'stub' > data/training/model-a-adapter/0000100_adapters.safetensors
+printf 'stub' > data/training/model-a-adapter/adapters.safetensors
+
+# Write a fake trainer stub that writes to stdout in the exact shape parseTrainLine expects
+cat > /tmp/fake-nan-trainer.sh <<'BASH'
+#!/usr/bin/env bash
+set -u
+echo "Iter 1: Train loss 2.50, Learning Rate 1.000e-05, It/sec 0.4, Tokens/sec 800, Trained Tokens 1024, Peak mem 14.0 GB"
+echo "Iter 2: Train loss 2.48, Learning Rate 1.000e-05, It/sec 0.4, Tokens/sec 800, Trained Tokens 2048, Peak mem 14.0 GB"
+echo "Iter 3: Train loss 2.46, Learning Rate 1.000e-05, It/sec 0.4, Tokens/sec 800, Trained Tokens 3072, Peak mem 14.0 GB"
+echo "Iter 4: Train loss 2.45, Learning Rate 1.000e-05, It/sec 0.4, Tokens/sec 800, Trained Tokens 4096, Peak mem 14.0 GB"
+echo "Iter 5: Train loss NaN, Learning Rate 1.000e-05, It/sec 0.4, Tokens/sec 800, Trained Tokens 5120, Peak mem 14.0 GB"
+sleep 30  # Let the supervisor SIGTERM us
+BASH
+chmod +x /tmp/fake-nan-trainer.sh
+
+# Run it by temporarily pointing scripts/train.sh at the fake, OR — preferred — write a
+# small Node harness at scripts/nan-rollback-harness.ts that:
+#   1. spawn('bash', ['/tmp/fake-nan-trainer.sh'])
+#   2. pipes stdout through readline into a real `new TrainSupervisor()` + `parseTrainLine`
+#   3. on signal.kind === 'rollback': call the real `performRollback('data/training/model-a-adapter')`
+#   4. asserts `adapters.safetensors` now has the bytes of `0000100_adapters.safetensors`
+#   5. writes the observation to data/bench/e2e-nan-rollback.log
+pnpm tsx scripts/nan-rollback-harness.ts 2>&1 | tee data/bench/e2e-nan-rollback.log
+```
+
+The harness MUST exercise the production `TrainSupervisor` and `performRollback` — not a stub. This is the ONLY live end-to-end verification of TRN-04 outside 05-03's unit tests; it is not skippable.
 
 7. **Write** `.planning/phases/05-train-model-a/05-04-e2e-notes.md` with all of:
    - SFT wall-clock for the 50-iter run (extrapolated to 400-iter).
@@ -337,7 +368,7 @@ Expected: supervisor receives `grpo.skipped` line → emits `training.grpo_colla
      - TIER2 — SFT aborted (unrecoverable NaN); ship Phase 1's 50-iter bench adapter as Tier 2 per CONTEXT §"NaN Recovery".
   </action>
   <verify>
-    <automated>test -f .planning/phases/05-train-model-a/05-04-e2e-notes.md && grep -E "^PHASE_5_RESULT=(PASS|PARTIAL|TIER2)" .planning/phases/05-train-model-a/05-04-e2e-notes.md && test -f data/bench/e2e-sft.log && test -f data/bench/e2e-grpo-skipped.log && grep -E "data-train|iter|loss" data/bench/e2e-sft.log | head -5 && grep -E "grpo.collapsed|grpo_collapsed|aborted" data/bench/e2e-grpo-skipped.log</automated>
+    <automated>test -f .planning/phases/05-train-model-a/05-04-e2e-notes.md && grep -E "^PHASE_5_RESULT=(PASS|PARTIAL|TIER2)" .planning/phases/05-train-model-a/05-04-e2e-notes.md && test -f data/bench/e2e-sft.log && test -f data/bench/e2e-grpo-skipped.log && test -f data/bench/e2e-nan-rollback.log && grep -E "data-train|iter|loss" data/bench/e2e-sft.log | head -5 && grep -E "grpo.collapsed|grpo_collapsed|aborted" data/bench/e2e-grpo-skipped.log && grep -Ei "rollback|nan" data/bench/e2e-nan-rollback.log</automated>
   </verify>
   <acceptance_criteria>
     - `data/bench/e2e-sft.log` exists and contains at least 5 `data-train` events with `loss` values
@@ -346,6 +377,7 @@ Expected: supervisor receives `grpo.skipped` line → emits `training.grpo_colla
     - 05-04-e2e-notes.md contains exactly one `PHASE_5_RESULT=PASS|PARTIAL|TIER2` line
     - 05-04-e2e-notes.md contains the first 10 `data-train` samples from the SFT run
     - Training wall-clock (SFT 400-iter extrapolated) is explicitly recorded and is ≤ 12 min (TRN-01 budget check)
+    - `data/bench/e2e-nan-rollback.log` exists and documents: (a) synthetic `Iter 5: Train loss NaN, …` line was fed through the REAL `TrainSupervisor.ingest()` path, (b) supervisor emitted `signal.kind === 'rollback'`, (c) `performRollback` overwrote `adapters.safetensors` with the contents of `0000100_adapters.safetensors`, (d) child was SIGTERM'd. No "skipped — covered by unit tests" escape hatch is acceptable.
   </acceptance_criteria>
   <done>Phase 5 output is proven live: loss + reward stream on the chart, kill-points fire cleanly, Phase 6 has a deterministic input signal.</done>
 </task>

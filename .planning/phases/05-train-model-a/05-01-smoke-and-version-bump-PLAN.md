@@ -158,23 +158,25 @@ Observed in `mlx_lm.lora --help` (captured at data/bench/rank-help.log):
 - If NO: rank is set via `adapter_config.json` inside `--adapter-path` before training starts.
 
 ### Locked decision for scripts/train.sh (plan 05-02)
-RANK_STRATEGY=cli       # if --rank was present, pass `--rank 16` on argv
+RANK_STRATEGY=cli       # if --rank was present, pass `$RANK_FLAG_NAME 16` on argv
 RANK_STRATEGY=config    # otherwise, write adapter_config.json with {"rank":16,"scale":20.0,"dropout":0.0,"keys":null} before invoking mlx_lm.lora
+RANK_FLAG_NAME=--rank   # if RANK_STRATEGY=cli, record the EXACT flag spelling observed in --help (one of: --rank | --lora-rank). Leave unset/blank if RANK_STRATEGY=config.
 ```
 
-Fill in `YES` or `NO` based on the grep result and choose `RANK_STRATEGY=cli` or `RANK_STRATEGY=config`.
+Fill in `YES` or `NO` based on the grep result and choose `RANK_STRATEGY=cli` or `RANK_STRATEGY=config`. If `RANK_STRATEGY=cli`, ALSO write `RANK_FLAG_NAME=--rank` or `RANK_FLAG_NAME=--lora-rank` based on which spelling `data/bench/rank-help.log` shows — 05-02 reads this value directly.
 
-4. If `RANK_STRATEGY=config`, also record the exact JSON shape mlx-lm 0.31.2 expects in `adapter_config.json` — inspect `.venv/lib/python3.12/site-packages/mlx_lm/tuner/utils.py` (or the LoRA tuner file) for the schema and paste a minimal valid config into the smoke-notes file. If `RANK_STRATEGY=cli`, record the exact flag name (`--rank` or `--lora-rank` — whichever the help text shows).
+4. If `RANK_STRATEGY=config`, also record the exact JSON shape mlx-lm 0.31.2 expects in `adapter_config.json` — inspect `.venv/lib/python3.12/site-packages/mlx_lm/tuner/utils.py` (or the LoRA tuner file) for the schema and paste a minimal valid config into the smoke-notes file. If `RANK_STRATEGY=cli`, the exact flag name MUST appear in smoke-notes as `RANK_FLAG_NAME=<flag>` (this is the data-driven input to 05-02 Task 2).
   </action>
   <verify>
-    <automated>test -s data/bench/rank-help.log && grep -E "^(--|\s+--)" data/bench/rank-help.log | head -5 && grep -E "RANK_STRATEGY=(cli|config)" .planning/phases/05-train-model-a/05-01-smoke-notes.md</automated>
+    <automated>test -s data/bench/rank-help.log && grep -E "^(--|\s+--)" data/bench/rank-help.log | head -5 && grep -E "RANK_STRATEGY=(cli|config)" .planning/phases/05-train-model-a/05-01-smoke-notes.md && { ! grep -qE "RANK_STRATEGY=cli" .planning/phases/05-train-model-a/05-01-smoke-notes.md || grep -qE "RANK_FLAG_NAME=--(rank|lora-rank)" .planning/phases/05-train-model-a/05-01-smoke-notes.md; }</automated>
   </verify>
   <acceptance_criteria>
     - `data/bench/rank-help.log` exists and is non-empty
     - `.planning/phases/05-train-model-a/05-01-smoke-notes.md` contains exactly one of `RANK_STRATEGY=cli` or `RANK_STRATEGY=config`
+    - If `RANK_STRATEGY=cli`, smoke-notes ALSO contains exactly one of `RANK_FLAG_NAME=--rank` or `RANK_FLAG_NAME=--lora-rank` (observed from `data/bench/rank-help.log`) — this is the data-driven input to 05-02 Task 2
     - If `RANK_STRATEGY=config`, the smoke-notes file also contains a JSON block labeled `adapter_config.json` with a `rank` key
   </acceptance_criteria>
-  <done>05-02 knows exactly how to set rank=16 without blind-flag risk.</done>
+  <done>05-02 knows exactly how to set rank=16 without blind-flag risk — flag name is data-driven from smoke-notes, not a hand-edit comment.</done>
 </task>
 
 <task type="auto" tdd="false">

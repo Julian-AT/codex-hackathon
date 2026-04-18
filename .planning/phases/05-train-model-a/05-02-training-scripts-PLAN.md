@@ -16,7 +16,7 @@ must_haves:
   truths:
     - "`scripts/_lib.sh` is a sourced helper: activates `.venv`, exports `WANDB_MODE=offline` and `PYTHONUNBUFFERED=1`, defines `ADAPTER_DIR` default."
     - "`scripts/train.sh` invokes `python -u -m mlx_lm lora --train` with the PRD §6.2 SFT flag set (400 iters, 16 layers, batch 2, seq 1024, LR 1e-5, save-every 100, steps-per-report 5)."
-    - "Rank=16 is honored via RANK_STRATEGY from 05-01 (either CLI flag or pre-written `adapter_config.json`)."
+    - "Rank=16 is honored via RANK_STRATEGY from 05-01 (either CLI flag via `$RANK_FLAG_NAME` from smoke-notes, or pre-written `adapter_config.json`)."
     - "`scripts/grpo.sh` invokes `python -u -m mlx_lm_lora.train --train-mode grpo` with FINAL_GRPO_ITERS (from 05-01) iters, group-size 4, max-completion 512, LR 5e-6, save-every 50, `--resume-adapter-file` pointing at the SFT adapter."
     - "Both scripts `exec` the Python process (no bash wrapper between Node and Python) so `SIGTERM` from the supervisor reaches the subprocess directly."
     - "Both scripts accept env-var overrides (`MODEL`, `ITERS`, `ADAPTER_DIR`, `DATA_DIR`) via `: \"${VAR:=default}\"` pattern."
@@ -150,7 +150,7 @@ No shebang-based execution — the file is `source`d by callers. Mark it executa
   <files>scripts/train.sh, data/training/model-a-adapter/adapter_config.json</files>
   <read_first>
     - scripts/_lib.sh (just created)
-    - .planning/phases/05-train-model-a/05-01-smoke-notes.md (RANK_STRATEGY, exact adapter_config.json shape if config strategy)
+    - .planning/phases/05-train-model-a/05-01-smoke-notes.md (RANK_STRATEGY, RANK_FLAG_NAME if cli strategy, exact adapter_config.json shape if config strategy)
     - .planning/phases/05-train-model-a/05-RESEARCH.md §"Pattern 1: SFT scripts/train.sh" and §Pitfall P8
     - PRD_SPEC.md §6.2 (SFT hyperparams)
     - data/bench/rank-help.log (exact flag names available)
@@ -206,12 +206,17 @@ ARGS=(
   --adapter-path     "$ADAPTER_DIR"
 )
 
-# RANK_STRATEGY=cli → append --rank/--lora-rank based on 05-01-smoke-notes
-# If 05-01 chose RANK_STRATEGY=config, adapter_config.json already carries rank=16
-# and we add nothing here. Edit the block below to match the exact flag name
-# recorded in data/bench/rank-help.log.
+# RANK_STRATEGY=cli → append `$RANK_FLAG` 16 where RANK_FLAG comes from
+# 05-01-smoke-notes.md's RANK_FLAG_NAME (one of --rank | --lora-rank, observed
+# from `mlx_lm.lora --help`). The caller (/api/train or the operator) MUST
+# export RANK_FLAG=$RANK_FLAG_NAME before invoking this script when
+# RANK_STRATEGY=cli. The default below is a safe fallback matching the most
+# common spelling; the smoke-notes value wins via env override.
+# If 05-01 chose RANK_STRATEGY=config, adapter_config.json already carries
+# rank=16 and we add nothing here.
 if [ "${RANK_STRATEGY:-config}" = "cli" ]; then
-  ARGS+=(--rank 16)  # ← replace with --lora-rank if help.log shows that spelling
+  RANK_FLAG="${RANK_FLAG:---rank}"
+  ARGS+=("$RANK_FLAG" 16)
 fi
 
 if [ -n "$RESUME_ADAPTER" ]; then
@@ -228,7 +233,7 @@ Notes:
 - DATA_DIR defaults to `data/training` — Phase 4 ships `training.jsonl` (+ optional valid.jsonl) into that directory. For E2E dry-run without Phase 4, operator sets `DATA_DIR=data/bench` and reuses the 16/4 split.
   </action>
   <verify>
-    <automated>test -x scripts/train.sh && bash -n scripts/train.sh && grep -n "mlx_lm lora" scripts/train.sh && grep -n "exec python" scripts/train.sh && grep -n -- "--save-every" scripts/train.sh && grep -n "400" scripts/train.sh && grep -n "adapter-path" scripts/train.sh && ! grep -n -- "--grad-clip" scripts/train.sh && { [ "$(grep -E '^RANK_STRATEGY=(cli|config)' .planning/phases/05-train-model-a/05-01-smoke-notes.md | tail -1)" = "RANK_STRATEGY=config" ] && test -f data/training/model-a-adapter/adapter_config.json && grep -n "\"rank\"" data/training/model-a-adapter/adapter_config.json; true; }</automated>
+    <automated>test -x scripts/train.sh && bash -n scripts/train.sh && grep -n "mlx_lm lora" scripts/train.sh && grep -n "exec python" scripts/train.sh && grep -n -- "--save-every" scripts/train.sh && grep -n "400" scripts/train.sh && grep -n "adapter-path" scripts/train.sh && ! grep -n -- "--grad-clip" scripts/train.sh && { if grep -qE '^RANK_STRATEGY=cli' .planning/phases/05-train-model-a/05-01-smoke-notes.md; then grep -n 'RANK_FLAG="\${RANK_FLAG:---rank}"' scripts/train.sh && grep -n 'ARGS+=("\$RANK_FLAG" 16)' scripts/train.sh; else test -f data/training/model-a-adapter/adapter_config.json && grep -n '"rank"' data/training/model-a-adapter/adapter_config.json; fi; }</automated>
   </verify>
   <acceptance_criteria>
     - `scripts/train.sh` is executable and `bash -n` exits 0
@@ -237,7 +242,7 @@ Notes:
     - Sources `scripts/_lib.sh`
     - Handles `$RESUME_ADAPTER` env var (grep finds `--resume-adapter-file` under the `if` branch)
     - If smoke-notes RANK_STRATEGY=config: `data/training/model-a-adapter/adapter_config.json` exists and contains `"rank": 16`
-    - If smoke-notes RANK_STRATEGY=cli: `scripts/train.sh` contains `--rank 16` or `--lora-rank 16` (whichever help.log showed)
+    - If smoke-notes RANK_STRATEGY=cli: `scripts/train.sh` contains the data-driven pattern `RANK_FLAG="${RANK_FLAG:---rank}"` and `ARGS+=("$RANK_FLAG" 16)` — NOT a hand-edited `--rank 16` / `--lora-rank 16` literal with a "replace me" comment. Caller passes `RANK_FLAG=$RANK_FLAG_NAME` (from 05-01-smoke-notes.md) via env.
   </acceptance_criteria>
   <done>SFT wrapper is reproducible from the CLI (`bash scripts/train.sh` with MODEL/DATA_DIR set) and SIGTERM-safe.</done>
 </task>
