@@ -19,8 +19,9 @@ next-env.d.ts
 __pycache__/
 *.pyc
 
-# planning working data (allow .planning/ docs; block generated data)
-data/
+# planning working data (allow .planning/ docs; block generated data except corpus cache)
+data/*
+!data/corpus.json
 
 # iOS builds
 ios/**/build/
