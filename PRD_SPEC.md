@@ -165,7 +165,8 @@ Jackrong's April 2026 Gemopus release notes state: _"Tool calling remains unreli
 
 **Stage 1 — Supervised Fine-Tuning (SFT).** Package: `mlx-lm==0.31.2`. Applies LoRA adapters to a quantized base (automatically QLoRA since base is 4-bit). Training data is ChatML-style `messages` JSONL with `tools` field for tool-call trajectories.
 
-**Stage 2 — Group Relative Policy Optimization (GRPO).** Package: `mlx-lm-lora==0.1.0` (Gökdeniz Gülmez's RL extension, used by Apple, IBM, Mercedes per package metadata). Runs after SFT converges. Uses the frontier teacher as the reward function — each candidate response is scored by the judge jury, preferences are derived, GRPO updates the same adapter. Demonstrably converges in under 5 minutes for our group size.
+**Stage 2 — Group Relative Policy Optimization (GRPO).** Package: `mlx-lm-lora==0.1.9` (Gökdeniz Gülmez's RL extension, used by Apple, IBM, Mercedes per package metadata). Runs after SFT converges. Uses the frontier teacher as the reward function — each candidate response is scored by the judge jury, preferences are derived, GRPO updates the same adapter. Demonstrably converges in under 5 minutes for our group size.
+*Deviation: 0.1.0 was never published to PyPI; 0.1.9 is the earliest 0.1.x compatible with Python 3.12. Verified Phase 1 01-02-SUMMARY.md.*
 
 ### 6.2 Configuration
 
@@ -481,7 +482,7 @@ On-device: measure time-to-last-token for a fixed prompt via the app's own stopw
 
 ### H0 (Hour 0) — Environment + Critical Benchmark
 
-- Set up Python 3.12 venv, install `mlx-lm[train]==0.31.2` and `mlx-lm-lora==0.1.0`.
+- Set up Python 3.12 venv, install `mlx-lm[train]==0.31.2` and `mlx-lm-lora==0.1.9`.
 - Set up Next.js 15 app, install AI SDK v6, Sentry, providers. Single smoke hit to Claude Opus 4.7 via `generateText`.
 - Clone `mlx-swift-examples`. Open `LLMEval` in Xcode. Change `modelConfiguration` to `unsloth/gemma-4-E4B-it-UD-MLX-4bit`. Build to iPhone 17 simulator.
 - **Critical micro-benchmark (runs during the above):** `mlx_lm.lora --model unsloth/gemma-4-E4B-it-UD-MLX-4bit --train --iters 50 --batch-size 2 --num-layers 16 --max-seq-length 1024 --grad-checkpoint --steps-per-report 5 --learning-rate 1e-5 --adapter-path ./bench` on a hand-written 20-example JSONL. Record sec/iter and peak memory.
