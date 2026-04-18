@@ -1,7 +1,7 @@
 import { writeFile, copyFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import type { DynamicToolSpec, GateName } from './types.js';
-import { DYNAMIC_TOOL_SPEC_SCHEMA } from './worker.js';
+import type { DynamicToolSpec, GateName } from './types';
+import { DYNAMIC_TOOL_SPEC_SCHEMA } from './worker';
 
 export const MANIFEST_PATH = path.resolve('data/adapter-tools.json');
 export const FALLBACK_PATH = path.resolve('data/adapter-tools.fallback.json');

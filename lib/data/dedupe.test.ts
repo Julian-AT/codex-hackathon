@@ -5,7 +5,7 @@ import {
   dedupeByMinHash,
   cosineSimilarity,
   dedupeByEmbedding,
-} from './dedupe.js';
+} from './dedupe';
 
 describe('MinHash', () => {
   it('identical texts have Jaccard ~1.0', () => {

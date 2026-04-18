@@ -1,4 +1,4 @@
-import type { DynamicToolSpec } from './types.js';
+import type { DynamicToolSpec } from './types';
 
 export function normalizeName(name: string): string {
   return name.toLowerCase().replace(/[_-]/g, '');

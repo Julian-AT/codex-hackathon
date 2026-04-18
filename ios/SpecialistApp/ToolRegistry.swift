@@ -23,6 +23,8 @@ enum ToolError: Error, LocalizedError {
 }
 
 actor ToolRegistry {
+    static let shared = ToolRegistry()
+
     private var tools: [String: DynamicTool] = [:]
 
     func register(_ tool: DynamicTool) {
@@ -40,7 +42,9 @@ actor ToolRegistry {
     func dispatch(name: String, args: [String: Any], isOnline: Bool) throws -> String {
         guard let tool = tools[name] else { throw ToolError.notFound(name) }
         if tool.requiresNetwork && !isOnline {
-            throw ToolError.offlineBlocked(name)
+            let payload = ["error": "This tool requires network. Device is offline."]
+            let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+            return String(data: data, encoding: .utf8) ?? "{\"error\":\"This tool requires network. Device is offline.\"}"
         }
 
         // Fresh context per call (P6).

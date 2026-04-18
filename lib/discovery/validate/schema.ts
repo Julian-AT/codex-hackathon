@@ -1,5 +1,5 @@
 import Ajv2020 from 'ajv/dist/2020.js';
-import type { ValidationResult } from '../types.js';
+import type { ValidationResult } from '../types';
 
 const ajv = new Ajv2020({ strict: false, allErrors: true });
 

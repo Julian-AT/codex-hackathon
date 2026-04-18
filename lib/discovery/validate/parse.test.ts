@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateParse } from './parse.js';
+import { validateParse } from './parse';
 import candidates from '../__fixtures__/mock-candidates.json';
 
 describe('validateParse', () => {

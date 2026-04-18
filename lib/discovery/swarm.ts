@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
-import { toolDesignWorker } from './worker.js';
-import type { CORPUS, DynamicToolSpec } from './types.js';
+import { toolDesignWorker } from './worker';
+import type { CORPUS, DynamicToolSpec } from './types';
 
 export interface SwarmEvent {
   type: 'worker-start' | 'worker-ok' | 'worker-err';

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { chunkCorpus, fetchCorpus } from './corpus.js';
+import { chunkCorpus, fetchCorpus } from './corpus';
 
 const FIXTURE = path.resolve('lib/discovery/__fixtures__/llms-mini.txt');
 

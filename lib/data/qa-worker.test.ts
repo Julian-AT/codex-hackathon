@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { Chunk, DynamicToolSpec } from '../discovery/types.js';
+import type { Chunk, DynamicToolSpec } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Mocks — must be hoisted before dynamic import                     */

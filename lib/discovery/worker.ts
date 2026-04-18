@@ -1,8 +1,8 @@
 import { generateObject, type LanguageModel } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { z } from 'zod';
-import type { Chunk, DynamicToolSpec } from './types.js';
-import { buildToolDesignPrompt } from './prompts.js';
+import type { Chunk, DynamicToolSpec } from './types';
+import { buildToolDesignPrompt } from './prompts';
 
 const Z_TRAJECTORY = z.object({
   userPrompt: z.string(),

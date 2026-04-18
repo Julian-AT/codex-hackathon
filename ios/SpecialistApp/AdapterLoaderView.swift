@@ -8,11 +8,14 @@ import SwiftUI
 
 struct AdapterLoaderView: View {
     @EnvironmentObject var model: ModelState
+    @State private var timer: Timer? = nil
     @State private var adapters: [URL] = []
     @State private var status: String = ""
     @State private var baseOut: String = ""
     @State private var adapterOut: String = ""
     @State private var probePrompt: String = "Complete: The quick brown fox"
+
+    private let registry = ToolRegistry.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -36,7 +39,11 @@ struct AdapterLoaderView: View {
                         Task {
                             do {
                                 try await model.swapAdapter(directory: dir)
-                                status = "Loaded \(dir.lastPathComponent) in \(model.lastSwapMs) ms"
+                                let toolCount = try await AdapterToolsLoader.loadAndRegister(
+                                    from: dir,
+                                    into: registry
+                                )
+                                status = "Loaded \(dir.lastPathComponent) + \(toolCount) tools in \(model.lastSwapMs) ms"
                             } catch {
                                 status = "Load error: \(error.localizedDescription)"
                             }
@@ -81,7 +88,17 @@ struct AdapterLoaderView: View {
             Text(status).font(.caption).foregroundColor(.secondary)
         }
         .padding(.horizontal)
-        .task { refresh() }
+        .task {
+            refresh()
+            timer?.invalidate()
+            timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+                Task { @MainActor in refresh() }
+            }
+        }
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
+        }
     }
 
     private func refresh() {
@@ -90,7 +107,7 @@ struct AdapterLoaderView: View {
         let adaptersRoot = docs.appending(component: "adapters")
         let entries = (try? fm.contentsOfDirectory(at: adaptersRoot,
                                                    includingPropertiesForKeys: [.isDirectoryKey])) ?? []
-        adapters = entries.filter { url in
+        let nextAdapters = entries.filter { url in
             var isDir: ObjCBool = false
             let path = url.path
             guard fm.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue else { return false }
@@ -98,5 +115,9 @@ struct AdapterLoaderView: View {
             let c = url.appending(component: "adapter_config.json").path
             return fm.fileExists(atPath: w) && fm.fileExists(atPath: c)
         }
+        if nextAdapters.count > adapters.count {
+            status = "New adapter detected"
+        }
+        adapters = nextAdapters
     }
 }

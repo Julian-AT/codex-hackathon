@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runInSandbox } from './sandbox.js';
+import { runInSandbox } from './sandbox';
 
 describe('runInSandbox', () => {
   it('runs a happy-path body and returns JSON-serialized value', async () => {

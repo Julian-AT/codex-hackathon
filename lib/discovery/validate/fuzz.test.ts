@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateFuzz, generateFuzzInputs } from './fuzz.js';
+import { validateFuzz, generateFuzzInputs } from './fuzz';
 
 describe('generateFuzzInputs', () => {
   it('returns exactly 10 inputs', () => {

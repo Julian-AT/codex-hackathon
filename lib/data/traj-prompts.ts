@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import type { Chunk, DynamicToolSpec } from './types.js';
+import type { Chunk, DynamicToolSpec } from './types';
 
 /* ------------------------------------------------------------------ */
 /*  Zod response schemas for generateObject                          */

@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { DynamicToolSpec, Chunk } from './types.js';
+import type { DynamicToolSpec, Chunk } from './types';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';

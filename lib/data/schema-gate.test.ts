@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { validateToolCall, _resetCache } from './schema-gate.js';
+import { validateToolCall, _resetCache } from './schema-gate';
 
 beforeEach(() => _resetCache());
 

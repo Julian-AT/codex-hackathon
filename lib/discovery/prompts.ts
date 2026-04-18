@@ -1,4 +1,4 @@
-import type { Chunk } from './types.js';
+import type { Chunk } from './types';
 
 export const BANNED_LIST = [
   'fetch','require','import','process','globalThis','eval','Function',

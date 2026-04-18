@@ -1,9 +1,9 @@
-import { validateSchema } from './schema.js';
-import { validateParse } from './parse.js';
-import { validateFuzz } from './fuzz.js';
-import { validateTrajectories } from './trajectory.js';
-import { runInSandbox } from './sandbox.js';
-import type { DynamicToolSpec, ValidationResult } from '../types.js';
+import { validateSchema } from './schema';
+import { validateParse } from './parse';
+import { validateFuzz } from './fuzz';
+import { validateTrajectories } from './trajectory';
+import { runInSandbox } from './sandbox';
+import type { DynamicToolSpec, ValidationResult } from '../types';
 
 export async function validateTool(spec: DynamicToolSpec): Promise<ValidationResult> {
   // Gate 1: Schema well-formedness

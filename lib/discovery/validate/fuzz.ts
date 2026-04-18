@@ -1,5 +1,5 @@
-import { runInSandbox } from './sandbox.js';
-import type { ValidationResult } from '../types.js';
+import { runInSandbox } from './sandbox';
+import type { ValidationResult } from '../types';
 
 const STRING_PRIMS = ['', 'a', '0', 'x'.repeat(1000), '\u{1F984}\u{1F680}', 'null', 'undefined', 'true', '  ', '\n'];
 const NUMBER_PRIMS = [0, 1, -1, 1.5, -1.5, 1e308, -1e308, Number.MAX_SAFE_INTEGER, 0.1 + 0.2, Number.EPSILON];

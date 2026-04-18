@@ -1,4 +1,4 @@
-import type { TrainingExample } from './types.js';
+import type { TrainingExample } from './types';
 
 /** Extract all unique tool names invoked across messages in an example. */
 export function extractToolNames(example: TrainingExample): string[] {

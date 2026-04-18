@@ -13,21 +13,21 @@ import { embedMany } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import type { DynamicToolSpec } from '../discovery/types.js';
-import type { TrainingExample, DataGenMeta } from './types.js';
-import { fetchCorpus } from '../discovery/corpus.js';
-import { splitDocs } from './split.js';
-import { generateQABatch } from './qa-worker.js';
-import { generateTrajBatch } from './traj-worker.js';
-import { judgeJury } from './judge.js';
-import { dedupeByMinHash, dedupeByEmbedding } from './dedupe.js';
-import { checkStratification } from './stratify.js';
-import { generateEvalSet } from './eval-gen.js';
+import type { DynamicToolSpec } from '../discovery/types';
+import type { TrainingExample, DataGenMeta } from './types';
+import { fetchCorpus } from '../discovery/corpus';
+import { splitDocs } from './split';
+import { generateQABatch } from './qa-worker';
+import { generateTrajBatch } from './traj-worker';
+import { judgeJury } from './judge';
+import { dedupeByMinHash, dedupeByEmbedding } from './dedupe';
+import { checkStratification } from './stratify';
+import { generateEvalSet } from './eval-gen';
 import {
   emitTrainingJsonl,
   emitEvalJsonl,
   verifyNoOverlap,
-} from './emit-jsonl.js';
+} from './emit-jsonl';
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                       */

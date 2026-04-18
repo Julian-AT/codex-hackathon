@@ -23,14 +23,22 @@ import {
 } from 'recharts';
 import type { TrainPoint } from '@/lib/streams/trainParser';
 
-export function LossChart({ points }: { points: TrainPoint[] }) {
+import { cn } from '@/lib/utils';
+
+export function LossChart({
+  points,
+  className,
+}: {
+  points: TrainPoint[];
+  className?: string;
+}) {
   // Drop sentinel iter=-1 fallback points from the visual (no real iter axis value).
   const data = points.filter((p) => p.iter >= 0);
   return (
-    <div style={{ width: '100%', minWidth: 0, height: 320 }}>
+    <div className={cn('h-80 w-full min-w-0', className)}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 12, right: 24, bottom: 8, left: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="iter" type="number" domain={['auto', 'auto']} />
           <YAxis yAxisId="loss" orientation="left" domain={['auto', 'auto']} />
           <YAxis yAxisId="reward" orientation="right" domain={['auto', 'auto']} />

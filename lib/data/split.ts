@@ -11,7 +11,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
-import type { Chunk, CORPUS } from '../discovery/types.js';
+import type { Chunk, CORPUS } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                         */

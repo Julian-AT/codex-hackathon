@@ -1,16 +1,24 @@
-// app/(demo)/AgentCard.tsx
-// Single worker card for the 5x4 agent grid. Inline-styled for resilience —
-// Tailwind is not yet wired in this scaffold (Phase 1 layout is a bare HTML shell).
-
 'use client';
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 import type { AgentStatus } from './useDemoStream';
 
-const COLOR: Record<AgentStatus['status'], string> = {
-  running: '#60a5fa',
-  ok: '#22c55e',
-  err: '#ef4444',
-  timeout: '#f59e0b',
+const STATUS_BADGE: Record<
+  AgentStatus['status'],
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
+  running: 'default',
+  ok: 'secondary',
+  err: 'destructive',
+  timeout: 'outline',
 };
 
 export function AgentCard({
@@ -21,38 +29,41 @@ export function AgentCard({
   lastLine,
 }: { id: string } & AgentStatus) {
   return (
-    <div
-      style={{
-        border: `2px solid ${COLOR[status]}`,
-        borderRadius: 8,
-        padding: 8,
-        minHeight: 96,
-        fontFamily: 'monospace',
-        fontSize: 11,
-        background: '#0a0a0a',
-        color: '#f5f5f5',
-      }}
+    <Card
       data-agent-id={id}
       data-agent-status={status}
+      className={cn(
+        'min-h-24 gap-1 py-3 transition-colors',
+        status === 'running' && 'border-primary/50',
+        status === 'ok' && 'border-emerald-500/40',
+        status === 'err' && 'border-destructive/60',
+        status === 'timeout' && 'border-amber-500/50',
+      )}
     >
-      <div style={{ opacity: 0.7 }}>{id}</div>
-      <div style={{ fontWeight: 600 }}>{role}</div>
-      <div style={{ color: COLOR[status] }}>
-        {status}
-        {step ? ` · ${step}` : ''}
-      </div>
-      {lastLine ? (
-        <div
-          style={{
-            opacity: 0.6,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {lastLine}
+      <CardHeader className="gap-0 px-3 pb-0 pt-0">
+        <div className="font-mono text-[10px] text-muted-foreground">{id}</div>
+        <div className="flex items-center justify-between gap-2">
+          <span className="truncate text-xs font-semibold">{role}</span>
+          <Badge variant={STATUS_BADGE[status]} className="shrink-0 text-[10px]">
+            {status}
+          </Badge>
         </div>
+      </CardHeader>
+      <CardContent className="px-3 pb-0">
+        {step ? (
+          <p className="line-clamp-2 text-[11px] text-muted-foreground">{step}</p>
+        ) : null}
+      </CardContent>
+      {lastLine ? (
+        <CardFooter className="px-3 pt-0">
+          <span
+            title={lastLine}
+            className="block w-full cursor-default truncate font-mono text-[10px] text-muted-foreground"
+          >
+            {lastLine}
+          </span>
+        </CardFooter>
       ) : null}
-    </div>
+    </Card>
   );
 }

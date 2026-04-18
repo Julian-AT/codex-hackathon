@@ -19,8 +19,8 @@ import { google } from '@ai-sdk/google';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
 import { z } from 'zod';
-import type { TrainingExample, JudgeScore } from './types.js';
-import { makeRng } from './personas.js';
+import type { TrainingExample, JudgeScore } from './types';
+import { makeRng } from './personas';
 
 /* ------------------------------------------------------------------ */
 /*  Schema                                                             */

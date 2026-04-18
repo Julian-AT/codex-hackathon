@@ -22,5 +22,16 @@ export PYTHONUNBUFFERED=1
 # Default adapter output dir — a separate path from Phase 1's bench adapter
 : "${ADAPTER_DIR:=data/training/model-a-adapter}"
 : "${MODEL:=unsloth/gemma-4-E4B-it-UD-MLX-4bit}"
+: "${RANK_STRATEGY:=config}"
 
 mkdir -p "$ADAPTER_DIR"
+
+if [ "$RANK_STRATEGY" = "config" ] && [ ! -f "$ADAPTER_DIR/adapter_config.json" ]; then
+  cat > "$ADAPTER_DIR/adapter_config.json" <<'EOF'
+{
+  "rank": 16,
+  "scale": 20.0,
+  "dropout": 0.0
+}
+EOF
+fi

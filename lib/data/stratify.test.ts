@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { checkStratification, extractToolNames } from './stratify.js';
-import type { TrainingExample, ChatMessage, ToolCall } from './types.js';
+import { checkStratification, extractToolNames } from './stratify';
+import type { TrainingExample, ChatMessage, ToolCall } from './types';
 
 function makeExample(toolName: string): TrainingExample {
   const tc: ToolCall = {

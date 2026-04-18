@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { MockLanguageModelV3 } from 'ai/test';
-import { toolDesignWorker, DYNAMIC_TOOL_SPEC_SCHEMA } from './worker.js';
-import type { Chunk } from './types.js';
+import { toolDesignWorker, DYNAMIC_TOOL_SPEC_SCHEMA } from './worker';
+import type { Chunk } from './types';
 
 const fakeCorpus: Chunk[] = [
   { id: 'llms.txt#0001', source: 'llms', text: 'Supabase Row Level Security uses Postgres policies...', tokenCount: 40, ordinal: 1 },
@@ -42,12 +42,24 @@ const fakeSpec = {
 
 function makeMockModel() {
   return new MockLanguageModelV3({
-    doGenerate: {
+    doGenerate: async () => ({
       content: [{ type: 'text', text: JSON.stringify(fakeSpec) }],
-      finishReason: 'stop',
-      usage: { inputTokens: 100, outputTokens: 100 },
+      finishReason: { unified: 'stop', raw: 'stop' },
+      usage: {
+        inputTokens: {
+          total: 100,
+          noCache: 100,
+          cacheRead: undefined,
+          cacheWrite: undefined,
+        },
+        outputTokens: {
+          total: 100,
+          text: 100,
+          reasoning: undefined,
+        },
+      },
       warnings: [],
-    },
+    }),
   });
 }
 

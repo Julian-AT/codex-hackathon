@@ -14,8 +14,8 @@
 
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import type { TrainingExample, EvalItem } from './types.js';
-import type { DynamicToolSpec } from '../discovery/types.js';
+import type { TrainingExample, EvalItem } from './types';
+import type { DynamicToolSpec } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */

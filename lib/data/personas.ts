@@ -4,8 +4,8 @@
  */
 
 import { createHash } from 'node:crypto';
-import type { Persona } from './types.js';
-import { DIFFICULTIES as _DIFFICULTIES } from './types.js';
+import type { Persona } from './types';
+import { DIFFICULTIES as _DIFFICULTIES } from './types';
 
 /* Re-export DIFFICULTIES from the single source of truth */
 export const DIFFICULTIES = _DIFFICULTIES;

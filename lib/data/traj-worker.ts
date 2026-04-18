@@ -16,9 +16,9 @@ import { generateObject } from 'ai';
 import pLimit from 'p-limit';
 import * as Sentry from '@sentry/nextjs';
 
-import type { Chunk, DynamicToolSpec, TrainingExample, ChatMessage, DataGenMeta } from './types.js';
-import { samplePersona, sampleDifficulty, makeRng } from './personas.js';
-import { validateToolCall } from './schema-gate.js';
+import type { Chunk, DynamicToolSpec, TrainingExample, ChatMessage, DataGenMeta } from './types';
+import { samplePersona, sampleDifficulty, makeRng } from './personas';
+import { validateToolCall } from './schema-gate';
 import {
   SINGLE_TURN_SCHEMA,
   MULTI_TURN_SCHEMA,
@@ -28,7 +28,7 @@ import {
   buildMultiTurnPrompt,
   buildParallelDepPrompt,
   buildRefusalPrompt,
-} from './traj-prompts.js';
+} from './traj-prompts';
 
 /* ------------------------------------------------------------------ */
 /*  Anthropic provider (pinned baseURL — bypasses shell shadow)       */

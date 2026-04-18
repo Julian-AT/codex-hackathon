@@ -10,7 +10,7 @@
  * String, Array, Object, etc.).
  */
 
-import type { DynamicToolSpec } from '../discovery/types.js';
+import type { DynamicToolSpec } from '../discovery/types';
 
 export const HAND_WRITTEN_SUPABASE_TOOLS: DynamicToolSpec[] = [
   // ── 1. supabase_rls_policy_template ──────────────────────────────

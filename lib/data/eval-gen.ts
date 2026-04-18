@@ -14,8 +14,8 @@ import { openai } from '@ai-sdk/openai';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
 import { z } from 'zod';
-import type { Chunk, DynamicToolSpec } from '../discovery/types.js';
-import type { EvalItem, ToolCall } from './types.js';
+import type { Chunk, DynamicToolSpec } from '../discovery/types';
+import type { EvalItem, ToolCall } from './types';
 
 /* ------------------------------------------------------------------ */
 /*  Schemas                                                            */

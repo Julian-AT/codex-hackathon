@@ -1,6 +1,6 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import type { CORPUS, Chunk } from './types.js';
+import type { CORPUS, Chunk } from './types';
 
 const SOURCES = [
   { name: 'llms' as const, url: 'https://supabase.com/llms.txt' },

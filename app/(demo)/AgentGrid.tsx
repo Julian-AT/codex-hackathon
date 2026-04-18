@@ -1,11 +1,8 @@
-// app/(demo)/AgentGrid.tsx
-// 5x4 CSS grid (capacity 20) of AgentCard, keyed by worker id.
-// Empty slots render a dashed placeholder so the grid is always visually 5x4.
-// Grid dimensions are inline (`repeat(5, 1fr)` / `repeat(4, 1fr)`) rather than
-// Tailwind classes because Tailwind is not wired in the Phase 1 scaffold;
-// data-cols / data-rows attributes mirror the visual layout for tests/grep.
-
 'use client';
+
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 import { AgentCard } from './AgentCard';
 import type { AgentStatus } from './useDemoStream';
@@ -16,17 +13,12 @@ export function AgentGrid({
   agents: Record<string, AgentStatus>;
 }) {
   const entries = Object.entries(agents).slice(0, 20);
-  // Pad to 20 slots so the grid always shows 5x4 even when no workers reported yet.
   const slots: ([string, AgentStatus] | null)[] = [...entries];
   while (slots.length < 20) slots.push(null);
+
   return (
     <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gridTemplateRows: 'repeat(4, 1fr)',
-        gap: 8,
-      }}
+      className="grid min-h-0 w-full grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       data-rows="4"
       data-cols="5"
     >
@@ -34,14 +26,18 @@ export function AgentGrid({
         slot ? (
           <AgentCard key={slot[0]} id={slot[0]} {...slot[1]} />
         ) : (
-          <div
+          <Card
             key={`empty-${i}`}
-            style={{
-              border: '1px dashed #27272a',
-              borderRadius: 8,
-              minHeight: 96,
-            }}
-          />
+            className={cn(
+              'flex min-h-24 flex-col justify-center border-dashed bg-muted/20 py-3',
+            )}
+          >
+            <div className="flex flex-col gap-2 px-3">
+              <Skeleton className="h-3 w-1/2" />
+              <Skeleton className="h-3 w-3/4" />
+              <Skeleton className="h-2 w-full" />
+            </div>
+          </Card>
         ),
       )}
     </div>

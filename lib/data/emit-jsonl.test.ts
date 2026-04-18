@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { writeFile, readFile, unlink, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import type { TrainingExample, EvalItem, ToolCall, ChatMessage } from './types.js';
-import type { DynamicToolSpec } from '../discovery/types.js';
+import type { TrainingExample, EvalItem, ToolCall, ChatMessage } from './types';
+import type { DynamicToolSpec } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Fixtures                                                           */

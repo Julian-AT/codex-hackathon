@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/nextjs';
-import type { CORPUS, DynamicToolSpec, GateName, ValidationResult } from './types.js';
-import { designToolsSwarm, type SwarmEvent } from './swarm.js';
-import { validateTool } from './validate/index.js';
-import { dedupeByNormalizedName } from './dedupe.js';
-import { writeManifest, copyFallback, type ManifestMeta } from './manifest.js';
+import type { CORPUS, DynamicToolSpec, GateName, ValidationResult } from './types';
+import { designToolsSwarm, type SwarmEvent } from './swarm';
+import { validateTool } from './validate/index';
+import { dedupeByNormalizedName } from './dedupe';
+import { writeManifest, copyFallback, type ManifestMeta } from './manifest';
 
 export class KillPointError extends Error {
   constructor(

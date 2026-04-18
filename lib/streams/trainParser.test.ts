@@ -1,27 +1,46 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { parseTrainLine } from './trainParser.ts';
+import { describe, expect, it } from 'vitest';
+import { parseTrainLine } from './trainParser';
 
-test('parses SFT Train loss line', () => {
-  assert.deepEqual(parseTrainLine('Iter 5: Train loss 1.234'), { iter: 5, loss: 1.234 });
-});
+describe('parseTrainLine', () => {
+  it('parses SFT Train loss line', () => {
+    expect(parseTrainLine('Iter 5: Train loss 1.234')).toEqual({
+      iter: 5,
+      loss: 1.234,
+    });
+  });
 
-test('parses GRPO Reward line', () => {
-  assert.deepEqual(parseTrainLine('Iter 120: Reward 0.87'), { iter: 120, reward: 0.87 });
-});
+  it('parses GRPO reward from the actual total_rewards_mean log shape', () => {
+    expect(
+      parseTrainLine(
+        'Iter 1: Val loss 0.000, Val total_rewards_mean 0.000, Val total_rewards_std 0.000',
+      ),
+    ).toEqual({ iter: 1, reward: 0 });
+  });
 
-test('returns null on unrelated chatter', () => {
-  assert.equal(parseTrainLine('some unrelated stdout chatter'), null);
-});
+  it('parses GRPO reward lines with longer per-function suffixes', () => {
+    expect(
+      parseTrainLine(
+        'Iter 8: Val loss 1.250, Val total_rewards_mean 0.375, Val total_rewards_std 0.111, Val r1_accuracy_reward_func_mean 0.500',
+      ),
+    ).toEqual({ iter: 8, reward: 0.375 });
+  });
 
-test('lax suffix: still parses Train loss even with trailing garbage', () => {
-  assert.deepEqual(parseTrainLine('Iter 10: Train loss 0.5 extra garbage'), { iter: 10, loss: 0.5 });
-});
+  it('returns null on unrelated chatter', () => {
+    expect(parseTrainLine('some unrelated stdout chatter')).toBeNull();
+  });
 
-test('empty string returns null', () => {
-  assert.equal(parseTrainLine(''), null);
-});
+  it('still parses Train loss with trailing garbage', () => {
+    expect(parseTrainLine('Iter 10: Train loss 0.5 extra garbage')).toEqual({
+      iter: 10,
+      loss: 0.5,
+    });
+  });
 
-test('fallback regex catches bare loss with iter=-1 sentinel', () => {
-  assert.deepEqual(parseTrainLine('loss: 1.5'), { iter: -1, loss: 1.5 });
+  it('empty string returns null', () => {
+    expect(parseTrainLine('')).toBeNull();
+  });
+
+  it('fallback regex catches bare loss with iter=-1 sentinel', () => {
+    expect(parseTrainLine('loss: 1.5')).toEqual({ iter: -1, loss: 1.5 });
+  });
 });

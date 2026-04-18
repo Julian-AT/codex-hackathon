@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { readFile, rm, copyFile } from 'node:fs/promises';
 import path from 'node:path';
-import type { DynamicToolSpec, CORPUS } from './types.js';
+import type { DynamicToolSpec, CORPUS } from './types';
 
 const MANIFEST = path.resolve('data/adapter-tools.json');
 const MANIFEST_BAK = MANIFEST + '.test-bak';

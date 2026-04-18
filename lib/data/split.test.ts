@@ -4,8 +4,8 @@
 
 import { describe, it, expect, afterEach } from 'vitest';
 import { unlinkSync } from 'node:fs';
-import { splitDocs, computeSplitHash, loadSplitManifest, SPLIT_MANIFEST_PATH } from './split.js';
-import type { CORPUS } from '../discovery/types.js';
+import { splitDocs, computeSplitHash, loadSplitManifest, SPLIT_MANIFEST_PATH } from './split';
+import type { CORPUS } from '../discovery/types';
 import mockCorpus from './__fixtures__/mock-corpus.json';
 
 const corpus = mockCorpus as unknown as CORPUS;

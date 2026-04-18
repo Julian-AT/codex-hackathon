@@ -10,20 +10,20 @@ import { generateObject } from 'ai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
-import type { Chunk, DynamicToolSpec } from '../discovery/types.js';
+import type { Chunk, DynamicToolSpec } from '../discovery/types';
 import type {
   TrainingExample,
   ChatMessage,
   ToolCall,
   DataGenMeta,
-} from './types.js';
-import { samplePersona, sampleDifficulty, makeRng } from './personas.js';
-import { validateToolCall } from './schema-gate.js';
+} from './types';
+import { samplePersona, sampleDifficulty, makeRng } from './personas';
+import { validateToolCall } from './schema-gate';
 import {
   QA_RESPONSE_SCHEMA,
   buildQASystemPrompt,
   buildQAUserPrompt,
-} from './qa-prompts.js';
+} from './qa-prompts';
 
 /* ------------------------------------------------------------------ */
 /*  Anthropic provider — CRITICAL: pin baseURL to bypass shell shadow */

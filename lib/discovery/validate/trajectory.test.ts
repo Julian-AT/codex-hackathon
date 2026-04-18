@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateTrajectories } from './trajectory.js';
+import { validateTrajectories } from './trajectory';
 
 const body = 'function addNumbers(args) { return { sum: args.a + args.b }; }';
 

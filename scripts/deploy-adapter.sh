@@ -27,28 +27,57 @@ if [ -z "$UDID" ] || [ -z "$BUNDLE" ]; then
   exit 1
 fi
 
-ADAPTER_DIR="${ADAPTER_DIR:-data/bench/adapter-50iter}"
+ADAPTER_DIR="${ADAPTER_DIR:-data/training/model-a-adapter}"
+TOOLS_JSON="${TOOLS_JSON:-data/adapter-tools.json}"
+HAS_LORA_DIR=1
 for f in adapter_config.json adapters.safetensors; do
   if [ ! -f "$ADAPTER_DIR/$f" ]; then
-    echo "ERROR: missing $ADAPTER_DIR/$f (LoRAContainer.from(directory:) needs both)"
-    exit 1
+    HAS_LORA_DIR=0
   fi
 done
 
-DST_REL="Documents/adapters/bench-50iter"
+HAS_FUSED=0
+if [ -f "$ADAPTER_DIR/adapter.safetensors" ]; then
+  HAS_FUSED=1
+fi
+
+if [ "$HAS_LORA_DIR" -ne 1 ] && [ "$HAS_FUSED" -ne 1 ]; then
+  echo "ERROR: $ADAPTER_DIR must contain either adapter_config.json + adapters.safetensors or adapter.safetensors"
+  exit 1
+fi
+
+DST_REL="${DST_REL:-Documents/adapters/model-a}"
 
 echo "[deploy-adapter] udid=$UDID bundle=$BUNDLE"
 echo "[deploy-adapter] src_dir=$ADAPTER_DIR dst=$DST_REL"
 
 START=$(/usr/bin/python3 -c 'import time;print(time.time())')
-for f in adapter_config.json adapters.safetensors; do
+if [ "$HAS_LORA_DIR" -eq 1 ]; then
+  for f in adapter_config.json adapters.safetensors; do
+    xcrun devicectl device copy to \
+      --device "$UDID" \
+      --domain-type appDataContainer \
+      --domain-identifier "$BUNDLE" \
+      --source "$ADAPTER_DIR/$f" \
+      --destination "$DST_REL/$f"
+  done
+fi
+if [ "$HAS_FUSED" -eq 1 ]; then
   xcrun devicectl device copy to \
     --device "$UDID" \
     --domain-type appDataContainer \
     --domain-identifier "$BUNDLE" \
-    --source "$ADAPTER_DIR/$f" \
-    --destination "$DST_REL/$f"
-done
+    --source "$ADAPTER_DIR/adapter.safetensors" \
+    --destination "$DST_REL/adapter.safetensors"
+fi
+if [ -f "$TOOLS_JSON" ]; then
+  xcrun devicectl device copy to \
+    --device "$UDID" \
+    --domain-type appDataContainer \
+    --domain-identifier "$BUNDLE" \
+    --source "$TOOLS_JSON" \
+    --destination "$DST_REL/adapter-tools.json"
+fi
 END=$(/usr/bin/python3 -c 'import time;print(time.time())')
 ELAPSED=$(/usr/bin/python3 -c "print(round($END-$START,2))")
 echo "[deploy-adapter] copy elapsed=${ELAPSED}s"
@@ -62,12 +91,20 @@ xcrun devicectl device info files \
   --domain-subpath "$DST_REL" \
   | tee /tmp/adapter-verify.txt
 
-if ! grep -q "adapters.safetensors" /tmp/adapter-verify.txt; then
+if [ "$HAS_LORA_DIR" -eq 1 ] && ! grep -q "adapters.safetensors" /tmp/adapter-verify.txt; then
   echo "ERROR: silent copy fail — adapters.safetensors not visible on-device"
   exit 2
 fi
-if ! grep -q "adapter_config.json" /tmp/adapter-verify.txt; then
+if [ "$HAS_LORA_DIR" -eq 1 ] && ! grep -q "adapter_config.json" /tmp/adapter-verify.txt; then
   echo "ERROR: silent copy fail — adapter_config.json not visible on-device"
+  exit 2
+fi
+if [ "$HAS_FUSED" -eq 1 ] && ! grep -q "adapter.safetensors" /tmp/adapter-verify.txt; then
+  echo "ERROR: silent copy fail — adapter.safetensors not visible on-device"
+  exit 2
+fi
+if [ -f "$TOOLS_JSON" ] && ! grep -q "adapter-tools.json" /tmp/adapter-verify.txt; then
+  echo "ERROR: silent copy fail — adapter-tools.json not visible on-device"
   exit 2
 fi
 
@@ -83,6 +120,7 @@ cat > data/state/adapter-deploy.json <<EOF
   "bundle_id": "$BUNDLE",
   "adapter_src_dir": "$ADAPTER_DIR",
   "adapter_dst_dir": "$DST_REL",
+  "tools_json": "$TOOLS_JSON",
   "copy_seconds": $ELAPSED,
   "deployed_at": "$(date -u +%FT%TZ)"
 }

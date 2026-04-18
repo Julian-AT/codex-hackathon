@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateSchema } from './schema.js';
+import { validateSchema } from './schema';
 import candidates from '../__fixtures__/mock-candidates.json';
 
 describe('validateSchema', () => {

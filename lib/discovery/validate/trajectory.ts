@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal';
-import { runInSandbox } from './sandbox.js';
-import type { ValidationResult } from '../types.js';
+import { runInSandbox } from './sandbox';
+import type { ValidationResult } from '../types';
 
 export interface Trajectory {
   userPrompt: string;

@@ -15,10 +15,25 @@
 
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { TrainPoint } from '@/lib/streams/trainParser';
+
+export function formatPipelineStatus(status: string): string {
+  switch (status) {
+    case 'ready':
+      return 'Ready';
+    case 'streaming':
+      return 'Streaming';
+    case 'submitted':
+      return 'Submitted';
+    case 'error':
+      return 'Error';
+    default:
+      return status;
+  }
+}
 
 export type AgentStatus = {
   role: string;
@@ -65,6 +80,10 @@ export function useDemoStream() {
     },
   });
 
+  const clearTrain = useCallback(() => {
+    setTrain([]);
+  }, []);
+
   const startTrain = useCallback(async (mode: 'sft' | 'grpo', iters: number) => {
     const res = await fetch('/api/train', {
       method: 'POST',
@@ -97,12 +116,19 @@ export function useDemoStream() {
     }
   }, []);
 
+  const pipelineStatusDisplay = useMemo(
+    () => formatPipelineStatus(pipelineStatus),
+    [pipelineStatus],
+  );
+
   return {
     agents,
     notifications,
     train,
     sendMessage,
     pipelineStatus,
+    pipelineStatusDisplay,
+    clearTrain,
     startTrain,
   };
 }

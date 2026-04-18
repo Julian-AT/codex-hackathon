@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { HAND_WRITTEN_SUPABASE_TOOLS } from './hand-written-supabase.js';
-import { validateTool } from '../discovery/validate/index.js';
+import { HAND_WRITTEN_SUPABASE_TOOLS } from './hand-written-supabase';
+import { validateTool } from '../discovery/validate/index';
 
 describe('hand-written Supabase fallback set', () => {
   it('has exactly 8 entries', () => {

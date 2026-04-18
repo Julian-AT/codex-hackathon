@@ -1,5 +1,5 @@
 import * as acorn from 'acorn';
-import type { ValidationResult } from '../types.js';
+import type { ValidationResult } from '../types';
 
 export const BANNED_IDENTIFIERS = new Set([
   'fetch', 'require', 'import', 'process', 'globalThis', 'eval', 'Function', 'crypto', 'performance',

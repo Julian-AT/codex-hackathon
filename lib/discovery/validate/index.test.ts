@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { validateTool } from './index.js';
+import { validateTool } from './index';
 import candidates from '../__fixtures__/mock-candidates.json';
-import type { DynamicToolSpec } from '../types.js';
+import type { DynamicToolSpec } from '../types';
 
 describe('validateTool integration (all 12 fixtures)', () => {
   for (const c of candidates) {

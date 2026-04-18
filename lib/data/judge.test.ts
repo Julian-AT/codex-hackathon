@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { TrainingExample } from './types.js';
+import type { TrainingExample } from './types';
 
 /* ------------------------------------------------------------------ */
 /*  Mocks                                                              */

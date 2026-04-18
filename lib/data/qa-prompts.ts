@@ -9,8 +9,8 @@
  */
 
 import { z } from 'zod';
-import type { Persona, Difficulty } from './types.js';
-import type { Chunk, DynamicToolSpec } from '../discovery/types.js';
+import type { Persona, Difficulty } from './types';
+import type { Chunk, DynamicToolSpec } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Zod response schema                                               */

@@ -4,7 +4,7 @@
  * Every downstream data-gen plan imports from this file.
  */
 
-export type { Chunk, DynamicToolSpec } from '../discovery/types.js';
+export type { Chunk, DynamicToolSpec } from '../discovery/types';
 
 /* ------------------------------------------------------------------ */
 /*  Chat / Training shapes (mlx-lm tools JSONL row)                   */
