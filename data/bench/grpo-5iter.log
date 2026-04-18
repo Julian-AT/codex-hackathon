@@ -1,0 +1,44 @@
+Calling `python -m mlx_lm_lora...` directly is deprecated. Use `mlx_lm_lora.train...` or `python -m mlx_lm_lora train ...` instead.
+Loading pretrained model
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 63872.65it/s]
+Loading datasets
+Training
+Trainable parameters: 0.103% (7.725M/7518.069M)
+Loading pretrained reference model
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 50064.64it/s]
+Starting GRPO training with 5 reward functions..., iters: 5
+
+=== Validation Sample Details ===
+
+📋 Raw Prompt:
+What does the Supabase Auth JWT claim 'role' typically contain for signed-in users?
+
+==========
+
+
+🔄 Model Input:
+What does the Supabase Auth JWT claim 'role' typically contain for signed-in users?
+
+==========
+
+
+📝 Generation:
+ typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users?
+
+==========
+
+
+✅ Answer:
+authenticated
+
+==========
+
+
+🔍 Extracted Answer:
+typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users? typically contain for signed-in users?
+
+===================================
+
+Iter 1: Val loss 0.000, Val total_rewards_mean 0.000, Val total_rewards_std 0.000, Val grouped_rewards_mean 0.000, Val grouped_rewards_std 0.000, Val Average Generated Tokens 1.0, Val kl 0.000, Val r1_accuracy_reward_func_mean 0.000, Val r1_accuracy_reward_func_std 0.000, Val r1_int_reward_func_mean 0.000, Val r1_int_reward_func_std 0.000, Val r1_strict_format_reward_func_mean 0.000, Val r1_strict_format_reward_func_std 0.000, Val r1_soft_format_reward_func_mean 0.000, Val r1_soft_format_reward_func_std 0.000, Val r1_count_xml_mean 0.000, Val r1_count_xml_std 0.000, Val took 128.874s
+/Users/julianschmidt/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

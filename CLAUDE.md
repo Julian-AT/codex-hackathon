@@ -41,7 +41,7 @@ Do NOT introduce any of the following — they are confirmed dead-ends at this m
 ## Tech Stack Locks (PRD §13)
 
 - Node ≥ 20 / Next.js 15 App Router (`runtime='nodejs'` on routes that use `child_process`).
-- `mlx-lm==0.31.2`, `mlx-lm-lora==0.1.0`.
+- `mlx-lm==0.31.2`, `mlx-lm-lora==0.1.9`.
 - AI SDK v6 (`ToolLoopAgent`, `createUIMessageStream`, `writer.merge`).
 - `@sentry/nextjs ≥ 9.29.0` with `Sentry.vercelAIIntegration()`.
 - Swift 5.9 / Xcode 16 / iOS 18 minimum deployment target.

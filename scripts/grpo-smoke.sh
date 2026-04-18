@@ -1,41 +1,32 @@
 #!/usr/bin/env bash
-# Phase 1 GRPO flag-surface smoke (PITFALLS P2).
-#
-# Purpose is capture-only: mlx_lm_lora.train --help and a 5-iter dry-run
-# so Phase 5 knows whether there is a CLI reward-fn flag or we need to
-# bridge via shell. Non-zero exit is EXPECTED and actionable; we do not
-# `set -e` around the training call.
-set -uo pipefail
+set -euo pipefail
 
 cd "$(dirname "$0")/.."
+source /Users/julianschmidt/Documents/GitHub/codex-hackathon/.venv/bin/activate
+export WANDB_MODE=offline
+export PYTHONUNBUFFERED=1
 
-# shellcheck disable=SC1091
-source .venv/bin/activate
+MODEL="unsloth/gemma-4-E4B-it-UD-MLX-4bit"
+DATA="data/training/grpo"
+OUT="data/bench/adapter-grpo-smoke"
+mkdir -p "$OUT"
 
-if [ -f .env.base ]; then
-  # shellcheck disable=SC1091
-  source .env.base
-fi
-BASE_MODEL=${BASE_MODEL:-unsloth/gemma-4-E4B-it-UD-MLX-4bit}
+REWARD_WEIGHTS='[2.0,0.0,0.5,0.0]'
 
-echo "=== GRPO smoke: $BASE_MODEL ==="
-mlx_lm_lora.train --help 2>&1 | tee data/bench/grpo-help.log | head -80
-
-echo ""
-echo "=== Attempting 5-iter GRPO dry-run ==="
-mlx_lm_lora.train \
+START=$(date +%s)
+python -m mlx_lm_lora.train \
   --train-mode grpo \
-  --model "$BASE_MODEL" \
-  --data ./data/bench \
+  --model "$MODEL" \
+  --train \
+  --data "$DATA" \
   --iters 5 \
   --group-size 4 \
-  --max-completion-length 128 \
+  --max-completion-length 256 \
   --learning-rate 5e-6 \
-  --adapter-path ./data/bench/adapter-50iter 2>&1 | tee data/bench/grpo-smoke.log
-RC=${PIPESTATUS[0]}
-echo "=== GRPO smoke exit: $RC ==="
-if [ "$RC" -ne 0 ]; then
-  echo "PITFALLS P2 TRIGGERED — capture reward-fn flag surface above."
-  echo "Phase 5 chooses between CLI flag, shell bridge, or sanctioned .py carve-out."
-fi
-exit 0
+  --grad-checkpoint \
+  --save-every 5 \
+  --steps-per-report 1 \
+  --reward-weights "$REWARD_WEIGHTS" \
+  --adapter-path "$OUT" 2>&1 | tee data/bench/grpo-5iter.log
+END=$(date +%s)
+echo "elapsed_seconds=$((END-START))" | tee -a data/bench/grpo-5iter.log

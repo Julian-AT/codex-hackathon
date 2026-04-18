@@ -1,0 +1,6 @@
+{"prompt":"What is Supabase RLS short for?","answer":"Row Level Security"}
+{"prompt":"Name the SQL command Supabase uses to enable RLS on a table.","answer":"ALTER TABLE tablename ENABLE ROW LEVEL SECURITY"}
+{"prompt":"Which Supabase client library is used in Next.js server components?","answer":"@supabase/ssr"}
+{"prompt":"What does the Supabase Auth JWT claim 'role' typically contain for signed-in users?","answer":"authenticated"}
+{"prompt":"Which Supabase function returns the current user's id inside SQL?","answer":"auth.uid()"}
+{"prompt":"What HTTP method does Supabase PostgREST use for creating rows?","answer":"POST"}
