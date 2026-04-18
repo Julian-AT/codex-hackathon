@@ -112,7 +112,11 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 **Kill-Point Gates**:
   - TRN-04 unrecoverable NaN during SFT → abandon training, ship previous-checkpoint adapter and narrate as Tier 2.
   - TRN-02 GRPO collapse (reward variance <0.01 for 10 steps) → kill GRPO, ship SFT-only adapter.
-**Plans**: TBD
+**Plans**: 4 plans across 3 waves
+  - [ ] 05-01-smoke-and-version-bump-PLAN.md — Version pin 0.1.9 + rank-flag verify + 5-iter GRPO smoke + final iter count lock (TRN-01, TRN-02, TRN-03) · wave 1
+  - [ ] 05-02-training-scripts-PLAN.md — scripts/_lib.sh + scripts/train.sh (SFT) + scripts/grpo.sh (Path A + Path C short-circuit) (TRN-01, TRN-02) · wave 2
+  - [ ] 05-03-supervisor-rollback-transform-PLAN.md — TrainSupervisor NaN/spike/variance-collapse + rollback util + SFT→GRPO transform + tests (TRN-02, TRN-04) · wave 2
+  - [ ] 05-04-integration-e2e-PLAN.md — Wire supervisor into /api/train, optional parser patch, E2E SFT→GRPO dry run + kill-point exercise (TRN-01, TRN-02, TRN-03, TRN-04) · wave 3
 **UI hint**: yes
 
 ### Phase 6 — Fuse, Deploy, Verify, Cassette (H7)
@@ -175,7 +179,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 | 2. Orchestrator Harness | 0/3 | Planned (2 waves) | - |
 | 3. Discovery + Tool Design | 0/5 | Planned (3 waves) | - |
 | 4. Data + Eval Gen | 0/? | Not started | - |
-| 5. Train Model A | 0/? | Not started | - |
+| 5. Train Model A | 0/4 | Planned (3 waves) | - |
 | 6. Fuse, Deploy, Verify, Cassette | 0/? | Not started | - |
 | 7. Three-Way Eval | 0/? | Not started | - |
 | 8. Polish & Pre-Cache | 0/? | Not started | - |
