@@ -48,7 +48,12 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
   - FND-02 fails (>20 GB peak) → switch base model to E2B (keep pipeline).
   - FND-08 fails (>2 s swap or `devicectl` silent failure) → demote to Tier 2, ship static pre-trained tools only.
   - FND-11 fails (parser cannot round-trip) → demote to Tier 3 cassette early, pre-record without live tool-call beat.
-**Plans**: TBD
+**Plans**: 5 plans across 3 waves
+  - [ ] 01-01-next-scaffold-sentry-providers-PLAN.md — Next.js 15 + AI SDK v6 + Sentry + 3-provider smoke (FND-03, FND-04) · wave 1
+  - [ ] 01-02-python-venv-microbench-PLAN.md — Python 3.12 venv + mlx-lm install + 50-iter E4B micro-bench (FND-01, FND-02 kill-point) · wave 1
+  - [ ] 01-03-ios-llmeval-fork-deploy-PLAN.md — Fork LLMEval, pin E4B, deploy to iPhone 17, airplane-mode sanity (FND-05, FND-06, FND-07) · wave 1
+  - [ ] 01-04-adapter-hotswap-PLAN.md — Fuse + devicectl copy + LoRATrain.loadLoRAWeights round-trip (FND-08 kill-point) · wave 2
+  - [ ] 01-05-toolregistry-parser-roundtrip-PLAN.md — ToolRegistry + GemmaToolParser + end-to-end JS tool round-trip (FND-09, FND-10, FND-11 kill-point) · wave 3
 **UI hint**: yes
 
 ### Phase 2 — Orchestrator Harness (H3)
@@ -156,7 +161,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Smoke | 0/5 | Planning | - |
+| 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
 | 2. Orchestrator Harness | 0/? | Not started | - |
 | 3. Discovery + Tool Design | 0/? | Not started | - |
 | 4. Data + Eval Gen | 0/? | Not started | - |
