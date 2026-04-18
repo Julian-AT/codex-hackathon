@@ -10,13 +10,13 @@ describe('validateSchema', () => {
     expect(r.failedGate).toBe('schema');
   });
 
-  it('accepts well-formed schema (addNumbers fixture)', () => {
-    const good = candidates.find((c: any) => c.spec.function.name === 'addNumbers')!;
+  it('accepts well-formed schema (add_numbers fixture)', () => {
+    const good = candidates.find((c: any) => c.spec.function.name === 'add_numbers')!;
     expect(validateSchema(good.spec.function.parameters).pass).toBe(true);
   });
 
-  it('accepts well-formed schema (listTables fixture)', () => {
-    const good = candidates.find((c: any) => c.spec.function.name === 'listTables')!;
+  it('accepts well-formed schema (list_tables fixture)', () => {
+    const good = candidates.find((c: any) => c.spec.function.name === 'list_tables')!;
     expect(validateSchema(good.spec.function.parameters).pass).toBe(true);
   });
 });
