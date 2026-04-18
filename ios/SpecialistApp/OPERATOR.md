@@ -76,3 +76,41 @@ I will then write `01-03-SUMMARY.md` and advance to plan 01-04 (adapter hot-swap
 
 ## Hard constraints
 No Core ML, ExecuTorch, HF Transformers, WebLLM (PRD §19.4). No Python in the iOS app. mlx-swift-lm path only.
+
+---
+
+## 01-04 Adapter hot-swap — mount steps
+
+After 01-03 smoke passes, wire these into the same LLMEval target:
+
+1. `open ios/_upstream/mlx-swift-examples.xcodeproj`
+2. File → Add Files to "mlx-swift-examples" → select:
+   - `ios/SpecialistApp/ModelState.swift`
+   - `ios/SpecialistApp/AdapterLoaderView.swift`
+   Target membership: **LLMEval** only. "Copy if needed" = **OFF** (keep refs pointing at repo).
+3. In `Applications/LLMEval/Views/ContentView.swift`, mount the loader above the chat UI:
+   ```swift
+   @StateObject private var modelState = ModelState()
+   // ... in body VStack { AdapterLoaderView().environmentObject(modelState) ; existingChatUI }
+   // ... .task { try? await modelState.ensureLoaded(configuration: llm.modelConfiguration) }
+   ```
+   (Wire the same `ModelConfiguration` you pinned in `LLMEvaluator.swift:50` so base + adapter both target unsloth Gemma-4-E4B.)
+4. Laptop side:
+   ```bash
+   # one-time: fuse smoke (optional — fused model is NOT what we ship)
+   bash scripts/fuse-bench.sh    # proves mlx_lm.fuse works vs unsloth base
+   # deploy LoRA dir (the actual hot-swap payload — ~30 MB)
+   export IPHONE_UDID=5062E62E-41D9-5420-9D42-AA2EC85EDE9E
+   export BUNDLE=mlx.LLMEvalZP2PFF43D2
+   bash scripts/deploy-adapter.sh
+   ```
+5. On iPhone: tap "Refresh" in AdapterLoaderView → `bench-50iter` appears. Probe before swap, load adapter, probe again.
+   - `lastSwapMs < 2000` AND probe outputs differ → FND-08 PASS.
+   - If swap ≥ 2000 ms OR probes are byte-identical → kill-point, demote to Tier 2.
+
+## 01-04 resume signal
+```
+approved
+swap1_ms=<N> swap2_ms=<N> probe_differs=yes|no verdict=pass|kill-point
+```
+
