@@ -22,7 +22,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 
 - [ ] **Phase 1 — Foundation & Smoke (H0–H2)** — Verify env, micro-bench, iPhone base deploy, adapter hot-swap, JSContext tool round-trip.
 - [ ] **Phase 2 — Orchestrator Harness (H3)** — Coordinator/Worker AI-SDK-v6 skeleton with merged SSE stream, agent grid, and train-pipe.
-- [ ] **Phase 3 — Discovery + Tool Design (H4)** — Supabase corpus + 4-worker tool-design swarm → validated `adapter-tools.json`.
+- [x] **Phase 3 — Discovery + Tool Design (H4)** — Supabase corpus + 4-worker tool-design swarm → validated `adapter-tools.json`. ✓ 2026-04-18
 - [ ] **Phase 4 — Data + Eval Gen (H5)** — 500 QA + 1,150 trajectories + 70-item eval set, judge-gated, deduped, stratified.
 - [ ] **Phase 5 — Train Model A (H6)** — SFT 400-iter + GRPO 150-iter on MLX, loss/reward live-streamed, NaN-safe.
 - [ ] **Phase 6 — Fuse, Deploy, Verify, Cassette (H7)** — Fuse adapter → `devicectl` → on-device verify → **Tier-3 cassette recorded**.
@@ -83,11 +83,11 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 **Kill-Point Gates**:
   - SWR-08 <4 validated tools after retry → copy hand-written fallback manifest and narrate as Tier 2 (NEVER CUT).
 **Plans**: 5 plans across 3 waves
-  - [ ] 03-01-corpus-fetch-chunk-PLAN.md — Supabase corpus fetch + chunking + shared types (SWR-01) · wave 1
-  - [ ] 03-02-validator-gates-PLAN.md — 5-gate validator: schema / acorn parse / node:vm sandbox / fuzz / trajectory (SWR-03..SWR-07) · wave 2
-  - [ ] 03-03-tool-design-worker-PLAN.md — generateObject tool-design worker with Zod DynamicToolSpec schema (SWR-02) · wave 2
-  - [ ] 03-05-fallback-hand-written-tools-PLAN.md — 8 hand-written Supabase tools + fallback manifest (SWR-08 kill-point safety net) · wave 2
-  - [ ] 03-04-swarm-pipeline-manifest-PLAN.md — 4-worker swarm + dedupe + gates + retry + manifest write + /api/discover (SWR-02, SWR-08) · wave 3
+  - [x] 03-01-corpus-fetch-chunk-PLAN.md — Supabase corpus fetch + chunking + shared types (SWR-01) · wave 1
+  - [x] 03-02-validator-gates-PLAN.md — 5-gate validator: schema / acorn parse / node:vm sandbox / fuzz / trajectory (SWR-03..SWR-07) · wave 2
+  - [x] 03-03-tool-design-worker-PLAN.md — generateObject tool-design worker with Zod DynamicToolSpec schema (SWR-02) · wave 2
+  - [x] 03-05-fallback-hand-written-tools-PLAN.md — 8 hand-written Supabase tools + fallback manifest (SWR-08 kill-point safety net) · wave 2
+  - [x] 03-04-swarm-pipeline-manifest-PLAN.md — 4-worker swarm + dedupe + gates + retry + manifest write + /api/discover (SWR-02, SWR-08) · wave 3
 
 ### Phase 4 — Data + Eval Gen (H5)
 **Goal**: Produce the training JSONL (≥1,200 examples, judge-gated, deduped, stratified) and the 70-item held-out eval set with deterministic 70/30 split.
@@ -177,7 +177,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 |-------|----------------|--------|-----------|
 | 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
 | 2. Orchestrator Harness | 3/3 | Code-complete (human gate pending) | 2026-04-18 |
-| 3. Discovery + Tool Design | 0/5 | Planned (3 waves) | - |
+| 3. Discovery + Tool Design | 5/5 | Complete | 2026-04-18 |
 | 4. Data + Eval Gen | 0/? | Not started | - |
 | 5. Train Model A | 0/4 | Planned (3 waves) | - |
 | 6. Fuse, Deploy, Verify, Cassette | 0/? | Not started | - |
