@@ -17,7 +17,7 @@ export const WORKER_ROLES = [
 export type WorkerRole = (typeof WORKER_ROLES)[number];
 
 const OPENAI_ALIAS = 'gpt-5';
-const GOOGLE_ALIAS = 'gemini-2.5-pro';
+const GOOGLE_ALIAS = 'gemini-3.1-flash-lite';
 
 export type RoleResult = {
   text: string;

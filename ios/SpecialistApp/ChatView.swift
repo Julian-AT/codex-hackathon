@@ -63,34 +63,29 @@ struct ChatView: View {
 
     @ViewBuilder
     private func bubble(for message: ChatMessage) -> some View {
+        switch message.role {
+        case .toolCall:
+            ToolCallBubble(
+                messageContent: message.content,
+                toolName: message.toolName ?? "Tool call",
+                toolArgs: message.toolArgs,
+                toolResult: message.toolResult
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
+        default:
+            standardBubble(for: message)
+        }
+    }
+
+    @ViewBuilder
+    private func standardBubble(for message: ChatMessage) -> some View {
         let alignment: HorizontalAlignment = message.role == .user ? .trailing : .leading
-        let fill: Color = {
-            switch message.role {
-            case .user: return .blue
-            case .assistant: return Color(.secondarySystemBackground)
-            case .toolCall: return Color.orange.opacity(0.18)
-            }
-        }()
+        let fill: Color = message.role == .user ? .blue : Color(.secondarySystemBackground)
 
         VStack(alignment: alignment, spacing: 4) {
-            if message.role == .toolCall, let toolName = message.toolName {
-                Text(toolName)
-                    .font(.caption.bold())
-                    .foregroundStyle(.orange)
-            }
             Text(message.content)
                 .foregroundStyle(message.role == .user ? .white : .primary)
                 .frame(maxWidth: .infinity, alignment: message.role == .user ? .trailing : .leading)
-            if let args = message.toolArgs, !args.isEmpty {
-                Text(args)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-            }
-            if let result = message.toolResult, !result.isEmpty {
-                Text(result)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-            }
         }
         .padding(12)
         .background(fill, in: RoundedRectangle(cornerRadius: 16))

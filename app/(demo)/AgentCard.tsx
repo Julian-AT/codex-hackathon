@@ -33,32 +33,34 @@ export function AgentCard({
       data-agent-id={id}
       data-agent-status={status}
       className={cn(
-        'min-h-24 gap-1 py-3 transition-colors',
-        status === 'running' && 'border-primary/50',
-        status === 'ok' && 'border-emerald-500/40',
-        status === 'err' && 'border-destructive/60',
-        status === 'timeout' && 'border-amber-500/50',
+        'min-h-32 gap-3 border bg-card py-3 transition-colors shadow-sm',
+        status === 'running' && 'border-primary/25 bg-primary/5',
+        status === 'ok' && 'border-emerald-200 bg-emerald-50/60',
+        status === 'err' && 'border-destructive/20 bg-destructive/5',
+        status === 'timeout' && 'border-amber-200 bg-amber-50/70',
       )}
     >
       <CardHeader className="gap-0 px-3 pb-0 pt-0">
-        <div className="font-mono text-[10px] text-muted-foreground">{id}</div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          {id}
+        </div>
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-xs font-semibold">{role}</span>
-          <Badge variant={STATUS_BADGE[status]} className="shrink-0 text-[10px]">
+          <span className="truncate text-sm font-semibold">{role}</span>
+          <Badge variant={STATUS_BADGE[status]} className="shrink-0 text-[10px] uppercase tracking-[0.16em]">
             {status}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="px-3 pb-0">
         {step ? (
-          <p className="line-clamp-2 text-[11px] text-muted-foreground">{step}</p>
+          <p className="line-clamp-3 text-[12px] leading-5 text-muted-foreground">{step}</p>
         ) : null}
       </CardContent>
       {lastLine ? (
         <CardFooter className="px-3 pt-0">
           <span
             title={lastLine}
-            className="block w-full cursor-default truncate font-mono text-[10px] text-muted-foreground"
+            className="block w-full cursor-default truncate rounded-md bg-muted/40 px-2 py-1 font-mono text-[10px] text-muted-foreground"
           >
             {lastLine}
           </span>

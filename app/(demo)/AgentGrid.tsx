@@ -18,7 +18,7 @@ export function AgentGrid({
 
   return (
     <div
-      className="grid min-h-0 w-full grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+      className="grid min-h-0 w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
       data-rows="4"
       data-cols="5"
     >
@@ -29,7 +29,7 @@ export function AgentGrid({
           <Card
             key={`empty-${i}`}
             className={cn(
-              'flex min-h-24 flex-col justify-center border-dashed bg-muted/20 py-3',
+              'flex min-h-32 flex-col justify-center border-dashed bg-muted/20 py-3 shadow-none',
             )}
           >
             <div className="flex flex-col gap-2 px-3">

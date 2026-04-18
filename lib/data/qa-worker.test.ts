@@ -96,7 +96,7 @@ describe('generateQABatch', () => {
 
     expect(result.meta.length).toBe(result.examples.length);
     for (const m of result.meta) {
-      expect(m.generator).toBe('opus-4-7');
+      expect(m.generator).toBe('gemini-3.1-flash-lite');
       expect(['easy', 'medium', 'hard']).toContain(m.difficulty);
     }
   });

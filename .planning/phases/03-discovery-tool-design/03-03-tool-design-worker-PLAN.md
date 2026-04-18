@@ -68,7 +68,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { z } from 'zod';
 ```
 
-Model alias: `anthropic('claude-opus-4-5')` primary, fallback chain `claude-opus-4-7` → `claude-opus-4-latest` → `google('gemini-2.5-pro')` on 429/404 (PITFALLS P22). The worker takes `model` as an optional parameter so Wave 3 can swap at runtime.
+Model alias: `anthropic('claude-opus-4-5')` primary, fallback chain `claude-opus-4-7` → `claude-opus-4-latest` → `google('gemini-3.1-flash-lite')` on 429/404 (PITFALLS P22). The worker takes `model` as an optional parameter so Wave 3 can swap at runtime.
 
 `ToolDesignWorkerInput` shape:
 ```ts

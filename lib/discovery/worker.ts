@@ -1,5 +1,5 @@
 import { generateObject, type LanguageModel } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 import type { Chunk, DynamicToolSpec } from './types';
 import { buildToolDesignPrompt } from './prompts';
@@ -40,7 +40,7 @@ export async function toolDesignWorker(input: ToolDesignWorkerInput): Promise<Dy
   const { workerId, slice, model, temperature = 0.4 } = input;
   const { system, user } = buildToolDesignPrompt(workerId, slice);
   const { object } = await generateObject({
-    model: model ?? anthropic('claude-opus-4-5'),
+    model: model ?? google(process.env.DISCOVERY_MODEL || 'gemini-3.1-flash-lite'),
     schema: DYNAMIC_TOOL_SPEC_SCHEMA,
     system,
     prompt: user,

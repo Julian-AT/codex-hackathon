@@ -202,7 +202,7 @@ import { google } from '@ai-sdk/google';
 export const teacher = anthropic('claude-opus-4-5-20250929'); // use provider's current Opus 4.7 alias
 // Judges
 export const gpt5   = openai('gpt-5');
-export const gemini = google('gemini-2.5-pro');
+export const gemini = google('gemini-3.1-flash-lite');
 ```
 
 > Model ID strings: confidence MEDIUM. Verify the exact provider alias at H0 with a `generateText({ model: teacher, prompt: 'hi', maxTokens: 2 })` smoke test. Providers change aliases without warning.

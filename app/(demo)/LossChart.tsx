@@ -17,12 +17,11 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
 } from 'recharts';
 import type { TrainPoint } from '@/lib/streams/trainParser';
-
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 
 export function LossChart({
@@ -36,32 +35,63 @@ export function LossChart({
   const data = points.filter((p) => p.iter >= 0);
   return (
     <div className={cn('h-80 w-full min-w-0', className)}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 12, right: 24, bottom: 8, left: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="iter" type="number" domain={['auto', 'auto']} />
-          <YAxis yAxisId="loss" orientation="left" domain={['auto', 'auto']} />
-          <YAxis yAxisId="reward" orientation="right" domain={['auto', 'auto']} />
-          <Tooltip />
-          <Legend />
-          <Line
-            yAxisId="loss"
-            type="monotone"
-            dataKey="loss"
-            stroke="#e11d48"
-            dot={false}
-            isAnimationActive={false}
-          />
-          <Line
-            yAxisId="reward"
-            type="monotone"
-            dataKey="reward"
-            stroke="#0ea5e9"
-            dot={false}
-            isAnimationActive={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <ChartContainer
+        className="h-full rounded-xl border bg-background p-4"
+        config={{
+          loss: { label: 'Loss', color: 'var(--chart-1)' },
+          reward: { label: 'Reward', color: 'var(--chart-2)' },
+        }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 12, right: 8, bottom: 8, left: -8 }}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border/60" />
+            <XAxis
+              dataKey="iter"
+              type="number"
+              domain={['auto', 'auto']}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={12}
+            />
+            <YAxis
+              yAxisId="loss"
+              orientation="left"
+              domain={['auto', 'auto']}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+            />
+            <YAxis
+              yAxisId="reward"
+              orientation="right"
+              domain={['auto', 'auto']}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Legend />
+            <Line
+              yAxisId="loss"
+              type="monotone"
+              dataKey="loss"
+              stroke="var(--color-loss)"
+              strokeWidth={2.5}
+              dot={false}
+              isAnimationActive={false}
+            />
+            <Line
+              yAxisId="reward"
+              type="monotone"
+              dataKey="reward"
+              stroke="var(--color-reward)"
+              strokeWidth={2.5}
+              dot={false}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartContainer>
     </div>
   );
 }

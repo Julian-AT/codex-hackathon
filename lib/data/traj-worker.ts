@@ -1,6 +1,6 @@
 /**
  * Trajectory generation worker — DAT-02 + DAT-03.
- * Generates 1,150 tool-call trajectories via Claude Opus 4.7 with p-limit(15).
+ * Generates tool-call trajectories via a configurable frontier model with p-limit(15).
  *
  * 4 trajectory types:
  * - Single-turn (APIGen): user -> tool_call -> tool_response -> assistant
@@ -11,7 +11,7 @@
  * Plan 04-04, Task 2.
  */
 
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import { generateObject } from 'ai';
 import pLimit from 'p-limit';
 import * as Sentry from '@sentry/nextjs';
@@ -30,14 +30,8 @@ import {
   buildRefusalPrompt,
 } from './traj-prompts';
 
-/* ------------------------------------------------------------------ */
-/*  Anthropic provider (pinned baseURL — bypasses shell shadow)       */
-/* ------------------------------------------------------------------ */
-
-const anthropicProvider = createAnthropic({
-  baseURL: 'https://api.anthropic.com',
-});
-const MODEL = anthropicProvider('claude-opus-4-7');
+const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gemini-3.1-flash-lite';
+const MODEL = google(DATA_GEN_MODEL);
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                      */
@@ -197,7 +191,7 @@ async function generateSingleTurn(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: 'opus-4-7',
+        generator: DATA_GEN_MODEL,
       },
     };
   }
@@ -305,7 +299,7 @@ async function generateMultiTurn(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: 'opus-4-7',
+        generator: DATA_GEN_MODEL,
       },
     };
   }
@@ -407,7 +401,7 @@ async function generateParallelDep(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: 'opus-4-7',
+        generator: DATA_GEN_MODEL,
       },
     };
   }
@@ -462,7 +456,7 @@ async function generateRefusal(
       persona: persona.id,
       difficulty,
       sourceChunks: chunks.map((c) => c.id),
-      generator: 'opus-4-7',
+      generator: DATA_GEN_MODEL,
     },
   };
 }

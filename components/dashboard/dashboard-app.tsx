@@ -5,48 +5,35 @@ import { useMemo, useState } from 'react';
 
 import { AgentGrid } from '@/app/(demo)/AgentGrid';
 import { useDemoStream } from '@/app/(demo)/useDemoStream';
-import { AppSidebar } from '@/components/dashboard/app-sidebar';
-import { buildPipelinePrompt } from '@/lib/pipeline-prompt';
-import type { TrainPoint } from '@/lib/streams/trainParser';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { EvalSummary } from '@/lib/eval/types';
+import { buildPipelinePrompt } from '@/lib/pipeline-prompt';
+import type { TrainPoint } from '@/lib/streams/trainParser';
 import { cn } from '@/lib/utils';
 import {
-  ChevronDown,
-  ExternalLink,
-  Info,
+  Activity,
+  AlertCircle,
+  Bot,
+  CheckCircle2,
   Loader2,
   Play,
-  Trash2,
+  Rocket,
+  Sparkles,
+  Upload,
+  WifiOff,
 } from 'lucide-react';
 
 const LossChart = dynamic(
@@ -61,33 +48,95 @@ const PRODUCT_PRESETS = [
   { label: 'Hono', url: 'https://hono.dev' },
 ] as const;
 
-/** Placeholder scores (PRD §11.6 shape) until /api/eval exists. */
-const STUB_SCORES = { base: 35.2, tuned: 78.4, teacher: 94.1 };
-
-const TIER_COPY: Record<'1' | '2' | '3', { title: string; body: string }> = {
-  '1': {
-    title: 'Tier 1 — Full live',
-    body: 'Model A warmup, live Model B training, hot-swap, full scoreboard.',
-  },
-  '2': {
-    title: 'Tier 2 — Partial live',
-    body: 'Training visible; deploy or scoreboard may use pre-run artifacts; narration pivots honestly.',
-  },
-  '3': {
-    title: 'Tier 3 — Cassette',
-    body: 'Pre-recorded video + live narration; offline phone still in room.',
-  },
-};
-
 function latestTrainMetrics(points: TrainPoint[]) {
   const valid = points.filter((p) => p.iter >= 0);
-  const last = valid[valid.length - 1];
-  if (!last) return null;
-  return {
-    iter: last.iter,
-    loss: last.loss,
-    reward: last.reward,
-  };
+  return valid[valid.length - 1] ?? null;
+}
+
+function evalRows(rows: EvalSummary[] | undefined) {
+  if (rows?.length) return rows;
+  return [
+    {
+      key: 'base',
+      label: 'Base',
+      available: false,
+      score: null,
+      passed: 0,
+      total: 0,
+      latencyMs: null,
+      notes: 'Not run',
+    },
+    {
+      key: 'tuned',
+      label: 'Tuned',
+      available: false,
+      score: null,
+      passed: 0,
+      total: 0,
+      latencyMs: null,
+      notes: 'Not run',
+    },
+    {
+      key: 'teacher',
+      label: 'Teacher',
+      available: false,
+      score: null,
+      passed: 0,
+      total: 0,
+      latencyMs: null,
+      notes: 'Not run',
+    },
+  ];
+}
+
+function formatStatusTone(status: string) {
+  switch (status) {
+    case 'Streaming':
+      return 'bg-primary/10 text-primary border-primary/20';
+    case 'Submitted':
+      return 'bg-muted text-muted-foreground border-border';
+    case 'Error':
+      return 'bg-destructive/10 text-destructive border-destructive/20';
+    default:
+      return 'bg-muted text-muted-foreground border-border';
+  }
+}
+
+function MetricCard({
+  label,
+  value,
+  hint,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  icon: typeof Activity;
+}) {
+  return (
+    <Card className="shadow-sm">
+      <CardContent className="flex items-start justify-between gap-4 pt-6">
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {label}
+          </p>
+          <p className="text-2xl font-semibold tracking-tight">{value}</p>
+          <p className="text-sm text-muted-foreground">{hint}</p>
+        </div>
+        <div className="rounded-lg border bg-muted/50 p-2.5">
+          <Icon className="size-4 text-muted-foreground" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed bg-muted/20 px-4 text-sm text-muted-foreground">
+      {label}
+    </div>
+  );
 }
 
 export function DashboardApp() {
@@ -100,496 +149,390 @@ export function DashboardApp() {
     pipelineStatusDisplay,
     clearTrain,
     startTrain,
+    evalResult,
+    evalError,
+    evalPending,
+    startEval,
+    adapterPending,
+    adapterLog,
+    adapterError,
+    runAdapterAction,
   } = useDemoStream();
 
   const [productUrl, setProductUrl] = useState('https://supabase.com');
-  const [demoTier, setDemoTier] = useState<'1' | '2' | '3'>('1');
-  const [sankeyOpen, setSankeyOpen] = useState(false);
 
   const notificationRows = useMemo(
-    () => Object.entries(notifications),
+    () => Object.entries(notifications).reverse(),
     [notifications],
   );
-
   const metrics = useMemo(() => latestTrainMetrics(train), [train]);
+  const scoreboardRows = useMemo(() => evalRows(evalResult?.models), [evalResult]);
 
-  const sentryHref = process.env.NEXT_PUBLIC_SENTRY_DASHBOARD_URL;
+  const busy = pipelineStatus === 'streaming' || pipelineStatus === 'submitted';
+  const activeAgents = Object.keys(agents).length;
+  const completedTasks = notificationRows.filter(([, item]) => item.status === 'ok').length;
+  const failedTasks = notificationRows.filter(([, item]) => item.status === 'err').length;
 
   const runPipeline = () => {
     sendMessage({ text: buildPipelinePrompt(productUrl) });
   };
 
-  const busy = pipelineStatus === 'streaming' || pipelineStatus === 'submitted';
-
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger />
-          <Separator orientation="vertical" className="h-6" />
-          <div className="flex min-w-0 flex-1 flex-col">
-            <h1 className="truncate text-sm font-semibold tracking-tight">
-              Offline Specialist–LLM pipeline
-            </h1>
-            <p className="truncate text-xs text-muted-foreground">
-              Coordinator / workers · training telemetry · eval & observability
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="truncate text-xl font-semibold tracking-tight">
+                Specialist Dashboard
+              </h1>
+              <Badge variant="secondary">Supabase</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Swarm first. Local training and device handoff underneath.
             </p>
           </div>
-          <Badge variant="outline" className="shrink-0 font-mono text-[10px]">
+          <Badge
+            variant="outline"
+            className={cn('shrink-0', formatStatusTone(pipelineStatusDisplay))}
+          >
             {pipelineStatusDisplay}
           </Badge>
-        </header>
+        </div>
+      </header>
 
-        <div className="flex flex-1 flex-col gap-10 p-4 md:p-6">
-          {/* Run */}
-          <section id="section-run" className="scroll-mt-20 space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold tracking-tight">Run pipeline</h2>
-              <p className="text-sm text-muted-foreground">
-                Product URL feeds the coordinator prompt (PRD product input).
-              </p>
+      <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">
+        <Card className="shadow-sm">
+          <CardHeader className="gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="space-y-1">
+              <CardTitle>Run the pipeline</CardTitle>
+              <CardDescription>
+                Start the swarm, then keep the rest of the surface quiet.
+              </CardDescription>
             </div>
-            <Card>
-              <CardHeader className="gap-1">
-                <CardTitle className="text-base">Product</CardTitle>
-                <CardDescription>
-                  Presets match PRD audience options (Supabase primary; Vercel / Zod / Hono).
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Input
-                    value={productUrl}
-                    onChange={(e) => setProductUrl(e.target.value)}
-                    placeholder="https://…"
-                    className="font-mono text-sm"
-                  />
-                  <div className="flex shrink-0 gap-2">
-                    <Button onClick={runPipeline} disabled={busy}>
-                      {busy ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <Play className="size-4" />
-                      )}
-                      Run pipeline
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      title="Phase harness: parallel discovery smoke"
-                      onClick={() =>
-                        sendMessage({
-                          text: 'Launch 2 discovery workers named w1 and w2 in parallel.',
-                        })
-                      }
-                      disabled={busy}
-                    >
-                      Smoke: 2 workers
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {PRODUCT_PRESETS.map((p) => (
-                    <Button
-                      key={p.url}
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setProductUrl(p.url)}
-                    >
-                      {p.label}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-
-          <Separator />
-
-          {/* Tier */}
-          <section id="section-tier" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Demo tier (fallback ladder)</h2>
             <div className="flex flex-wrap gap-2">
-              {(['1', '2', '3'] as const).map((t) => (
+              {PRODUCT_PRESETS.map((preset) => (
                 <Button
-                  key={t}
+                  key={preset.url}
                   type="button"
+                  variant="outline"
                   size="sm"
-                  variant={demoTier === t ? 'default' : 'outline'}
-                  onClick={() => setDemoTier(t)}
+                  onClick={() => setProductUrl(preset.url)}
                 >
-                  Tier {t}
+                  {preset.label}
                 </Button>
               ))}
             </div>
-            <Alert>
-              <Info className="size-4" />
-              <AlertTitle>{TIER_COPY[demoTier].title}</AlertTitle>
-              <AlertDescription>{TIER_COPY[demoTier].body}</AlertDescription>
-            </Alert>
-          </section>
-
-          <Separator />
-
-          {/* Orchestration */}
-          <section id="section-orchestration" className="scroll-mt-20 space-y-4">
-            <div className="flex flex-wrap items-end justify-between gap-2">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight">Orchestration</h2>
-                <p className="text-sm text-muted-foreground">
-                  Up to 20 workers · live{' '}
-                  <code className="rounded bg-muted px-1 text-xs">data-agent-status</code>{' '}
-                  stream
-                </p>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                Active: {Object.keys(agents).length} / 20
-              </span>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 lg:flex-row">
+            <Input
+              value={productUrl}
+              onChange={(e) => setProductUrl(e.target.value)}
+              placeholder="https://supabase.com"
+              className="font-mono"
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={runPipeline} disabled={busy}>
+                {busy ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
+                Run pipeline
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  sendMessage({
+                    text: 'Launch 2 discovery workers named w1 and w2 in parallel.',
+                  })
+                }
+                disabled={busy}
+              >
+                Smoke swarm
+              </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            label="Pipeline"
+            value={pipelineStatusDisplay}
+            hint={busy ? 'Streaming worker output' : 'Ready for the next run'}
+            icon={Activity}
+          />
+          <MetricCard
+            label="Active agents"
+            value={String(activeAgents)}
+            hint={`${completedTasks} completed`}
+            icon={Bot}
+          />
+          <MetricCard
+            label="Failures"
+            value={String(failedTasks)}
+            hint={failedTasks ? 'Needs attention' : 'No task errors'}
+            icon={AlertCircle}
+          />
+          <MetricCard
+            label="Training"
+            value={metrics ? `Iter ${metrics.iter}` : 'Idle'}
+            hint={
+              metrics?.loss != null ? `Loss ${metrics.loss.toFixed(4)}` : 'No telemetry yet'
+            }
+            icon={Sparkles}
+          />
+        </div>
+
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <CardTitle>Swarm</CardTitle>
+              <CardDescription>Live coordinator and worker activity.</CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary">{activeAgents} active</Badge>
+              <Badge variant="outline">{completedTasks} completed</Badge>
+              {failedTasks > 0 ? <Badge variant="destructive">{failedTasks} failed</Badge> : null}
+            </div>
+          </CardHeader>
+          <CardContent>
             <AgentGrid agents={agents} />
-          </section>
+          </CardContent>
+        </Card>
 
-          <Separator />
-
-          {/* Tasks */}
-          <section id="section-tasks" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Task notifications</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Worker completions</CardTitle>
+        <div className="grid gap-6 xl:grid-cols-[1.35fr_0.95fr]">
+          <Card className="shadow-sm">
+            <CardHeader className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div className="space-y-1">
+                <CardTitle>Training</CardTitle>
                 <CardDescription>
-                  Terminal{' '}
-                  <code className="rounded bg-muted px-1 text-xs">data-task-notification</code>{' '}
-                  parts (PRD §10.2).
+                  Keep the curve visible, but keep the controls minimal.
                 </CardDescription>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => startTrain('sft', 20)}>
+                  <Activity className="size-4" />
+                  Smoke SFT
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => startTrain('grpo', 20)}>
+                  <Sparkles className="size-4" />
+                  Probe GRPO
+                </Button>
+                <Button size="sm" variant="ghost" onClick={clearTrain}>
+                  Clear
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <LossChart points={train} className="h-[340px]" />
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border bg-muted/20 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Iteration
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold">
+                    {metrics?.iter ?? '—'}
+                  </div>
+                </div>
+                <div className="rounded-xl border bg-muted/20 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Loss
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold font-mono">
+                    {metrics?.loss != null ? metrics.loss.toFixed(4) : '—'}
+                  </div>
+                </div>
+                <div className="rounded-xl border bg-muted/20 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Reward
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold font-mono">
+                    {metrics?.reward != null ? metrics.reward.toFixed(4) : '—'}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-6">
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle>Worker results</CardTitle>
+                <CardDescription>Persistent task outcomes from the swarm.</CardDescription>
               </CardHeader>
               <CardContent>
                 {notificationRows.length === 0 ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <p className="text-sm text-muted-foreground">No completions yet.</p>
-                  </div>
+                  <EmptyState label="Run the pipeline to populate results." />
                 ) : (
-                  <ScrollArea className="h-[min(360px,50vh)] rounded-md border">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[120px]">Worker</TableHead>
-                          <TableHead className="w-[100px]">Task ID</TableHead>
-                          <TableHead className="w-[90px]">Status</TableHead>
-                          <TableHead>Summary</TableHead>
-                          <TableHead className="w-[100px]">Usage</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {notificationRows.map(([workerId, n]) => (
-                          <TableRow key={workerId}>
-                            <TableCell className="font-mono text-xs">{workerId}</TableCell>
-                            <TableCell className="font-mono text-xs">{n.taskId}</TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  n.status === 'ok'
-                                    ? 'secondary'
-                                    : n.status === 'err'
-                                      ? 'destructive'
-                                      : 'outline'
-                                }
-                              >
-                                {n.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="max-w-md truncate text-sm">
-                              {n.summary}
-                            </TableCell>
-                            <TableCell className="font-mono text-[10px] text-muted-foreground">
-                              {n.usage != null ? JSON.stringify(n.usage) : '—'}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                  <ScrollArea className="h-[320px] pr-3">
+                    <div className="space-y-3">
+                      {notificationRows.slice(0, 12).map(([workerId, item]) => (
+                        <div key={`${workerId}-${item.taskId}`} className="rounded-xl border p-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium">{workerId}</p>
+                              <p className="truncate text-xs text-muted-foreground">
+                                {item.taskId}
+                              </p>
+                            </div>
+                            <Badge
+                              variant={
+                                item.status === 'ok'
+                                  ? 'secondary'
+                                  : item.status === 'err'
+                                    ? 'destructive'
+                                    : 'outline'
+                              }
+                            >
+                              {item.status}
+                            </Badge>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {item.summary}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </ScrollArea>
                 )}
               </CardContent>
             </Card>
-          </section>
 
-          <Separator />
-
-          {/* Training */}
-          <section id="section-training" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Training (SFT / GRPO)</h2>
-            <Card>
+            <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle className="text-base">Loss & reward</CardTitle>
-                <CardDescription>
-                  Streams from <code className="rounded bg-muted px-1 text-xs">/api/train</code>{' '}
-                  · PRD §6.2 · 5-step report cadence
-                </CardDescription>
+                <CardTitle>Validation and device</CardTitle>
+                <CardDescription>Quick eval and adapter handoff.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Tabs defaultValue="sft">
-                  <TabsList>
-                    <TabsTrigger value="sft">SFT (loss)</TabsTrigger>
-                    <TabsTrigger value="grpo">GRPO (reward)</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="sft" className="pt-4">
-                    <p className="mb-2 text-xs text-muted-foreground">
-                      mlx_lm.lora — Train loss vs iteration
-                    </p>
-                    <LossChart points={train} />
-                  </TabsContent>
-                  <TabsContent value="grpo" className="pt-4">
-                    <p className="mb-2 text-xs text-muted-foreground">
-                      mlx_lm_lora.train — Reward vs iteration (overlays when present)
-                    </p>
-                    <LossChart points={train} />
-                  </TabsContent>
-                </Tabs>
-                {metrics ? (
-                  <div className="grid gap-2 rounded-lg border bg-muted/30 p-3 text-sm sm:grid-cols-3">
-                    <div>
-                      <div className="text-xs text-muted-foreground">Last iter</div>
-                      <div className="font-mono font-semibold">{metrics.iter}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">Loss</div>
-                      <div className="font-mono font-semibold">
-                        {metrics.loss != null ? metrics.loss.toFixed(4) : '—'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">Reward</div>
-                      <div className="font-mono font-semibold">
-                        {metrics.reward != null ? metrics.reward.toFixed(4) : '—'}
-                      </div>
-                    </div>
-                  </div>
+              <CardContent className="space-y-5">
+                {evalError ? (
+                  <Alert variant="destructive">
+                    <AlertTitle>Eval error</AlertTitle>
+                    <AlertDescription>{evalError}</AlertDescription>
+                  </Alert>
                 ) : null}
-              </CardContent>
-              <CardFooter className="flex flex-wrap gap-2 border-t">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => startTrain('sft', 20)}
-                >
-                  Smoke: SFT 20 iter
-                </Button>
-                <Button type="button" variant="secondary" onClick={() => startTrain('grpo', 20)}>
-                  Smoke: GRPO 20 iter
-                </Button>
-                <Button type="button" variant="ghost" size="sm" onClick={clearTrain}>
-                  <Trash2 className="size-4" />
-                  Clear chart
-                </Button>
-              </CardFooter>
-            </Card>
-          </section>
+                {adapterError ? (
+                  <Alert variant="destructive">
+                    <AlertTitle>Adapter error</AlertTitle>
+                    <AlertDescription>{adapterError}</AlertDescription>
+                  </Alert>
+                ) : null}
 
-          <Separator />
-
-          {/* Eval */}
-          <section id="section-eval" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Three-way evaluation</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Base vs tuned vs teacher</CardTitle>
-                <CardDescription>
-                  PRD §11.6 — placeholder until{' '}
-                  <code className="rounded bg-muted px-1 text-xs">/api/eval</code> ships (H8).
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {(
-                  [
-                    { key: 'base', label: 'Base Gemma 4 E4B', v: STUB_SCORES.base },
-                    { key: 'tuned', label: 'Tuned (LoRA)', v: STUB_SCORES.tuned },
-                    { key: 'teacher', label: 'Teacher (Opus 4.7)', v: STUB_SCORES.teacher },
-                  ] as const
-                ).map((row) => (
-                  <div key={row.key} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{row.label}</span>
-                      <span className="font-mono tabular-nums">{row.v.toFixed(1)}%</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">Quick eval</p>
+                      <p className="text-sm text-muted-foreground">
+                        Small run for the scoreboard.
+                      </p>
                     </div>
-                    <Progress value={row.v} className="h-2" />
+                    <Button size="sm" variant="outline" onClick={() => startEval(4)} disabled={evalPending}>
+                      {evalPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <CheckCircle2 className="size-4" />
+                      )}
+                      Run eval
+                    </Button>
                   </div>
-                ))}
-                <p className="text-xs text-muted-foreground">
-                  Expected ordering for demo: Base &lt; Tuned &lt; Teacher. Scores are illustrative
-                  stubs.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  type="button"
-                  className="w-full sm:w-auto"
-                  disabled
-                  title="Wire POST /api/eval (H8)"
-                >
-                  Run 3-way eval (70 items)
-                </Button>
-              </CardFooter>
-            </Card>
-          </section>
-
-          <Separator />
-
-          {/* Latency */}
-          <section id="section-latency" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Latency stopwatch</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">On-device vs cloud</CardTitle>
-                <CardDescription>PRD §11.7 — compute-only vs round-trip (asymmetry is intentional)</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-lg border p-4">
-                  <div className="text-xs text-muted-foreground">On-device (TTLT)</div>
-                  <div className="font-mono text-2xl font-semibold">—</div>
-                  <p className="mt-1 text-xs text-muted-foreground">ms · iPhone via USB-C shim</p>
+                  <div className="space-y-2">
+                    {scoreboardRows.map((row) => (
+                      <div
+                        key={row.key}
+                        className="flex items-center justify-between rounded-xl border bg-muted/20 px-3 py-2"
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{row.label}</p>
+                          <p className="text-xs text-muted-foreground">{row.notes}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-semibold">
+                            {row.score != null ? row.score.toFixed(1) : '—'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {row.latencyMs != null ? `${row.latencyMs} ms` : 'No latency'}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="rounded-lg border p-4">
-                  <div className="text-xs text-muted-foreground">Cloud (round-trip)</div>
-                  <div className="font-mono text-2xl font-semibold">—</div>
-                  <p className="mt-1 text-xs text-muted-foreground">ms · AI SDK · same prompt</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Alert className="w-full border-dashed">
-                  <Info className="size-4" />
-                  <AlertTitle className="text-sm">Harness not connected</AlertTitle>
-                  <AlertDescription className="text-xs">
-                    Populated when the eval route measures TTLT vs cloud RTT for a fixed prompt.
-                  </AlertDescription>
-                </Alert>
-              </CardFooter>
-            </Card>
-          </section>
 
-          <Separator />
+                <Separator />
 
-          {/* Sankey */}
-          <section id="section-sankey" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Distillation flow</h2>
-            <Collapsible open={sankeyOpen} onOpenChange={setSankeyOpen}>
-              <Card className="gap-0 py-0">
-                <CardHeader className="flex flex-row items-center justify-between gap-2 pb-4">
+                <div className="space-y-3">
                   <div>
-                    <CardTitle className="text-base">Sankey (stretch)</CardTitle>
-                    <CardDescription>
-                      PRD §2.2 — generated → filtered → trained → lifted
-                    </CardDescription>
+                    <p className="text-sm font-medium">Device handoff</p>
+                    <p className="text-sm text-muted-foreground">
+                      Fuse, deploy, and verify from one place.
+                    </p>
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-expanded={sankeyOpen}
-                    onClick={() => setSankeyOpen((o) => !o)}
-                  >
-                    <ChevronDown
-                      className={cn('size-4 transition-transform', sankeyOpen && 'rotate-180')}
-                    />
-                  </Button>
-                </CardHeader>
-              </Card>
-              <CollapsibleContent>
-                <Card className="mt-2 border-dashed">
-                  <CardContent className="pt-6">
-                    <div className="flex min-h-[120px] items-center justify-center text-sm text-muted-foreground">
-                      Not generated — optional Tier 1 nice-to-have
-                    </div>
-                  </CardContent>
-                </Card>
-              </CollapsibleContent>
-            </Collapsible>
-          </section>
-
-          <Separator />
-
-          {/* Deploy */}
-          <section id="section-deploy" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Fuse &amp; deploy</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Adapter to device</CardTitle>
-                <CardDescription>
-                  mlx_lm.fuse + <code className="rounded bg-muted px-1 text-xs">xcrun devicectl</code>{' '}
-                  (PRD §8.3, §19.1)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Device UDID</label>
-                  <Input disabled placeholder="XXXXXXXX-…" className="font-mono" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Bundle ID</label>
-                  <Input disabled placeholder="com.example.SpecialistApp" className="font-mono" />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button type="button" disabled title="H7 — implement POST /api/adapter">
-                  Fuse + deploy to iPhone
-                </Button>
-              </CardFooter>
-            </Card>
-          </section>
-
-          <Separator />
-
-          {/* Sentry */}
-          <section id="section-observability" className="scroll-mt-20 space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Observability</h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Sentry (gen_ai)</CardTitle>
-                <CardDescription>
-                  PRD §12 — secondary screen during demo; spans for workers and training
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <ul className="list-inside list-disc space-y-1 text-muted-foreground">
-                  <li>
-                    <code className="rounded bg-muted px-1 text-xs">Sentry.vercelAIIntegration()</code>{' '}
-                    captures AI SDK calls
-                  </li>
-                  <li>Custom spans: worker roles, training (SFT/GRPO), tool-validation sandbox</li>
-                  <li>Exceptions from workers / subprocesses become issues</li>
-                </ul>
-                {sentryHref ? (
-                  <a
-                    href={sentryHref}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: 'outline', size: 'sm' }),
-                      'inline-flex items-center gap-2',
-                    )}
-                  >
-                    Open Sentry project
-                    <ExternalLink className="size-4" />
-                  </a>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Set{' '}
-                    <code className="rounded bg-muted px-1 text-xs">
-                      NEXT_PUBLIC_SENTRY_DASHBOARD_URL
-                    </code>{' '}
-                    in <code className="rounded bg-muted px-1 text-xs">.env.local</code> for a quick
-                    link.
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => runAdapterAction('fuse')}
+                      disabled={adapterPending}
+                    >
+                      <Rocket className="size-4" />
+                      Fuse
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => runAdapterAction('deploy')}
+                      disabled={adapterPending}
+                    >
+                      <Upload className="size-4" />
+                      Deploy
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => runAdapterAction('fuse-and-deploy')}
+                      disabled={adapterPending}
+                      className="sm:col-span-2"
+                    >
+                      {adapterPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <WifiOff className="size-4" />
+                      )}
+                      Fuse and deploy
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Fuse and deploy stay visible, and the device log sits directly below.
                   </p>
-                )}
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-medium">Adapter log</p>
+                    <p className="text-sm text-muted-foreground">
+                      Recent fuse and deploy output.
+                    </p>
+                  </div>
+                  {adapterLog.length === 0 ? (
+                    <EmptyState label="Deploy actions will appear here." />
+                  ) : (
+                    <ScrollArea className="h-[180px] pr-3">
+                      <div className="space-y-2">
+                        {adapterLog.slice().reverse().map((line, index) => (
+                          <div
+                            key={`${index}-${line}`}
+                            className="rounded-xl border bg-muted/20 px-3 py-2 text-sm text-muted-foreground"
+                          >
+                            {line}
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </div>
               </CardContent>
             </Card>
-          </section>
+          </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </main>
+    </div>
   );
 }

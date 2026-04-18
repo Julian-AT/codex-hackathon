@@ -60,10 +60,10 @@ Rate each dimension as an integer 1-5. Be strict — only rate 4 or 5 if the exa
 
 export async function judgeExample(
   example: TrainingExample,
-  judgeModel: 'gpt-5' | 'gemini-2.5-pro',
+  judgeModel: 'gpt-5' | 'gemini-3.1-flash-lite',
 ): Promise<JudgeScore> {
   const model =
-    judgeModel === 'gpt-5' ? openai('gpt-5') : google('gemini-2.5-pro');
+    judgeModel === 'gpt-5' ? openai('gpt-5') : google('gemini-3.1-flash-lite');
   const formatted = formatExampleForJudge(example);
 
   const { object } = await Sentry.startSpan(
@@ -139,7 +139,7 @@ export async function judgeJury(
     await Promise.all(
       geminiIndices.map((i) =>
         limit(async () => {
-          const geminiScore = await judgeExample(examples[i], 'gemini-2.5-pro');
+          const geminiScore = await judgeExample(examples[i], 'gemini-3.1-flash-lite');
           scores.get(i)!.push(geminiScore);
           // Check for disagreements > 1 Likert point
           const gpt5Score = gpt5Scores.find((s) => s.index === i)!.score;

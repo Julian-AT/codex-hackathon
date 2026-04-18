@@ -8,7 +8,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const OPENAI_ALIAS = 'gpt-5';
-const GOOGLE_ALIAS = 'gemini-2.5-pro';
+const GOOGLE_ALIAS = 'gemini-3.1-flash-lite';
 
 export async function GET() {
   const prompt = 'Reply with the single word: pong.';

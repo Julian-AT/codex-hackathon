@@ -58,7 +58,7 @@ export interface JudgeScore {
   toolCorrectness: Score;
   naturalness: Score;
   grounding: Score;
-  judge: 'gpt-5' | 'gemini-2.5-pro';
+  judge: 'gpt-5' | 'gemini-3.1-flash-lite';
 }
 
 export interface EvalItem {
@@ -78,5 +78,5 @@ export interface DataGenMeta {
   persona: string;       // persona id
   difficulty: Difficulty;
   sourceChunks: string[];
-  generator: 'opus-4-7';
+  generator: string;
 }

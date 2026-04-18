@@ -1,5 +1,5 @@
 /**
- * QA data-gen worker — 500 grounded Q&A examples via Opus 4.7.
+ * QA data-gen worker — grounded Q&A examples via a configurable frontier model.
  * Source of truth: PRD SS7.1, SS7.2, DAT-01, DAT-03 and plan 04-03.
  *
  * Fan-out under p-limit(15), persona x difficulty x chunk stratification,
@@ -7,7 +7,7 @@
  */
 
 import { generateObject } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import * as Sentry from '@sentry/nextjs';
 import pLimit from 'p-limit';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
@@ -25,14 +25,8 @@ import {
   buildQAUserPrompt,
 } from './qa-prompts';
 
-/* ------------------------------------------------------------------ */
-/*  Anthropic provider — CRITICAL: pin baseURL to bypass shell shadow */
-/* ------------------------------------------------------------------ */
-
-const anthropicProvider = createAnthropic({
-  baseURL: 'https://api.anthropic.com',
-});
-const MODEL = anthropicProvider('claude-opus-4-7');
+const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gemini-3.1-flash-lite';
+const MODEL = google(DATA_GEN_MODEL);
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                      */
@@ -191,7 +185,7 @@ export async function generateQABatch(
         persona: persona.id,
         difficulty,
         sourceChunks: chunkIds,
-        generator: 'opus-4-7',
+        generator: DATA_GEN_MODEL,
       });
     } catch (err: unknown) {
       const status = (err as { statusCode?: number })?.statusCode;

@@ -66,7 +66,7 @@ describe('judgeExample', () => {
     expect(score.judge).toBe('gpt-5');
   });
 
-  it('uses google model for gemini-2.5-pro', async () => {
+  it('uses google model for gemini-3.1-flash-lite', async () => {
     const ai = await import('ai');
     vi.mocked(ai.generateObject).mockResolvedValueOnce({
       object: {
@@ -80,10 +80,10 @@ describe('judgeExample', () => {
     const { judgeExample } = await import('./judge.js');
     const score = await judgeExample(
       makeExample('Edge functions?'),
-      'gemini-2.5-pro',
+      'gemini-3.1-flash-lite',
     );
 
-    expect(score.judge).toBe('gemini-2.5-pro');
+    expect(score.judge).toBe('gemini-3.1-flash-lite');
     expect(score.faithfulness).toBe(3);
   });
 });

@@ -19,6 +19,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { TrainPoint } from '@/lib/streams/trainParser';
+import type { EvalRunResult } from '@/lib/eval/types';
 
 export function formatPipelineStatus(status: string): string {
   switch (status) {
@@ -60,6 +61,12 @@ export function useDemoStream() {
     Record<string, TaskNotification>
   >({});
   const [train, setTrain] = useState<TrainPoint[]>([]);
+  const [evalResult, setEvalResult] = useState<EvalRunResult | null>(null);
+  const [evalError, setEvalError] = useState<string | null>(null);
+  const [evalPending, setEvalPending] = useState(false);
+  const [adapterPending, setAdapterPending] = useState(false);
+  const [adapterLog, setAdapterLog] = useState<string[]>([]);
+  const [adapterError, setAdapterError] = useState<string | null>(null);
 
   const { sendMessage, status: pipelineStatus } = useChat({
     transport: new DefaultChatTransport({ api: '/api/pipeline' }),
@@ -116,6 +123,80 @@ export function useDemoStream() {
     }
   }, []);
 
+  const startEval = useCallback(async (limit = 4) => {
+    setEvalPending(true);
+    setEvalError(null);
+    try {
+      const res = await fetch('/api/eval', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ limit }),
+      });
+      const body = (await res.json()) as EvalRunResult & { error?: string };
+      if (!res.ok) {
+        throw new Error(body.error ?? `eval failed (${res.status})`);
+      }
+      setEvalResult(body);
+    } catch (error) {
+      setEvalError(error instanceof Error ? error.message : 'eval failed');
+    } finally {
+      setEvalPending(false);
+    }
+  }, []);
+
+  const runAdapterAction = useCallback(
+    async (action: 'fuse' | 'deploy' | 'fuse-and-deploy') => {
+      setAdapterPending(true);
+      setAdapterError(null);
+      setAdapterLog([]);
+      try {
+        const res = await fetch('/api/adapter', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ action }),
+        });
+        if (!res.body) throw new Error('missing adapter stream body');
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split('\n');
+          buf = lines.pop() ?? '';
+          for (const line of lines) {
+            if (!line.startsWith('data:')) continue;
+            const payload = line.slice(5).trim();
+            if (!payload || payload === '[DONE]') continue;
+            try {
+              const obj = JSON.parse(payload);
+              if (obj?.type === 'data-agent-status' && obj.data?.step) {
+                setAdapterLog((prev) => [...prev.slice(-19), String(obj.data.step)]);
+              }
+              if (obj?.type === 'data-task-notification') {
+                const summary = obj.data?.summary ? String(obj.data.summary) : 'adapter completed';
+                setAdapterLog((prev) => [...prev.slice(-19), summary]);
+                if (obj.data?.status === 'err') {
+                  setAdapterError(summary);
+                }
+              }
+            } catch {
+              /* ignore malformed SSE */
+            }
+          }
+        }
+      } catch (error) {
+        setAdapterError(
+          error instanceof Error ? error.message : 'adapter action failed',
+        );
+      } finally {
+        setAdapterPending(false);
+      }
+    },
+    [],
+  );
+
   const pipelineStatusDisplay = useMemo(
     () => formatPipelineStatus(pipelineStatus),
     [pipelineStatus],
@@ -130,5 +211,13 @@ export function useDemoStream() {
     pipelineStatusDisplay,
     clearTrain,
     startTrain,
+    evalResult,
+    evalError,
+    evalPending,
+    startEval,
+    adapterPending,
+    adapterLog,
+    adapterError,
+    runAdapterAction,
   };
 }

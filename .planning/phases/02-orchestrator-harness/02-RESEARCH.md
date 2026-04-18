@@ -449,7 +449,7 @@ export function withTrainingSpan<T>(kind: 'sft' | 'grpo', iters: number, fn: (sp
 | Node ≥20 | Next.js runtime | ✓ (assumed — Phase 1 scaffold required it) | [CITED: Phase 1 interfaces] | — |
 | `mlx_lm.lora` CLI | `/api/train` subprocess | ✓ (Phase 1 FND-01/FND-02 installed and bench-ran it) | `mlx-lm==0.31.2` | Skip `/api/train` smoke, mock stdout with a pre-recorded log for UI-only work. |
 | `mlx_lm_lora.train` CLI | `/api/train` GRPO mode (Phase 5; scaffolded here) | ✓ (Phase 1 FND-01) | `mlx-lm-lora==0.1.0` | Flag GRPO mode behind `--experimental-grpo` env var; defer to Phase 5. |
-| Anthropic / OpenAI / Google API keys | Coordinator and worker agents | ✓ (Phase 1 FND-04 verified) | — | If Anthropic 429s, fall over to `google('gemini-2.5-pro')` (PITFALLS P22). |
+| Anthropic / OpenAI / Google API keys | Coordinator and worker agents | ✓ (Phase 1 FND-04 verified) | — | If Anthropic 429s, fall over to `google('gemini-3.1-flash-lite')` (PITFALLS P22). |
 | Sentry DSN | `Sentry.init` + span dashboard | ✓ (Phase 1 scaffold `.env.example`) | — | If DSN unset, Sentry init is a no-op; spans are built but not sent. Acceptable for local dev. |
 
 **Missing dependencies with no fallback:** none — every Phase-2 dep is a Phase-1 deliverable.
