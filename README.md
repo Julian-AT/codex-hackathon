@@ -5,22 +5,26 @@
 </p>
 
 <p align="center">
-  <a href="assets/recording.mp4">
-    <img src="assets/recording-preview.gif" alt="Desktop control room recording" width="920" />
-  </a>
+  
+
+https://github.com/user-attachments/assets/b3b7906b-b16d-4755-8b06-12855f8ec9de
+
+
+
+https://github.com/user-attachments/assets/2039d6d2-f806-4e9d-8255-d179653d646d
+
+
 </p>
 
 <p align="center">
-  <a href="assets/recording_mobile.MP4">
-    <img src="assets/recording-mobile-preview.gif" alt="Offline iPhone recording" width="360" />
-  </a>
+  
 </p>
 
 <p align="center">
   <a href="https://github.com/Julian-AT/codex-hackathon"><img src="https://img.shields.io/badge/OpenClaw-Hack__001-blue?style=flat-square" alt="OpenClaw Hack_001"></a>
   <img src="https://img.shields.io/badge/Stack-Next.js_15_·_AI_SDK_6_·_MLX_Swift-black?style=flat-square" alt="Stack">
   <img src="https://img.shields.io/badge/Training-mlx--lm_%2B_mlx--lm--lora-orange?style=flat-square" alt="Training">
-  <img src="https://img.shields.io/badge/Runtime-iPhone_offline-0F766E?style=flat-square" alt="iPhone offline">
+  <img src="https://img.shields.io/badge/Runtime-iPhone_offline-0F766E?style=flat-square" alt="iPhone">
   <img src="https://img.shields.io/badge/Product-Any_specialist_model-111827?style=flat-square" alt="Specialist model">
 </p>
 
