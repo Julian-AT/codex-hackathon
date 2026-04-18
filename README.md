@@ -2,6 +2,16 @@
 
 End-to-end pipeline for producing a narrow product expert model, training it locally with MLX, and running it fully offline on an iPhone with agent-authored JavaScript tools.
 
+<p align="center">
+
+https://github.com/user-attachments/assets/b3b7906b-b16d-4755-8b06-12855f8ec9de
+
+
+https://github.com/user-attachments/assets/2039d6d2-f806-4e9d-8255-d179653d646d
+
+</p>
+
+
 - Control plane: Next.js 15 App Router + AI SDK v6 streaming routes.
 - Training path: `mlx-lm==0.31.2` SFT, `mlx-lm-lora==0.1.9` GRPO, shell entrypoints in [`scripts/`](./scripts).
 - Device runtime: SwiftUI + MLX Swift LM + `JavaScriptCore` + `Network`.
