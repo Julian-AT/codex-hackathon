@@ -1,0 +1,4 @@
+mlx-lm[train]==0.31.2
+mlx-lm-lora==0.1.9
+datasketch
+jsonschema
