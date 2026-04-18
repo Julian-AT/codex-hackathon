@@ -1,0 +1,147 @@
+{
+  "chunks": [
+    {
+      "id": "llms.txt#0001",
+      "source": "llms",
+      "text": "Supabase provides Row Level Security (RLS) policies that let you restrict which rows a given user can access. RLS uses PostgreSQL's native policy engine and is enforced at the database level, ensuring no bypass through client libraries.",
+      "tokenCount": 42,
+      "ordinal": 0
+    },
+    {
+      "id": "llms.txt#0002",
+      "source": "llms",
+      "text": "Edge Functions in Supabase run on Deno Deploy. Each function receives a Request object and must return a Response. You can import Supabase client libraries and connect to your project's Postgres instance directly from the function.",
+      "tokenCount": 38,
+      "ordinal": 1
+    },
+    {
+      "id": "llms.txt#0003",
+      "source": "llms",
+      "text": "Supabase Auth supports multiple authentication methods including email/password, magic links, OAuth providers (Google, GitHub, Apple), and phone OTP. JWTs issued by GoTrue contain sub, role, and exp claims.",
+      "tokenCount": 36,
+      "ordinal": 2
+    },
+    {
+      "id": "llms.txt#0004",
+      "source": "llms",
+      "text": "Realtime in Supabase uses PostgreSQL's logical replication to broadcast INSERT, UPDATE, and DELETE events to connected WebSocket clients. Channels can be filtered by table, schema, and event type.",
+      "tokenCount": 34,
+      "ordinal": 3
+    },
+    {
+      "id": "llms.txt#0005",
+      "source": "llms",
+      "text": "Supabase Storage provides S3-compatible object storage with built-in access control via RLS policies on the storage.objects table. Buckets can be public or private, and presigned URLs enable time-limited access.",
+      "tokenCount": 37,
+      "ordinal": 4
+    },
+    {
+      "id": "llms.txt#0006",
+      "source": "llms",
+      "text": "Database webhooks in Supabase fire HTTP requests to external URLs when specified database events occur. They use pg_net to send asynchronous HTTP calls without blocking the transaction.",
+      "tokenCount": 32,
+      "ordinal": 5
+    },
+    {
+      "id": "llms.txt#0007",
+      "source": "llms",
+      "text": "Supabase supports PostgreSQL extensions including pgvector for embeddings, pg_cron for scheduled jobs, and PostGIS for geospatial queries. Extensions are enabled through the dashboard or SQL.",
+      "tokenCount": 31,
+      "ordinal": 6
+    },
+    {
+      "id": "llms.txt#0008",
+      "source": "llms",
+      "text": "Connection pooling in Supabase uses PgBouncer in transaction mode. The pooler sits between your app and Postgres, reusing connections to handle thousands of concurrent clients efficiently.",
+      "tokenCount": 30,
+      "ordinal": 7
+    },
+    {
+      "id": "cli.txt#0001",
+      "source": "cli",
+      "text": "The Supabase CLI provides local development with `supabase init` and `supabase start`. It spins up a local Postgres instance, Auth server, Storage API, and Edge Functions runtime using Docker containers.",
+      "tokenCount": 35,
+      "ordinal": 0
+    },
+    {
+      "id": "cli.txt#0002",
+      "source": "cli",
+      "text": "Database migrations are managed with `supabase migration new <name>` which creates timestamped SQL files. Apply migrations with `supabase db push` or `supabase migration up`.",
+      "tokenCount": 28,
+      "ordinal": 1
+    },
+    {
+      "id": "cli.txt#0003",
+      "source": "cli",
+      "text": "Edge Functions are deployed with `supabase functions deploy <name>`. Local testing uses `supabase functions serve` which watches for file changes and restarts the Deno runtime automatically.",
+      "tokenCount": 30,
+      "ordinal": 2
+    },
+    {
+      "id": "cli.txt#0004",
+      "source": "cli",
+      "text": "Generate TypeScript types from your database schema using `supabase gen types typescript`. This produces type definitions matching your tables, views, and functions for use with supabase-js.",
+      "tokenCount": 29,
+      "ordinal": 3
+    },
+    {
+      "id": "cli.txt#0005",
+      "source": "cli",
+      "text": "Link your local project to a remote Supabase instance with `supabase link --project-ref <ref>`. This enables pushing migrations, deploying functions, and diffing schemas against production.",
+      "tokenCount": 31,
+      "ordinal": 4
+    },
+    {
+      "id": "cli.txt#0006",
+      "source": "cli",
+      "text": "Inspect database health with `supabase inspect db` commands: `bloat` shows table bloat, `index-usage` reports unused indexes, and `long-running-queries` identifies slow queries holding locks.",
+      "tokenCount": 33,
+      "ordinal": 5
+    },
+    {
+      "id": "guides.txt#0001",
+      "source": "guides",
+      "text": "To set up RLS on a new table: 1) Enable RLS with ALTER TABLE; 2) Create a policy with CREATE POLICY; 3) Use auth.uid() in the USING clause to match the authenticated user's ID against a user_id column.",
+      "tokenCount": 40,
+      "ordinal": 0
+    },
+    {
+      "id": "guides.txt#0002",
+      "source": "guides",
+      "text": "Supabase Storage buckets should be configured with appropriate MIME type restrictions and file size limits. Use the storage.foldername() function in RLS policies to restrict uploads to user-specific directories.",
+      "tokenCount": 34,
+      "ordinal": 1
+    },
+    {
+      "id": "guides.txt#0003",
+      "source": "guides",
+      "text": "For production deployments, enable connection pooling via PgBouncer and set pool_mode to 'transaction'. Prepare statements won't work in transaction mode — use simple query protocol instead.",
+      "tokenCount": 30,
+      "ordinal": 2
+    },
+    {
+      "id": "guides.txt#0004",
+      "source": "guides",
+      "text": "Implement soft deletes by adding a deleted_at timestamp column and an RLS policy that filters WHERE deleted_at IS NULL. Create a database function to handle cascading soft deletes across related tables.",
+      "tokenCount": 33,
+      "ordinal": 3
+    },
+    {
+      "id": "guides.txt#0005",
+      "source": "guides",
+      "text": "Use Supabase Vault to store API keys and secrets securely. Vault encrypts values at rest using pgsodium and exposes them through a simple SQL interface: vault.create_secret() and vault.read_secret().",
+      "tokenCount": 35,
+      "ordinal": 4
+    },
+    {
+      "id": "guides.txt#0006",
+      "source": "guides",
+      "text": "Set up row-level multitenancy by adding a tenant_id column and creating RLS policies that check auth.jwt() ->> 'tenant_id' matches the row's tenant_id. Use a composite index on (tenant_id, id) for fast lookups.",
+      "tokenCount": 38,
+      "ordinal": 5
+    }
+  ],
+  "byTopic": {},
+  "fetchedAt": "2026-04-18T00:00:00Z",
+  "sourceBytes": 12345
+}

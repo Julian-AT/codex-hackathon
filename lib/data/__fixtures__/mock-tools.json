@@ -1,0 +1,143 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "supabase_column_type_mapper",
+      "description": "Map a PostgreSQL column type to its TypeScript equivalent.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "postgresType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "postgresType"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "meta": {
+      "jsBody": "function supabase_column_type_mapper(args) { var pgType = String(args.postgresType || '').toLowerCase(); var map = { 'text': 'string', 'varchar': 'string', 'char': 'string', 'uuid': 'string', 'int2': 'number', 'int4': 'number', 'int8': 'number', 'float4': 'number', 'float8': 'number', 'numeric': 'number', 'integer': 'number', 'bigint': 'number', 'smallint': 'number', 'real': 'number', 'double precision': 'number', 'bool': 'boolean', 'boolean': 'boolean', 'json': 'Record<string, unknown>', 'jsonb': 'Record<string, unknown>', 'timestamp': 'string', 'timestamptz': 'string', 'date': 'string', 'time': 'string', 'bytea': 'string' }; return { tsType: map[pgType] || 'unknown' }; }",
+      "requiresNetwork": false,
+      "trajectories": [
+        {
+          "userPrompt": "What TypeScript type maps to PostgreSQL text?",
+          "call": {
+            "name": "supabase_column_type_mapper",
+            "arguments": {
+              "tableName": "text"
+            }
+          },
+          "result": {
+            "tsType": "string"
+          }
+        }
+      ],
+      "sourceWorker": "hand-written",
+      "sourceChunks": []
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "supabase_connection_string_parser",
+      "description": "Parse a PostgreSQL connection string into host, port, database, and user components. Pure regex, no network.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "meta": {
+      "jsBody": "function supabase_connection_string_parser(args) { var url = String(args.url || ''); var m = /^postgres(?:ql)?:\\/\\/([^:@]+)(?::([^@]*))?@([^:\\/]+)(?::(\\d+))?\\/(.+)$/.exec(url); if (!m) return { host: '', port: 5432, database: '', user: '' }; return { host: m[3] || '', port: m[4] ? Number(m[4]) : 5432, database: m[5] || '', user: m[1] || '' }; }",
+      "requiresNetwork": false,
+      "trajectories": [
+        {
+          "userPrompt": "Parse postgresql://admin:secret@db.example.com:5432/mydb.",
+          "call": {
+            "name": "supabase_connection_string_parser",
+            "arguments": {
+              "url": "postgresql://admin:secret@db.example.com:5432/mydb"
+            }
+          },
+          "result": {
+            "host": "db.example.com",
+            "port": 5432,
+            "database": "mydb",
+            "user": "admin"
+          }
+        }
+      ],
+      "sourceWorker": "hand-written",
+      "sourceChunks": []
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "supabase_rls_policy_template",
+      "description": "Emit a Supabase RLS policy DDL template for a given table, role, and operation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "authenticated",
+              "anon",
+              "service_role"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "select",
+              "insert",
+              "update",
+              "delete"
+            ]
+          }
+        },
+        "required": [
+          "tableName",
+          "role",
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "meta": {
+      "jsBody": "function supabase_rls_policy_template(args) { var op = String(args.operation || '').toUpperCase(); var role = String(args.role || 'authenticated'); var table = String(args.tableName || ''); var policy = 'CREATE POLICY \"' + table + '_' + op.toLowerCase() + '_' + role + '\" ON public.' + table + ' FOR ' + op + ' TO ' + role + ' USING (auth.uid() = user_id);'; return { policy: policy }; }",
+      "requiresNetwork": false,
+      "trajectories": [
+        {
+          "userPrompt": "Write an RLS policy for select on profiles for authenticated users.",
+          "call": {
+            "name": "supabase_rls_policy_template",
+            "arguments": {
+              "tableName": "profiles",
+              "role": "authenticated",
+              "operation": "select"
+            }
+          },
+          "result": {
+            "policy": "CREATE POLICY \"profiles_select_authenticated\" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = user_id);"
+          }
+        }
+      ],
+      "sourceWorker": "hand-written",
+      "sourceChunks": []
+    }
+  }
+]
