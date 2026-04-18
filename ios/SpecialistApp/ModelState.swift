@@ -59,6 +59,59 @@ final class ModelState: ObservableObject {
         currentAdapter = "base"
     }
 
+    /// Generate until natural stop or `maxTokens` hit. Returns full text.
+    func generate(prompt: String, maxTokens: Int = 256) async throws -> String {
+        guard let container else { return "" }
+        return try await container.perform { context in
+            let input = try await context.processor.prepare(
+                input: .init(messages: [["role": "user", "content": prompt]])
+            )
+            var out = ""
+            let params = GenerateParameters(temperature: 0.0)
+            let stream = try MLXLMCommon.generate(
+                input: input, parameters: params, context: context
+            )
+            var count = 0
+            for await event in stream {
+                if case .chunk(let text) = event {
+                    out += text
+                    count += 1
+                    if count >= maxTokens { break }
+                }
+            }
+            return out
+        }
+    }
+
+    /// Generate, parse for tool calls, dispatch any calls, return (raw, calls, results).
+    /// 01-05 round-trip: registered tool executes in fresh JSContext; offline-gated.
+    func generateWithTools(
+        prompt: String,
+        registry: ToolRegistry,
+        isOnline: Bool,
+        parser: GemmaToolParser = GemmaToolParser(),
+        maxTokens: Int = 256
+    ) async throws -> (raw: String, calls: [ToolCall], results: [String]) {
+        let raw = try await generate(prompt: prompt, maxTokens: maxTokens)
+        let frames = parser.parse(raw)
+        var calls: [ToolCall] = []
+        var results: [String] = []
+        for frame in frames {
+            if case .call(let c) = frame {
+                calls.append(c)
+                do {
+                    let r = try await registry.dispatch(
+                        name: c.name, args: c.args, isOnline: isOnline
+                    )
+                    results.append(r)
+                } catch {
+                    results.append("ERROR: \(error.localizedDescription)")
+                }
+            }
+        }
+        return (raw, calls, results)
+    }
+
     /// Deterministic probe — temperature 0.0, capture first ~32 tokens.
     func probe(prompt: String, maxTokens: Int = 32) async throws -> String {
         guard let container else { return "" }
