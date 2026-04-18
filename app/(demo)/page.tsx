@@ -11,9 +11,14 @@
 
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useDemoStream } from './useDemoStream';
 import { AgentGrid } from './AgentGrid';
-import { LossChart } from './LossChart';
+
+const LossChart = dynamic(
+  () => import('./LossChart').then((m) => m.LossChart),
+  { ssr: false, loading: () => <div style={{ height: 320 }} /> },
+);
 
 export default function DemoPage() {
   const {
