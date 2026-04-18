@@ -4,7 +4,7 @@
     "spec": {
       "type": "function",
       "function": {
-        "name": "addNumbers",
+        "name": "add_numbers",
         "description": "Add two numbers together",
         "parameters": {
           "type": "object",
@@ -16,12 +16,12 @@
         }
       },
       "meta": {
-        "jsBody": "function addNumbers(args) { return { sum: args.a + args.b }; }",
+        "jsBody": "function add_numbers(args) { return { sum: args.a + args.b }; }",
         "requiresNetwork": false,
         "trajectories": [
-          { "userPrompt": "add 2 and 3", "call": { "name": "addNumbers", "arguments": { "a": 2, "b": 3 } }, "result": { "sum": 5 } },
-          { "userPrompt": "add 10 and 20", "call": { "name": "addNumbers", "arguments": { "a": 10, "b": 20 } }, "result": { "sum": 30 } },
-          { "userPrompt": "add 0 and 0", "call": { "name": "addNumbers", "arguments": { "a": 0, "b": 0 } }, "result": { "sum": 0 } }
+          { "userPrompt": "add 2 and 3", "call": { "name": "add_numbers", "arguments": { "a": 2, "b": 3 } }, "result": { "sum": 5 } },
+          { "userPrompt": "add 10 and 20", "call": { "name": "add_numbers", "arguments": { "a": 10, "b": 20 } }, "result": { "sum": 30 } },
+          { "userPrompt": "add 0 and 0", "call": { "name": "add_numbers", "arguments": { "a": 0, "b": 0 } }, "result": { "sum": 0 } }
         ],
         "sourceWorker": "fixture",
         "sourceChunks": []
@@ -33,7 +33,7 @@
     "spec": {
       "type": "function",
       "function": {
-        "name": "listTables",
+        "name": "list_tables",
         "description": "List tables matching a pattern",
         "parameters": {
           "type": "object",
@@ -45,12 +45,12 @@
         }
       },
       "meta": {
-        "jsBody": "function listTables(args) { var tables = ['users', 'posts', 'comments']; var p = args.pattern || ''; return { tables: tables.filter(function(t) { return t.indexOf(p) !== -1; }) }; }",
+        "jsBody": "function list_tables(args) { var tables = ['users', 'posts', 'comments']; var p = args.pattern || ''; return { tables: tables.filter(function(t) { return t.indexOf(p) !== -1; }) }; }",
         "requiresNetwork": false,
         "trajectories": [
-          { "userPrompt": "list tables in public schema", "call": { "name": "listTables", "arguments": { "schema": "public" } }, "result": { "tables": ["users", "posts", "comments"] } },
-          { "userPrompt": "list tables matching 'us'", "call": { "name": "listTables", "arguments": { "schema": "public", "pattern": "us" } }, "result": { "tables": ["users"] } },
-          { "userPrompt": "list tables matching 'post'", "call": { "name": "listTables", "arguments": { "schema": "public", "pattern": "post" } }, "result": { "tables": ["posts"] } }
+          { "userPrompt": "list tables in public schema", "call": { "name": "list_tables", "arguments": { "schema": "public" } }, "result": { "tables": ["users", "posts", "comments"] } },
+          { "userPrompt": "list tables matching 'us'", "call": { "name": "list_tables", "arguments": { "schema": "public", "pattern": "us" } }, "result": { "tables": ["users"] } },
+          { "userPrompt": "list tables matching 'post'", "call": { "name": "list_tables", "arguments": { "schema": "public", "pattern": "post" } }, "result": { "tables": ["posts"] } }
         ],
         "sourceWorker": "fixture",
         "sourceChunks": []

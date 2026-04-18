@@ -23,6 +23,7 @@ __pycache__/
 data/*
 !data/corpus.json
 !data/adapter-tools.fallback.json
+!data/adapter-tools.json
 
 # iOS builds
 ios/**/build/

@@ -25,13 +25,13 @@ describe('validateParse', () => {
     expect(validateParse(bad.spec.meta.jsBody).pass).toBe(false);
   });
 
-  it('accepts clean body (addNumbers)', () => {
-    const good = candidates.find((c: any) => c.spec.function.name === 'addNumbers')!;
+  it('accepts clean body (add_numbers)', () => {
+    const good = candidates.find((c: any) => c.spec.function.name === 'add_numbers')!;
     expect(validateParse(good.spec.meta.jsBody).pass).toBe(true);
   });
 
-  it('accepts clean body (listTables)', () => {
-    const good = candidates.find((c: any) => c.spec.function.name === 'listTables')!;
+  it('accepts clean body (list_tables)', () => {
+    const good = candidates.find((c: any) => c.spec.function.name === 'list_tables')!;
     expect(validateParse(good.spec.meta.jsBody).pass).toBe(true);
   });
 });
