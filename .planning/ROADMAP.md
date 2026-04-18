@@ -98,7 +98,12 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
   2. Every `<|tool_call|>` passes `jsonschema.validate` against shipped schemas; hallucinations re-enter the queue (reject-don't-patch) (DAT-03).
   3. GPT-5 + Gemini jury filters examples to ≥4 on all 4 Likert dims, logging >1-point disagreements; MinHash 0.7 + cos 0.92 dedup runs before JSONL emission; every tool has ≥30 examples (DAT-04, DAT-05, DAT-06, DAT-07).
   4. `training.jsonl` is written in mlx-lm `tools` format (`messages` + `tools` OpenAI schema) and the 70-item `eval.jsonl` (40 factual + 10 reasoning + 15 single-turn tool + 5 multi-turn tool) exists with a hash-verified no-overlap 70/30 doc split (DAT-08, DAT-09, DAT-10).
-**Plans**: TBD
+**Plans**: 5 plans across 3 waves
+  - [ ] 04-01-doc-split-types-personas-PLAN.md — Deterministic 70/30 hash split + Phase 4 vocabulary + persona pool + fixtures (DAT-09) · wave 1
+  - [ ] 04-02-schema-gate-dedup-stratify-PLAN.md — AJV schema-gate + MinHash/cosine dedup + tool-name stratification (DAT-03, DAT-06, DAT-07) · wave 1
+  - [ ] 04-03-data-gen-qa-worker-PLAN.md — 500 grounded Q&A via Opus 4.7 Genstruct x PersonaHub (DAT-01, DAT-03) · wave 2
+  - [ ] 04-04-data-gen-traj-worker-PLAN.md — 800+200+100+50 trajectories via APIGen/MT/When2Call (DAT-02, DAT-03) · wave 2
+  - [ ] 04-05-judge-pipeline-eval-emission-PLAN.md — Judge-jury + dedup + stratify + JSONL emission + eval-gen + /api/data-gen (DAT-04..DAT-10) · wave 3
 
 ### Phase 5 — Train Model A (H6)
 **Goal**: Produce a live-trained LoRA adapter with loss and reward curves visible on the stream, within a 17-minute wall-clock budget.
@@ -178,7 +183,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 | 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
 | 2. Orchestrator Harness | 3/3 | Code-complete (human gate pending) | 2026-04-18 |
 | 3. Discovery + Tool Design | 5/5 | Complete | 2026-04-18 |
-| 4. Data + Eval Gen | 0/? | Not started | - |
+| 4. Data + Eval Gen | 0/5 | Planned (3 waves) | - |
 | 5. Train Model A | 0/4 | Planned (3 waves) | - |
 | 6. Fuse, Deploy, Verify, Cassette | 0/? | Not started | - |
 | 7. Three-Way Eval | 0/? | Not started | - |
@@ -195,4 +200,4 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 - Duplicates: none
 - Never-cut REQs explicit: FND-02, FND-08, FND-11 (Phase 1); SWR-08 (Phase 3); DEV-06, DEV-07 (Phase 6)
 
-*Last updated: 2026-04-18 at roadmap creation.*
+*Last updated: 2026-04-18 after Phase 4 planning.*
