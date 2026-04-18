@@ -80,7 +80,14 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
   2. 4 tool-design workers complete in parallel and each emits `DynamicToolSpec` objects with ≥3 example trajectories (SWR-02).
   3. Every candidate tool passes all 5 gates (schema well-formed, `acorn` parse, `node:vm` sandbox exec with 2 s / 64 MB caps, 10-input fuzz ≥8 serializable, trajectory self-consistency) (SWR-03..SWR-07).
   4. `adapter-tools.json` on disk contains ≥8 unique validated Supabase tools, capped at 12 (SWR-08 — kill-point; <4 tools → fall back to hand-written set and narrate).
-**Plans**: TBD
+**Kill-Point Gates**:
+  - SWR-08 <4 validated tools after retry → copy hand-written fallback manifest and narrate as Tier 2 (NEVER CUT).
+**Plans**: 5 plans across 3 waves
+  - [ ] 03-01-corpus-fetch-chunk-PLAN.md — Supabase corpus fetch + chunking + shared types (SWR-01) · wave 1
+  - [ ] 03-02-validator-gates-PLAN.md — 5-gate validator: schema / acorn parse / node:vm sandbox / fuzz / trajectory (SWR-03..SWR-07) · wave 1
+  - [ ] 03-05-fallback-hand-written-tools-PLAN.md — 8 hand-written Supabase tools + fallback manifest (SWR-08 kill-point safety net) · wave 1
+  - [ ] 03-03-tool-design-worker-PLAN.md — generateObject tool-design worker with Zod DynamicToolSpec schema (SWR-02) · wave 2
+  - [ ] 03-04-swarm-pipeline-manifest-PLAN.md — 4-worker swarm + dedupe + gates + retry + manifest write + /api/discover (SWR-02, SWR-08) · wave 3
 
 ### Phase 4 — Data + Eval Gen (H5)
 **Goal**: Produce the training JSONL (≥1,200 examples, judge-gated, deduped, stratified) and the 70-item held-out eval set with deterministic 70/30 split.
@@ -166,7 +173,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 |-------|----------------|--------|-----------|
 | 1. Foundation & Smoke | 0/5 | Planned (3 waves) | - |
 | 2. Orchestrator Harness | 0/3 | Planned (2 waves) | - |
-| 3. Discovery + Tool Design | 0/? | Not started | - |
+| 3. Discovery + Tool Design | 0/5 | Planned (3 waves) | - |
 | 4. Data + Eval Gen | 0/? | Not started | - |
 | 5. Train Model A | 0/? | Not started | - |
 | 6. Fuse, Deploy, Verify, Cassette | 0/? | Not started | - |
