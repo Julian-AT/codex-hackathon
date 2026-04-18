@@ -43,3 +43,7 @@ ios/**/*.xcodeproj/project.xcworkspace/xcuserdata/
 .next.log
 /tmp/
 tsconfig.tsbuildinfo
+
+# iOS build artifacts
+ios/_upstream/
+build/ios/
