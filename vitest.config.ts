@@ -8,6 +8,7 @@ export default defineConfig({
     include: ['lib/**/*.test.ts', 'lib/**/*.spec.ts'],
     testTimeout: 10_000,
     hookTimeout: 10_000,
+    fileParallelism: false,
   },
   resolve: {
     alias: { '@': path.resolve(__dirname, '.') },

@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import Ajv, { type ValidateFunction } from 'ajv';
 
-const MANIFEST_PATH = path.resolve('data/adapter-tools.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const MANIFEST_PATH = path.resolve(__dirname, '../../data/adapter-tools.json');
 
 let _validators: Map<string, ValidateFunction> | null = null;
 

@@ -1,9 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { readFile, rm } from 'node:fs/promises';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { readFile, rm, copyFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { DynamicToolSpec, CORPUS } from './types.js';
 
 const MANIFEST = path.resolve('data/adapter-tools.json');
+const MANIFEST_BAK = MANIFEST + '.test-bak';
 
 async function loadMockCandidates(): Promise<DynamicToolSpec[]> {
   const raw = JSON.parse(
@@ -26,9 +27,23 @@ describe('runDiscoveryPipeline (integration with mock candidates)', () => {
   beforeEach(async () => {
     vi.resetModules();
     try {
+      await copyFile(MANIFEST, MANIFEST_BAK);
+    } catch {
+      // ignore if missing
+    }
+    try {
       await rm(MANIFEST);
     } catch {
       // ignore if missing
+    }
+  });
+
+  afterEach(async () => {
+    try {
+      await copyFile(MANIFEST_BAK, MANIFEST);
+      await rm(MANIFEST_BAK);
+    } catch {
+      // backup may not exist if test created a new manifest
     }
   });
 
