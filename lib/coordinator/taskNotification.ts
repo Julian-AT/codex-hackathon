@@ -1,9 +1,3 @@
-// lib/coordinator/taskNotification.ts
-// Typed shapes + builders for the two worker-related stream parts (PRD §10.4).
-//
-// data-agent-status  -> transient: true  (status pings; do NOT persist)
-// data-task-notification -> transient: false (terminal event; persists in message)
-
 export type AgentStatus = {
   role: string;
   status: 'running' | 'ok' | 'err' | 'timeout';
@@ -35,4 +29,30 @@ export function buildNotificationPart(id: string, data: TaskNotification) {
     data,
     transient: false as const,
   };
+}
+
+export type AgentStatusPart = ReturnType<typeof buildStatusPart>;
+export type TaskNotificationPart = ReturnType<typeof buildNotificationPart>;
+
+export function isAgentStatusPart(part: unknown): part is AgentStatusPart {
+  return hasPartShape(part, 'data-agent-status');
+}
+
+export function isTaskNotificationPart(
+  part: unknown,
+): part is TaskNotificationPart {
+  return hasPartShape(part, 'data-task-notification');
+}
+
+function hasPartShape(part: unknown, type: AgentStatusPart['type'] | TaskNotificationPart['type']) {
+  return (
+    typeof part === 'object' &&
+    part !== null &&
+    'type' in part &&
+    'id' in part &&
+    'data' in part &&
+    typeof part.type === 'string' &&
+    part.type === type &&
+    typeof part.id === 'string'
+  );
 }

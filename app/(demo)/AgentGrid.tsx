@@ -3,9 +3,9 @@
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import type { AgentStatus } from '@/lib/coordinator/taskNotification';
 
 import { AgentCard } from './AgentCard';
-import type { AgentStatus } from './useDemoStream';
 
 export function AgentGrid({
   agents,
@@ -29,7 +29,7 @@ export function AgentGrid({
           <Card
             key={`empty-${i}`}
             className={cn(
-              'flex min-h-32 flex-col justify-center border-dashed bg-muted/20 py-3 shadow-none',
+              'flex min-h-32 flex-col justify-center border-dashed bg-muted/10 py-3 shadow-none',
             )}
           >
             <div className="flex flex-col gap-2 px-3">

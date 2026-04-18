@@ -1,8 +1,3 @@
-// lib/streams/trainParser.ts
-// Pure line-to-TrainPoint parser for mlx_lm.lora / mlx_lm_lora.train stdout.
-// PRD §10.5: SFT emits "Iter N: Train loss X"; GRPO emits "Iter N: Reward X".
-// A5 fallback (02-RESEARCH): bare "loss: X" with sentinel iter=-1.
-
 export type TrainPoint = {
   iter: number;
   loss?: number;
@@ -24,4 +19,16 @@ export function parseTrainLine(line: string): TrainPoint | null {
   const f = line.match(LOSS_FALLBACK_RE);
   if (f) return { iter: -1, loss: Number(f[1]) };
   return null;
+}
+
+export function isTrainStreamPart(
+  value: unknown,
+): value is { type: 'data-train'; data: TrainPoint } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    'data' in value &&
+    value.type === 'data-train'
+  );
 }

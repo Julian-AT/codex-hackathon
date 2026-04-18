@@ -1,15 +1,3 @@
-// lib/coordinator/spawnWorker.ts
-// Factory for the `spawnWorker` tool that the coordinator invokes to delegate
-// a scoped subtask. Each spawn:
-//   - gets its own Sentry `ai.agent` span (worker.role/worker.id attributes)
-//   - emits a transient data-agent-status 'running' part immediately
-//   - runs runRole() with a 90s AbortSignal wall-clock budget (PITFALLS P10)
-//   - emits a persistent data-task-notification with final status
-//
-// Plan deviations (Rule 3, recorded here for SUMMARY):
-//   - ai@6.0.168 tool() uses `inputSchema` (not `parameters`). Adjusted.
-//   - writer.merge() has no options arg in this version; no-op — see mergeWriter.ts.
-
 import { tool, createUIMessageStream } from 'ai';
 import type { UIMessageStreamWriter } from 'ai';
 import { z } from 'zod';
@@ -24,6 +12,7 @@ import {
   withAgentSpan,
   setToolCallAttributes,
 } from '@/lib/observability/agentSpans';
+import { toErrorMessage } from '@/lib/server/errors';
 import { mergeWorkerStream } from '@/lib/streams/mergeWriter';
 
 const WORKER_TIMEOUT_MS = 90_000;
@@ -49,8 +38,6 @@ export function createSpawnWorkerTool(
         withAgentSpan(role as WorkerRole, id, async () => {
           setToolCallAttributes('spawnWorker', { id, role });
 
-          // Fire-and-merge the worker's sub-stream so terminal + status parts
-          // land on the single client SSE via writer.merge().
           const sub = createUIMessageStream({
             execute: async ({ writer: sub }) => {
               sub.write(
@@ -77,7 +64,7 @@ export function createSpawnWorkerTool(
                   err?.name === 'TimeoutError' ||
                   err?.name === 'AbortError' ||
                   /timeout/i.test(err?.message ?? '');
-                const msg = (err?.message ?? 'worker error').slice(0, 400);
+                const msg = toErrorMessage(e, 'worker error');
                 sub.write(
                   buildNotificationPart(id, {
                     taskId: id,
@@ -90,9 +77,6 @@ export function createSpawnWorkerTool(
           });
           mergeWorkerStream(writer, sub);
 
-          // Return to the coordinator LLM immediately — the worker runs async
-          // via writer.merge. The coordinator MUST NOT wait on a worker result
-          // before issuing the next spawnWorker call (ORC-01 parallelism).
           return { taskId: id, status: 'spawned' as const };
         }),
       );

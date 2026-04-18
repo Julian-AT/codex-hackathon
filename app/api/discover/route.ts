@@ -1,17 +1,9 @@
-// app/api/discover/route.ts
-// Discovery pipeline endpoint. Triggers the 4-worker tool-design swarm,
-// streams progress via createUIMessageStream, emits data-agent-status (transient)
-// per worker and gate, and data-task-notification (persistent) on completion or
-// SWR-08 kill-point fallback.
-//
-// No user input accepted — this is a trigger-only endpoint (PRD §13).
-// Runtime: 'nodejs' for child_process compatibility (tech stack lock).
-
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 import * as Sentry from '@sentry/nextjs';
 import { fetchCorpus } from '@/lib/discovery/corpus';
 import { runDiscoveryPipeline, KillPointError } from '@/lib/discovery/pipeline';
 import { buildStatusPart, buildNotificationPart } from '@/lib/coordinator/taskNotification';
+import { toErrorMessage } from '@/lib/server/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -117,13 +109,12 @@ export async function POST(_req: Request) {
                 }),
               );
             } else {
-              // T-03-20: truncate error to 400 chars — never leak raw provider errors
-              const msg = (err as Error).message ?? String(err);
+              const msg = toErrorMessage(err);
               writer.write(
                 buildNotificationPart('coordinator', {
                   taskId: 'coordinator',
                   status: 'err',
-                  summary: msg.slice(0, 400),
+                  summary: msg,
                 }),
               );
             }
@@ -131,10 +122,7 @@ export async function POST(_req: Request) {
         },
       );
     },
-    onError: (error) => {
-      const msg = error instanceof Error ? error.message : String(error);
-      return msg.slice(0, 400);
-    },
+    onError: (error) => toErrorMessage(error),
   });
 
   return createUIMessageStreamResponse({ stream });

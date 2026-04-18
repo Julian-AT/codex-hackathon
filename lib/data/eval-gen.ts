@@ -1,14 +1,3 @@
-/**
- * GPT-5 cross-family eval set generator — DAT-10.
- * Produces 70 held-out eval items from the 30% eval-split chunks.
- * Generator: GPT-5 (NOT Opus 4.7 — cross-family for anti-leakage).
- *
- * Composition: 40 factual + 10 reasoning + 15 single-turn tool + 5 multi-turn tool.
- * Each EvalItem has { id, kind, prompt, expected?, expectedToolCalls?, sourceChunks }.
- *
- * Plan 04-05, Task 1.
- */
-
 import { generateObject } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import * as Sentry from '@sentry/nextjs';
@@ -17,10 +6,6 @@ import { z } from 'zod';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
 import type { EvalItem, ToolCall } from './types';
 import { normalizeToolArguments } from '../tool-args';
-
-/* ------------------------------------------------------------------ */
-/*  Schemas                                                            */
-/* ------------------------------------------------------------------ */
 
 const EVAL_QA_SCHEMA = z.object({
   prompt: z.string().min(10),
@@ -42,10 +27,6 @@ const EVAL_TOOL_SCHEMA = z.object({
   expectedAnswer: z.string().optional(),
 });
 
-/* ------------------------------------------------------------------ */
-/*  Public types                                                       */
-/* ------------------------------------------------------------------ */
-
 export interface EvalGenOptions {
   evalChunks: Chunk[];
   tools: DynamicToolSpec[];
@@ -57,10 +38,6 @@ export interface EvalGenOptions {
   };
   concurrency?: number;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Internal generators                                                */
-/* ------------------------------------------------------------------ */
 
 const generateQAItem = async (
   model: ReturnType<typeof openai>,
@@ -165,13 +142,12 @@ export async function generateEvalSet(
     },
   } = opts;
   const limit = pLimit(concurrency);
-  const model = openai('gpt-5'); // Cross-family from Opus training data (DAT-10)
+  const model = openai('gpt-5');
   const items: EvalItem[] = [];
 
   const tasks: Promise<void>[] = [];
   let idx = 0;
 
-  // Factual Q&A
   for (let i = 0; i < (counts.factual ?? 40); i++) {
     const chunkIdx = i % evalChunks.length;
     const chunks = [evalChunks[chunkIdx]];
@@ -183,7 +159,6 @@ export async function generateEvalSet(
     );
   }
 
-  // Reasoning Q&A
   for (let i = 0; i < (counts.reasoning ?? 10); i++) {
     const startIdx = (i * 3) % evalChunks.length;
     const chunks = [
@@ -201,7 +176,6 @@ export async function generateEvalSet(
     );
   }
 
-  // Single-turn tool
   for (let i = 0; i < (counts.singleTurnTool ?? 15); i++) {
     const chunkIdx = i % evalChunks.length;
     const toolIdx = i % tools.length;
@@ -221,7 +195,6 @@ export async function generateEvalSet(
     );
   }
 
-  // Multi-turn tool
   for (let i = 0; i < (counts.multiTurnTool ?? 5); i++) {
     const chunkIdx = i % evalChunks.length;
     const tool1 = tools[i % tools.length];

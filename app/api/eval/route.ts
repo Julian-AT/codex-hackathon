@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { runEval } from '@/lib/eval/run';
+import { toErrorMessage } from '@/lib/server/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,9 +15,8 @@ export async function POST(req: Request) {
     const result = await runEval(limit);
     return NextResponse.json(result);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: message.slice(0, 400) },
+      { error: toErrorMessage(error) },
       { status: 500 },
     );
   }

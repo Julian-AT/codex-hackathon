@@ -1,8 +1,3 @@
-// app/api/adapter/route.ts
-// Triggers the fuse and/or deploy scripts, streaming their stdout/stderr as
-// `data-agent-status` pings and publishing a terminal `data-task-notification`.
-// Runtime must stay nodejs because the scripts rely on child_process.
-
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import readline from 'node:readline';
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
@@ -11,22 +6,16 @@ import {
   buildNotificationPart,
   buildStatusPart,
 } from '@/lib/coordinator/taskNotification';
+import { toErrorMessage } from '@/lib/server/errors';
+import {
+  createChildProcessRegistry,
+  terminateChild,
+} from '@/lib/server/processes';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const CHILDREN = new Set<ChildProcessWithoutNullStreams>();
-if (typeof process !== 'undefined') {
-  process.on('beforeExit', () => {
-    for (const child of CHILDREN) {
-      try {
-        child.kill('SIGTERM');
-      } catch {
-        /* noop */
-      }
-    }
-  });
-}
+const registry = createChildProcessRegistry();
 
 const ALLOWED_ACTIONS = ['fuse', 'deploy', 'fuse-and-deploy'] as const;
 type AdapterAction = (typeof ALLOWED_ACTIONS)[number];
@@ -85,21 +74,18 @@ function sanitizeLine(line: string) {
 
 async function runStep(step: AdapterStep, writer: StreamWriter, signal: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
-    const child = spawn('bash', [step.script, ...(step.args ?? [])], {
-      env: { ...process.env },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }) as ChildProcessWithoutNullStreams;
-    CHILDREN.add(child);
+    const child = registry.track(
+      spawn('bash', [step.script, ...(step.args ?? [])], {
+        env: { ...process.env },
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }) as ChildProcessWithoutNullStreams,
+    );
 
     let abortedBySignal = false;
 
     const onAbort = () => {
       abortedBySignal = true;
-      try {
-        child.kill('SIGTERM');
-      } catch {
-        /* noop */
-      }
+      terminateChild(child);
     };
 
     const emitLine = (line: string, isStderr = false) => {
@@ -118,7 +104,7 @@ async function runStep(step: AdapterStep, writer: StreamWriter, signal: AbortSig
     signal.addEventListener('abort', onAbort);
 
     const cleanup = () => {
-      CHILDREN.delete(child);
+      registry.untrack(child);
       signal.removeEventListener('abort', onAbort);
     };
 
@@ -207,24 +193,21 @@ export async function POST(req: Request) {
               }),
             );
           } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error);
+            const msg = toErrorMessage(error);
             const durationSeconds = (Date.now() - planStart) / 1000;
             writer.write(
               buildNotificationPart('adapter', {
                 taskId: 'adapter',
                 status: 'err',
-                summary: msg.slice(0, 400),
-                result: JSON.stringify({ action, durationSeconds, error: msg.slice(0, 400) }),
+                summary: msg,
+                result: JSON.stringify({ action, durationSeconds, error: msg }),
               }),
             );
           }
         },
       );
     },
-    onError: (error) => {
-      const msg = error instanceof Error ? error.message : String(error);
-      return msg.slice(0, 400);
-    },
+    onError: (error) => toErrorMessage(error),
   });
 
   return createUIMessageStreamResponse({ stream });

@@ -20,14 +20,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { EvalSummary } from '@/lib/eval/types';
-import { buildPipelinePrompt } from '@/lib/pipeline-prompt';
 import type { TrainPoint } from '@/lib/streams/trainParser';
 import { cn } from '@/lib/utils';
 import {
   Activity,
   AlertCircle,
+  ArrowUpRight,
   Bot,
   CheckCircle2,
+  Globe,
   Loader2,
   Play,
   Rocket,
@@ -92,13 +93,24 @@ function evalRows(rows: EvalSummary[] | undefined) {
 function formatStatusTone(status: string) {
   switch (status) {
     case 'Streaming':
-      return 'bg-primary/10 text-primary border-primary/20';
+      return 'border-primary/20 bg-primary/5 text-primary';
     case 'Submitted':
-      return 'bg-muted text-muted-foreground border-border';
+      return 'border-border bg-muted text-muted-foreground';
     case 'Error':
-      return 'bg-destructive/10 text-destructive border-destructive/20';
+      return 'border-destructive/20 bg-destructive/5 text-destructive';
     default:
-      return 'bg-muted text-muted-foreground border-border';
+      return 'border-border bg-muted text-muted-foreground';
+  }
+}
+
+function productLabelFromUrl(url: string) {
+  try {
+    const hostname = new URL(url).hostname.replace(/^www\./, '');
+    const [first] = hostname.split('.');
+    if (!first) return 'Custom target';
+    return first.charAt(0).toUpperCase() + first.slice(1);
+  } catch {
+    return 'Custom target';
   }
 }
 
@@ -114,16 +126,16 @@ function MetricCard({
   icon: typeof Activity;
 }) {
   return (
-    <Card className="shadow-sm">
-      <CardContent className="flex items-start justify-between gap-4 pt-6">
-        <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <Card className="border-border/80 shadow-none">
+      <CardContent className="flex items-start justify-between gap-4 p-4">
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             {label}
           </p>
-          <p className="text-2xl font-semibold tracking-tight">{value}</p>
-          <p className="text-sm text-muted-foreground">{hint}</p>
+          <p className="text-[26px] font-semibold tracking-tight text-foreground">{value}</p>
+          <p className="text-xs leading-5 text-muted-foreground/90">{hint}</p>
         </div>
-        <div className="rounded-lg border bg-muted/50 p-2.5">
+        <div className="rounded-md border bg-muted/30 p-2">
           <Icon className="size-4 text-muted-foreground" />
         </div>
       </CardContent>
@@ -174,6 +186,7 @@ export function DashboardApp() {
   const activeAgents = Object.keys(agents).length;
   const completedTasks = notificationRows.filter(([, item]) => item.status === 'ok').length;
   const failedTasks = notificationRows.filter(([, item]) => item.status === 'err').length;
+  const productLabel = useMemo(() => productLabelFromUrl(productUrl), [productUrl]);
 
   const runPipeline = () => {
     runDemoScenario(productUrl);
@@ -181,60 +194,34 @@ export function DashboardApp() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="truncate text-xl font-semibold tracking-tight">
-                Specialist Dashboard
-              </h1>
-              <Badge variant="secondary">Supabase</Badge>
+      <main className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6">
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="gap-1.5">
+                  <Bot className="size-3.5" />
+                  Swarm
+                </Badge>
+                <Badge variant="secondary">{productLabel}</Badge>
+              </div>
+              <div className="space-y-1">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                  Specialist Dashboard
+                </h1>
+                <p className="max-w-3xl text-sm text-muted-foreground">
+                  Overview of orchestration, training, evaluation, and device delivery.
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Swarm first. Local training and device handoff underneath.
-            </p>
-          </div>
-          <Badge
-            variant="outline"
-            className={cn('shrink-0', formatStatusTone(pipelineStatusDisplay))}
-          >
-            {pipelineStatusDisplay}
-          </Badge>
-        </div>
-      </header>
-
-      <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">
-        <Card className="shadow-sm">
-          <CardHeader className="gap-4 md:flex-row md:items-start md:justify-between">
-            <div className="space-y-1">
-              <CardTitle>Run the pipeline</CardTitle>
-              <CardDescription>
-                Start the swarm, then keep the rest of the surface quiet.
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {PRODUCT_PRESETS.map((preset) => (
-                <Button
-                  key={preset.url}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setProductUrl(preset.url)}
-                >
-                  {preset.label}
-                </Button>
-              ))}
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3 lg:flex-row">
-            <Input
-              value={productUrl}
-              onChange={(e) => setProductUrl(e.target.value)}
-              placeholder="https://supabase.com"
-              className="font-mono"
-            />
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={runPipeline} disabled={busy}>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                variant="outline"
+                className={cn('h-9 px-3 text-sm font-medium', formatStatusTone(pipelineStatusDisplay))}
+              >
+                {pipelineStatusDisplay}
+              </Badge>
+              <Button onClick={runPipeline} disabled={busy} className="min-w-32">
                 {busy ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
                 Run pipeline
               </Button>
@@ -251,10 +238,57 @@ export function DashboardApp() {
                 Smoke swarm
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <Card className="border-border/80 shadow-none">
+            <CardContent className="grid gap-4 p-4 xl:grid-cols-[1.15fr_0.85fr]">
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {PRODUCT_PRESETS.map((preset) => (
+                    <Button
+                      key={preset.url}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProductUrl(preset.url)}
+                    >
+                      {preset.label}
+                    </Button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <Globe className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={productUrl}
+                    onChange={(e) => setProductUrl(e.target.value)}
+                    placeholder="https://supabase.com"
+                    className="h-10 pl-9 font-mono text-sm"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg border bg-muted/20 p-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    Target
+                  </p>
+                  <p className="mt-2 truncate text-sm font-medium text-foreground">{productLabel}</p>
+                  <p className="mt-1 truncate text-xs text-muted-foreground">{productUrl}</p>
+                </div>
+                <div className="rounded-lg border bg-muted/20 p-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    Run state
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{pipelineStatusDisplay}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {busy ? 'Pipeline active' : 'Ready to launch'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             label="Pipeline"
             value={pipelineStatusDisplay}
@@ -281,32 +315,33 @@ export function DashboardApp() {
             }
             icon={Sparkles}
           />
-        </div>
+        </section>
 
-        <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle>Swarm</CardTitle>
-              <CardDescription>Live coordinator and worker activity.</CardDescription>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">{activeAgents} active</Badge>
-              <Badge variant="outline">{completedTasks} completed</Badge>
-              {failedTasks > 0 ? <Badge variant="destructive">{failedTasks} failed</Badge> : null}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <AgentGrid agents={agents} />
-          </CardContent>
-        </Card>
+        <div className="grid gap-5 xl:grid-cols-[1.45fr_0.95fr]">
+          <div className="grid gap-5">
+            <Card className="border-border/80 shadow-none">
+              <CardHeader className="flex flex-col gap-4 border-b pb-4 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-1">
+                  <CardTitle className="text-base">Agent swarm</CardTitle>
+                  <CardDescription>Coordinator and worker activity in real time.</CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary">{activeAgents} active</Badge>
+                  <Badge variant="outline">{completedTasks} completed</Badge>
+                  {failedTasks > 0 ? <Badge variant="destructive">{failedTasks} failed</Badge> : null}
+                </div>
+              </CardHeader>
+              <CardContent className="pt-5">
+                <AgentGrid agents={agents} />
+              </CardContent>
+            </Card>
 
-        <div className="grid gap-6 xl:grid-cols-[1.35fr_0.95fr]">
-          <Card className="shadow-sm">
+          <Card className="border-border/80 shadow-none">
             <CardHeader className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="space-y-1">
-                <CardTitle>Training</CardTitle>
+                <CardTitle className="text-base">Training</CardTitle>
                 <CardDescription>
-                  Keep the curve visible, but keep the controls minimal.
+                  Live telemetry with a compact control surface.
                 </CardDescription>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -327,7 +362,7 @@ export function DashboardApp() {
               <LossChart points={train} className="h-[340px]" />
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="rounded-xl border bg-muted/20 p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
                     Iteration
                   </div>
                   <div className="mt-2 text-2xl font-semibold">
@@ -335,7 +370,7 @@ export function DashboardApp() {
                   </div>
                 </div>
                 <div className="rounded-xl border bg-muted/20 p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
                     Loss
                   </div>
                   <div className="mt-2 text-2xl font-semibold font-mono">
@@ -343,7 +378,7 @@ export function DashboardApp() {
                   </div>
                 </div>
                 <div className="rounded-xl border bg-muted/20 p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
                     Reward
                   </div>
                   <div className="mt-2 text-2xl font-semibold font-mono">
@@ -353,21 +388,31 @@ export function DashboardApp() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           <div className="grid gap-6">
-            <Card className="shadow-sm">
+            <Card className="border-border/80 shadow-none">
               <CardHeader>
-                <CardTitle>Worker results</CardTitle>
-                <CardDescription>Persistent task outcomes from the swarm.</CardDescription>
+                <CardTitle className="text-base">Overview</CardTitle>
+                <CardDescription>Recent pipeline outputs and evaluation state.</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-5">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">Worker ledger</p>
+                      <p className="text-xs text-muted-foreground">Latest completed tasks.</p>
+                    </div>
+                    <ArrowUpRight className="size-4 text-muted-foreground" />
+                  </div>
+                </div>
                 {notificationRows.length === 0 ? (
                   <EmptyState label="Run the pipeline to populate results." />
                 ) : (
-                  <ScrollArea className="h-[320px] pr-3">
+                  <ScrollArea className="h-[260px] pr-3">
                     <div className="space-y-3">
-                      {notificationRows.slice(0, 12).map(([workerId, item]) => (
-                        <div key={`${workerId}-${item.taskId}`} className="rounded-xl border p-3">
+                      {notificationRows.slice(0, 10).map(([workerId, item]) => (
+                        <div key={`${workerId}-${item.taskId}`} className="rounded-xl border bg-card p-3">
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium">{workerId}</p>
@@ -398,9 +443,9 @@ export function DashboardApp() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-sm">
+            <Card className="border-border/80 shadow-none">
               <CardHeader>
-                <CardTitle>Validation and device</CardTitle>
+                <CardTitle className="text-base">Evaluation and device</CardTitle>
                 <CardDescription>Quick eval and adapter handoff.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
@@ -438,7 +483,7 @@ export function DashboardApp() {
                     {scoreboardRows.map((row) => (
                       <div
                         key={row.key}
-                        className="flex items-center justify-between rounded-xl border bg-muted/20 px-3 py-2"
+                        className="flex items-center justify-between rounded-xl border bg-muted/20 px-3 py-2.5"
                       >
                         <div>
                           <p className="text-sm font-medium">{row.label}</p>
@@ -500,7 +545,7 @@ export function DashboardApp() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Fuse and deploy stay visible, and the device log sits directly below.
+                    Device actions stay visible, with logs directly below.
                   </p>
                 </div>
 

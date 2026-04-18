@@ -1,16 +1,3 @@
-/**
- * Trajectory generation worker — DAT-02 + DAT-03.
- * Generates tool-call trajectories via a configurable frontier model with p-limit(15).
- *
- * 4 trajectory types:
- * - Single-turn (APIGen): user -> tool_call -> tool_response -> assistant
- * - Multi-turn (APIGen-MT): 2-6 turn conversation with interleaved tool calls
- * - Parallel/dependent: 2+ tool calls in a single assistant turn
- * - Refusal (When2Call): user query that should NOT trigger a tool call
- *
- * Plan 04-04, Task 2.
- */
-
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import pLimit from 'p-limit';
@@ -34,10 +21,6 @@ import {
 
 const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gpt-5-mini';
 const MODEL = openai(DATA_GEN_MODEL);
-
-/* ------------------------------------------------------------------ */
-/*  Public types                                                      */
-/* ------------------------------------------------------------------ */
 
 export interface TrajCounts {
   singleTurn?: number;
@@ -63,10 +46,6 @@ export interface TrajBatchResult {
   byType: Record<string, number>;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                           */
-/* ------------------------------------------------------------------ */
-
 const DEFAULT_COUNTS: Required<TrajCounts> = {
   singleTurn: 800,
   multiTurn: 200,
@@ -74,19 +53,16 @@ const DEFAULT_COUNTS: Required<TrajCounts> = {
   refusal: 50,
 };
 
-/** Pick N random chunks from the pool using the given PRNG. */
 function sampleChunks(chunks: Chunk[], n: number, rng: () => number): Chunk[] {
   const shuffled = [...chunks].sort(() => rng() - 0.5);
   return shuffled.slice(0, Math.min(n, shuffled.length));
 }
 
-/** Pick a random tool, biased toward those with fewer examples so far. */
 function sampleToolBiased(
   tools: DynamicToolSpec[],
   toolCounts: Map<string, number>,
   rng: () => number,
 ): DynamicToolSpec {
-  // Inverse-frequency weighting: fewer examples = higher weight
   const weights = tools.map((t) => {
     const count = toolCounts.get(t.function.name) ?? 0;
     return 1 / (count + 1);
@@ -100,7 +76,6 @@ function sampleToolBiased(
   return tools[tools.length - 1];
 }
 
-/** Pick N distinct tools. */
 function sampleDistinctTools(
   tools: DynamicToolSpec[],
   n: number,
@@ -109,10 +84,6 @@ function sampleDistinctTools(
   const shuffled = [...tools].sort(() => rng() - 0.5);
   return shuffled.slice(0, Math.min(n, shuffled.length));
 }
-
-/* ------------------------------------------------------------------ */
-/*  Single-turn generator                                            */
-/* ------------------------------------------------------------------ */
 
 async function generateSingleTurn(
   tool: DynamicToolSpec,
@@ -153,7 +124,6 @@ async function generateSingleTurn(
 
     const obj = result.object;
 
-    // Validate tool call via schema-gate (DAT-03)
     const validation = validateToolCall(
       obj.toolCall.name,
       normalizeToolArguments(obj.toolCall.arguments),
@@ -163,7 +133,6 @@ async function generateSingleTurn(
       continue;
     }
 
-    // Convert to TrainingExample messages
     const messages: ChatMessage[] = [
       { role: 'system', content: systemWithFeedback },
       { role: 'user', content: obj.userQuery },
@@ -203,12 +172,8 @@ async function generateSingleTurn(
     };
   }
 
-  return null; // All retries exhausted
+  return null;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Multi-turn generator                                             */
-/* ------------------------------------------------------------------ */
 
 async function generateMultiTurn(
   tools: DynamicToolSpec[],
@@ -249,7 +214,6 @@ async function generateMultiTurn(
 
     const obj = result.object;
 
-    // Validate ALL tool_calls across ALL turns (T-04-08 mitigation)
     let allValid = true;
     for (const turn of obj.turns) {
       if (turn.toolCall) {
@@ -266,7 +230,6 @@ async function generateMultiTurn(
     }
     if (!allValid) continue;
 
-    // Convert turns to ChatMessage array
     const messages: ChatMessage[] = [
       { role: 'system', content: systemWithFeedback },
     ];
@@ -319,10 +282,6 @@ async function generateMultiTurn(
   return null;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Parallel/dependent generator                                     */
-/* ------------------------------------------------------------------ */
-
 async function generateParallelDep(
   toolPair: [DynamicToolSpec, DynamicToolSpec],
   chunks: Chunk[],
@@ -363,7 +322,6 @@ async function generateParallelDep(
 
     const obj = result.object;
 
-    // Validate ALL tool calls
     let allValid = true;
     for (const tc of obj.toolCalls) {
       const validation = validateToolCall(
@@ -378,7 +336,6 @@ async function generateParallelDep(
     }
     if (!allValid) continue;
 
-    // Convert to TrainingExample messages
     const toolCallMessages = obj.toolCalls.map((tc, i) => ({
       id: `call_${i}`,
       type: 'function' as const,
@@ -398,7 +355,6 @@ async function generateParallelDep(
       },
     ];
 
-    // Add tool response messages
     for (let i = 0; i < obj.toolCalls.length; i++) {
       messages.push({
         role: 'tool',
@@ -423,10 +379,6 @@ async function generateParallelDep(
 
   return null;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Refusal generator                                                */
-/* ------------------------------------------------------------------ */
 
 async function generateRefusal(
   chunks: Chunk[],
@@ -458,7 +410,6 @@ async function generateRefusal(
 
   const obj = result.object;
 
-  // T-04-09 mitigation: ensure no tool_calls in refusal messages
   const messages: ChatMessage[] = [
     { role: 'system', content: prompt.system },
     { role: 'user', content: obj.userQuery },
@@ -475,10 +426,6 @@ async function generateRefusal(
     },
   };
 }
-
-/* ------------------------------------------------------------------ */
-/*  Main orchestrator                                                */
-/* ------------------------------------------------------------------ */
 
 export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBatchResult> {
   const {
@@ -508,18 +455,14 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
     refusal: 0,
   };
 
-  // Track per-tool example counts for bias sampling
   const toolCounts = new Map<string, number>();
-
   const tasks: Array<() => Promise<void>> = [];
 
-  // -- Single-turn tasks --
   for (let i = 0; i < counts.singleTurn; i++) {
     const tool = sampleToolBiased(tools, toolCounts, rng);
     const chunks = sampleChunks(trainChunks, 3, rng);
     const persona = samplePersona(rng);
     const difficulty = sampleDifficulty(rng);
-    // Pre-increment to influence future bias sampling
     toolCounts.set(tool.function.name, (toolCounts.get(tool.function.name) ?? 0) + 1);
 
     tasks.push(() =>
@@ -539,9 +482,8 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
     );
   }
 
-  // -- Multi-turn tasks --
   for (let i = 0; i < counts.multiTurn; i++) {
-    const numTools = 2 + Math.floor(rng() * 2); // 2-3 tools
+    const numTools = 2 + Math.floor(rng() * 2);
     const selectedTools = sampleDistinctTools(tools, numTools, rng);
     const chunks = sampleChunks(trainChunks, 4, rng);
     const persona = samplePersona(rng);
@@ -564,7 +506,6 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
     );
   }
 
-  // -- Parallel/dependent tasks --
   for (let i = 0; i < counts.parallelDep; i++) {
     const pair = sampleDistinctTools(tools, 2, rng) as [DynamicToolSpec, DynamicToolSpec];
     const depType = rng() < 0.5 ? 'parallel' : 'dependent';
@@ -589,7 +530,6 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
     );
   }
 
-  // -- Refusal tasks --
   for (let i = 0; i < counts.refusal; i++) {
     const chunks = sampleChunks(trainChunks, 2, rng);
     const persona = samplePersona(rng);
@@ -608,7 +548,6 @@ export async function generateTrajBatch(opts: TrajBatchOptions): Promise<TrajBat
     );
   }
 
-  // Execute all tasks through shared p-limit
   await Promise.all(tasks.map((t) => t()));
   await checkpoint.close();
 

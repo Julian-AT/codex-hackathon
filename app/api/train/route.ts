@@ -1,29 +1,20 @@
-// app/api/train/route.ts
-// /api/train — spawns mlx_lm.lora (SFT) or mlx_lm_lora.train (GRPO) as a subprocess,
-// pipes stdout through readline, parses lines via trainParser, and emits typed
-// `data-train` parts on the shared AI SDK UI-message stream.
-//
-// HARD CONSTRAINTS:
-//   - runtime='nodejs' + dynamic='force-dynamic' — child_process requires node,
-//     dynamic prevents static optimisation that would starve the stream.
-//   - argv is a literal array (no shell) and `model` is validated against a closed
-//     regex before it reaches spawn() — T-02-07 (argv injection).
-//   - iters capped at 2000 — T-02-09 (CLAUDE.md: no runs > 20 min).
-//   - Child SIGTERM'd on req.signal abort and process beforeExit — T-02-08.
-//   - PYTHONUNBUFFERED=1 so mlx_lm.lora flushes per-iter stdout lines.
-
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import readline from 'node:readline';
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 import { parseTrainLine } from '@/lib/streams/trainParser';
 import { withTrainingSpan } from '@/lib/observability/trainingSpans';
+import { toErrorMessage, truncateText } from '@/lib/server/errors';
+import {
+  createChildProcessRegistry,
+  terminateChild,
+  waitForChildExit,
+} from '@/lib/server/processes';
 import { TrainSupervisor, type SupervisorSignal } from '@/lib/training/supervisor';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// Module-scoped child registry so hot-reload can SIGTERM orphans (PITFALLS P16).
-const CHILDREN = new Map<string, ChildProcessWithoutNullStreams>();
+const registry = createChildProcessRegistry();
 
 type TrainRequest = {
   mode: 'sft' | 'grpo';
@@ -69,16 +60,11 @@ export async function POST(req: Request) {
             },
           );
 
-        let activeChild = spawnTrainingChild(mode);
+        let activeChild = registry.track(spawnTrainingChild(mode));
         let activeChildId = `${mode}-${Date.now()}`;
-        CHILDREN.set(activeChildId, activeChild);
 
         const onAbort = () => {
-          try {
-            activeChild.kill('SIGTERM');
-          } catch {
-            /* child already exited */
-          }
+          terminateChild(activeChild);
         };
         req.signal.addEventListener('abort', onAbort);
 
@@ -89,7 +75,7 @@ export async function POST(req: Request) {
             let recentStderr = '';
 
             stderrRl.on('line', (line) => {
-              recentStderr = line.slice(0, 400);
+              recentStderr = truncateText(line);
             });
 
             let respawned = false;
@@ -114,15 +100,9 @@ export async function POST(req: Request) {
               if (signal.kind === 'continue') continue;
 
               if (signal.kind === 'rollback') {
-                try {
-                  activeChild.kill('SIGTERM');
-                } catch {
-                  /* noop */
-                }
-                await new Promise<void>((resolve) =>
-                  activeChild.once('close', () => resolve()),
-                );
-                CHILDREN.delete(activeChildId);
+                terminateChild(activeChild);
+                await waitForChildExit(activeChild);
+                registry.untrack(activeChild);
                 const revertedIter = await supervisor.performRollback(adapterDir);
                 span.setAttribute('training.rollback', revertedIter);
                 writer.write({
@@ -130,11 +110,12 @@ export async function POST(req: Request) {
                   data: { iter: revertedIter, aborted: `rollback.${signal.reason}` },
                   transient: true,
                 });
-                activeChild = spawnTrainingChild('sft', {
-                  RESUME_ADAPTER: `${adapterDir}/adapters.safetensors`,
-                });
+                activeChild = registry.track(
+                  spawnTrainingChild('sft', {
+                    RESUME_ADAPTER: `${adapterDir}/adapters.safetensors`,
+                  }),
+                );
                 activeChildId = `sft-${Date.now()}-r${revertedIter}`;
-                CHILDREN.set(activeChildId, activeChild);
                 respawned = true;
                 stdoutRl.close();
                 stderrRl.close();
@@ -142,11 +123,7 @@ export async function POST(req: Request) {
               }
 
               if (signal.kind === 'abort' || signal.kind === 'grpo.collapsed') {
-                try {
-                  activeChild.kill('SIGTERM');
-                } catch {
-                  /* noop */
-                }
+                terminateChild(activeChild);
                 span.setAttribute(
                   signal.kind === 'abort'
                     ? 'training.aborted'
@@ -163,15 +140,15 @@ export async function POST(req: Request) {
             }
 
             stderrRl.close();
-            await new Promise<void>((resolve) => activeChild.once('close', () => resolve()));
-            CHILDREN.delete(activeChildId);
+            await waitForChildExit(activeChild);
+            registry.untrack(activeChild);
             if (!respawned) {
               if (recentStderr) span.setAttribute('training.stderr', recentStderr);
               break;
             }
           }
         } catch (e) {
-          const msg = e instanceof Error ? e.message.slice(0, 400) : 'train error';
+          const msg = toErrorMessage(e, 'train error');
           writer.write({
             type: 'data-train',
             data: { iter: -1, aborted: 'route.error' },
@@ -180,24 +157,11 @@ export async function POST(req: Request) {
           span.setAttribute('training.error', msg);
         } finally {
           req.signal.removeEventListener('abort', onAbort);
-          CHILDREN.delete(activeChildId);
+          registry.untrack(activeChild);
         }
       });
     },
   });
 
   return createUIMessageStreamResponse({ stream });
-}
-
-// SIGTERM all children on server exit (T-02-08 defense-in-depth).
-if (typeof process !== 'undefined') {
-  process.on('beforeExit', () => {
-    for (const c of CHILDREN.values()) {
-      try {
-        c.kill('SIGTERM');
-      } catch {
-        /* noop */
-      }
-    }
-  });
 }

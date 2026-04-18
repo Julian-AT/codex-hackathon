@@ -1,12 +1,3 @@
-// app/api/data-gen/route.ts
-// Phase 4 data generation pipeline endpoint. Triggers the full pipeline
-// (QA + Traj -> judge -> dedup -> stratify -> emit), streams progress via
-// createUIMessageStream, emits data-agent-status per pipeline stage and
-// data-task-notification on completion.
-//
-// No user input accepted -- trigger-only endpoint (PRD SS13).
-// Runtime: 'nodejs' for child_process compatibility (tech stack lock).
-
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 import * as Sentry from '@sentry/nextjs';
 import { runDataGenPipeline } from '@/lib/data/pipeline';
@@ -14,6 +5,7 @@ import {
   buildStatusPart,
   buildNotificationPart,
 } from '@/lib/coordinator/taskNotification';
+import { toErrorMessage } from '@/lib/server/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -45,23 +37,19 @@ export async function POST(_req: Request) {
               }),
             );
           } catch (err) {
-            // T-04-16: truncate error to 400 chars -- never leak raw provider errors
-            const msg = (err as Error).message ?? String(err);
+            const msg = toErrorMessage(err, 'data generation failed', 320);
             writer.write(
               buildNotificationPart('data-gen', {
                 taskId: 'data-gen',
                 status: 'err',
-                summary: `${msg.slice(0, 320)} Partial checkpoints saved in data/checkpoints/.`,
+                summary: `${msg} Partial checkpoints saved in data/checkpoints/.`,
               }),
             );
           }
         },
       );
     },
-    onError: (error) => {
-      const msg = error instanceof Error ? error.message : String(error);
-      return msg.slice(0, 400);
-    },
+    onError: (error) => toErrorMessage(error),
   });
   return createUIMessageStreamResponse({ stream });
 }
