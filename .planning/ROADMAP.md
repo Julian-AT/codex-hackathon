@@ -137,7 +137,10 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 **Kill-Point Gates**:
   - DEV-06 device battery passes with <3/5 prompts correct → demote to Tier 2 narration (pre-run scoreboard).
   - DEV-07 not recorded before H8 → STOP all feature work, record cassette on whatever adapter exists, even SFT-only.
-**Plans**: TBD
+**Plans**: 3 plans across 2 waves
+  - [ ] 06-01-fuse-deploy-scripts-PLAN.md — scripts/fuse.sh + enhanced deploy-adapter.sh (TRN-05, TRN-06) · wave 1
+  - [ ] 06-02-ios-chatview-statuspill-toolsloader-PLAN.md — ChatView + StatusPill + AdapterToolsLoader + file watcher (TRN-07, DEV-01..DEV-05) · wave 1
+  - [ ] 06-03-verify-battery-cassette-PLAN.md — On-device verification battery + Tier-3 cassette recording (DEV-06, DEV-07) · wave 2
 **UI hint**: yes
 
 ### Phase 7 — Three-Way Eval (H8)
@@ -185,7 +188,7 @@ Nine coarse phases execute against the PRD §14 hour-band schedule. Phase 1 is t
 | 3. Discovery + Tool Design | 5/5 | Complete | 2026-04-18 |
 | 4. Data + Eval Gen | 0/5 | Planned (3 waves) | - |
 | 5. Train Model A | 0/4 | Planned (3 waves) | - |
-| 6. Fuse, Deploy, Verify, Cassette | 0/? | Not started | - |
+| 6. Fuse, Deploy, Verify, Cassette | 0/3 | Planned (2 waves) | - |
 | 7. Three-Way Eval | 0/? | Not started | - |
 | 8. Polish & Pre-Cache | 0/? | Not started | - |
 | 9. Dry-Run + Pre-Flight | 0/? | Not started | - |

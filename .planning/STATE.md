@@ -11,11 +11,11 @@
 
 ## Current Position
 
-- **Current phase:** 4 — Data + Eval Gen — not yet planned
-- **Current plan:** (none running — Phase 3 complete)
-- **Status:** Phase 3 complete (5/5 plans executed, 49/49 tests green); Phase 4 next
-- **Phase progress:** Phase 3 `[##########] 100%` (5/5 plans)
-- **Overall progress:** `[###-------] 3 / 9 phases` (Phase 3 complete)
+- **Current phase:** 6 — Fuse, Deploy, Verify, Cassette — planned, ready to execute
+- **Current plan:** (none running)
+- **Status:** Phase 6 planned (3 plans, 2 waves); Phases 4-5 planned earlier
+- **Phase progress:** Phase 6 `[----------] 0%` (0/3 plans)
+- **Overall progress:** `[###-------] 3 / 9 phases` (Phase 3 complete, 4-6 planned)
 
 ## Performance Metrics
 
