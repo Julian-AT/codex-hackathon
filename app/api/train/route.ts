@@ -14,7 +14,7 @@
 
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import readline from 'node:readline';
-import { createUIMessageStream } from 'ai';
+import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 import { parseTrainLine } from '@/lib/streams/trainParser';
 import { withTrainingSpan } from '@/lib/observability/trainingSpans';
 
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     },
   });
 
-  return stream.toResponse();
+  return createUIMessageStreamResponse({ stream });
 }
 
 // SIGTERM all children on server exit (T-02-08 defense-in-depth).
