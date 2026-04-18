@@ -22,6 +22,7 @@ __pycache__/
 # planning working data (allow .planning/ docs; block generated data except corpus cache)
 data/*
 !data/corpus.json
+!data/adapter-tools.fallback.json
 
 # iOS builds
 ios/**/build/
