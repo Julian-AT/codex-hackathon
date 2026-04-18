@@ -1,0 +1,333 @@
+[
+  {
+    "expectedFailedGate": null,
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "addNumbers",
+        "description": "Add two numbers together",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "a": { "type": "number" },
+            "b": { "type": "number" }
+          },
+          "required": ["a", "b"]
+        }
+      },
+      "meta": {
+        "jsBody": "function addNumbers(args) { return { sum: args.a + args.b }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "add 2 and 3", "call": { "name": "addNumbers", "arguments": { "a": 2, "b": 3 } }, "result": { "sum": 5 } },
+          { "userPrompt": "add 10 and 20", "call": { "name": "addNumbers", "arguments": { "a": 10, "b": 20 } }, "result": { "sum": 30 } },
+          { "userPrompt": "add 0 and 0", "call": { "name": "addNumbers", "arguments": { "a": 0, "b": 0 } }, "result": { "sum": 0 } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": null,
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "listTables",
+        "description": "List tables matching a pattern",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "schema": { "type": "string" },
+            "pattern": { "type": "string" }
+          },
+          "required": ["schema"]
+        }
+      },
+      "meta": {
+        "jsBody": "function listTables(args) { var tables = ['users', 'posts', 'comments']; var p = args.pattern || ''; return { tables: tables.filter(function(t) { return t.indexOf(p) !== -1; }) }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "list tables in public schema", "call": { "name": "listTables", "arguments": { "schema": "public" } }, "result": { "tables": ["users", "posts", "comments"] } },
+          { "userPrompt": "list tables matching 'us'", "call": { "name": "listTables", "arguments": { "schema": "public", "pattern": "us" } }, "result": { "tables": ["users"] } },
+          { "userPrompt": "list tables matching 'post'", "call": { "name": "listTables", "arguments": { "schema": "public", "pattern": "post" } }, "result": { "tables": ["posts"] } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "schema",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "schemaBad",
+        "description": "Has a malformed JSON Schema",
+        "parameters": {
+          "type": "objekt",
+          "properties": {
+            "x": { "type": "strung" }
+          },
+          "required": ["x"]
+        }
+      },
+      "meta": {
+        "jsBody": "function schemaBad(args) { return args; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "test", "call": { "name": "schemaBad", "arguments": { "x": "hi" } }, "result": { "x": "hi" } },
+          { "userPrompt": "test2", "call": { "name": "schemaBad", "arguments": { "x": "yo" } }, "result": { "x": "yo" } },
+          { "userPrompt": "test3", "call": { "name": "schemaBad", "arguments": { "x": "ok" } }, "result": { "x": "ok" } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "parse",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "parseBad",
+        "description": "Has a JS syntax error in body",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "a": { "type": "number" }
+          },
+          "required": ["a"]
+        }
+      },
+      "meta": {
+        "jsBody": "function parseBad(a) { return a.; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "test", "call": { "name": "parseBad", "arguments": { "a": 1 } }, "result": 1 },
+          { "userPrompt": "test2", "call": { "name": "parseBad", "arguments": { "a": 2 } }, "result": 2 },
+          { "userPrompt": "test3", "call": { "name": "parseBad", "arguments": { "a": 3 } }, "result": 3 }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "parse",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "fetchBanned",
+        "description": "Body calls fetch (banned)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string" }
+          },
+          "required": ["url"]
+        }
+      },
+      "meta": {
+        "jsBody": "function fetchBanned(args) { return fetch(args.url); }",
+        "requiresNetwork": true,
+        "trajectories": [
+          { "userPrompt": "fetch google", "call": { "name": "fetchBanned", "arguments": { "url": "https://google.com" } }, "result": {} },
+          { "userPrompt": "fetch example", "call": { "name": "fetchBanned", "arguments": { "url": "https://example.com" } }, "result": {} },
+          { "userPrompt": "fetch test", "call": { "name": "fetchBanned", "arguments": { "url": "https://test.com" } }, "result": {} }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "sandbox",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "infiniteLoop",
+        "description": "Infinite loop body (sandbox timeout)",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "meta": {
+        "jsBody": "function infiniteLoop(args) { while(true){} }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "run loop", "call": { "name": "infiniteLoop", "arguments": {} }, "result": null },
+          { "userPrompt": "run loop2", "call": { "name": "infiniteLoop", "arguments": {} }, "result": null },
+          { "userPrompt": "run loop3", "call": { "name": "infiniteLoop", "arguments": {} }, "result": null }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "sandbox",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "memoryBomb",
+        "description": "Allocates ~200 MB (sandbox resource cap)",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "meta": {
+        "jsBody": "function memoryBomb(args) { var a = []; for (var i = 0; i < 2000000; i++) { a.push({x: 'x'.repeat(100)}); } return a.length; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "bomb", "call": { "name": "memoryBomb", "arguments": {} }, "result": 2000000 },
+          { "userPrompt": "bomb2", "call": { "name": "memoryBomb", "arguments": {} }, "result": 2000000 },
+          { "userPrompt": "bomb3", "call": { "name": "memoryBomb", "arguments": {} }, "result": 2000000 }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "fuzz",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "throwsOnEmpty",
+        "description": "Throws when query is empty string",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string" }
+          },
+          "required": ["query"]
+        }
+      },
+      "meta": {
+        "jsBody": "function throwsOnEmpty(args) { if (!args.query) { throw new Error('empty query'); } return { result: args.query.toUpperCase() }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "search hello", "call": { "name": "throwsOnEmpty", "arguments": { "query": "hello" } }, "result": { "result": "HELLO" } },
+          { "userPrompt": "search world", "call": { "name": "throwsOnEmpty", "arguments": { "query": "world" } }, "result": { "result": "WORLD" } },
+          { "userPrompt": "search test", "call": { "name": "throwsOnEmpty", "arguments": { "query": "test" } }, "result": { "result": "TEST" } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "fuzz",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "nonSerializable",
+        "description": "Returns a function (non-serializable)",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "meta": {
+        "jsBody": "function nonSerializable(args) { return function inner() { return 42; }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "test", "call": { "name": "nonSerializable", "arguments": {} }, "result": null },
+          { "userPrompt": "test2", "call": { "name": "nonSerializable", "arguments": {} }, "result": null },
+          { "userPrompt": "test3", "call": { "name": "nonSerializable", "arguments": {} }, "result": null }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "parse",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "nondeterministicDate",
+        "description": "Uses Date.now() (banned member access)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" }
+          },
+          "required": ["label"]
+        }
+      },
+      "meta": {
+        "jsBody": "function nondeterministicDate(args) { return { label: args.label, ts: Date.now() }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "tag it", "call": { "name": "nondeterministicDate", "arguments": { "label": "x" } }, "result": { "label": "x", "ts": 0 } },
+          { "userPrompt": "tag it2", "call": { "name": "nondeterministicDate", "arguments": { "label": "y" } }, "result": { "label": "y", "ts": 0 } },
+          { "userPrompt": "tag it3", "call": { "name": "nondeterministicDate", "arguments": { "label": "z" } }, "result": { "label": "z", "ts": 0 } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "parse",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "nondeterministicRandom",
+        "description": "Uses Math.random() (banned member access)",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "meta": {
+        "jsBody": "function nondeterministicRandom(args) { return { value: Math.random() }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "roll dice", "call": { "name": "nondeterministicRandom", "arguments": {} }, "result": { "value": 0.5 } },
+          { "userPrompt": "roll dice2", "call": { "name": "nondeterministicRandom", "arguments": {} }, "result": { "value": 0.5 } },
+          { "userPrompt": "roll dice3", "call": { "name": "nondeterministicRandom", "arguments": {} }, "result": { "value": 0.5 } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  },
+  {
+    "expectedFailedGate": "trajectory",
+    "spec": {
+      "type": "function",
+      "function": {
+        "name": "trajectoryMismatch",
+        "description": "Valid body but trajectory result disagrees with actual output",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "a": { "type": "number" },
+            "b": { "type": "number" }
+          },
+          "required": ["a", "b"]
+        }
+      },
+      "meta": {
+        "jsBody": "function trajectoryMismatch(args) { return { sum: args.a + args.b }; }",
+        "requiresNetwork": false,
+        "trajectories": [
+          { "userPrompt": "add 2 and 3", "call": { "name": "trajectoryMismatch", "arguments": { "a": 2, "b": 3 } }, "result": { "sum": 999 } },
+          { "userPrompt": "add 1 and 1", "call": { "name": "trajectoryMismatch", "arguments": { "a": 1, "b": 1 } }, "result": { "sum": 999 } },
+          { "userPrompt": "add 0 and 0", "call": { "name": "trajectoryMismatch", "arguments": { "a": 0, "b": 0 } }, "result": { "sum": 999 } }
+        ],
+        "sourceWorker": "fixture",
+        "sourceChunks": []
+      }
+    }
+  }
+]
