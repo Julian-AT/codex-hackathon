@@ -5,9 +5,11 @@
 </p>
 
 <p align="center">
-  <a href="assets/recording"><strong>Desktop control room recording</strong></a>
-  &nbsp;·&nbsp;
-  <a href="assets/recording_mobile.MP4"><strong>Offline iPhone recording</strong></a>
+  <video src="assets/recording.mp4" controls playsinline muted width="920"></video>
+</p>
+
+<p align="center">
+  <video src="assets/recording_mobile.MP4" controls playsinline muted width="360"></video>
 </p>
 
 <p align="center">
@@ -15,12 +17,12 @@
   <img src="https://img.shields.io/badge/Stack-Next.js_15_·_AI_SDK_6_·_MLX_Swift-black?style=flat-square" alt="Stack">
   <img src="https://img.shields.io/badge/Training-mlx--lm_%2B_mlx--lm--lora-orange?style=flat-square" alt="Training">
   <img src="https://img.shields.io/badge/Runtime-iPhone_offline-0F766E?style=flat-square" alt="iPhone offline">
-  <img src="https://img.shields.io/badge/Product-Supabase_specialist-111827?style=flat-square" alt="Supabase specialist">
+  <img src="https://img.shields.io/badge/Product-Any_specialist_model-111827?style=flat-square" alt="Specialist model">
 </p>
 
 ## Overview
 
-This project takes a product surface, currently **Supabase**, and turns it into a narrow specialist model that can run **fully offline on an iPhone**.
+This project takes a product surface and turns it into a narrow specialist model that can run **fully offline on an iPhone**.
 
 The system is intentionally end-to-end. A visible coordinator/worker swarm discovers the product surface, designs callable tools, and synthesizes training data. A local MLX LoRA path fine-tunes the model on a MacBook. The resulting adapter and tool manifest are copied into a native Swift app, where the phone can answer specialist questions and execute bundled JavaScript tools while in **airplane mode**.
 
@@ -48,11 +50,11 @@ Most offline-AI demos quietly weaken the story with hidden retrieval, cloud fall
 The README media flow mirrors the actual pitch surface: one desktop control-room run and one offline iPhone proof.
 
 <p align="center">
-  <a href="assets/Cap%202026-04-18%20at%2016.50.29.mp4"><strong>Watch the desktop swarm + training flow</strong></a>
+  <video src="assets/recording.mp4" controls playsinline muted width="920"></video>
 </p>
 
 <p align="center">
-  <a href="assets/recording_mobile.MP4"><strong>Watch the mobile offline proof</strong></a>
+  <video src="assets/recording_mobile.MP4" controls playsinline muted width="360"></video>
 </p>
 
 ---
@@ -144,7 +146,7 @@ sequenceDiagram
   OP->>A: Fuse + deploy adapter
   A->>I: Copy adapter + tools bundle
   I->>I: Load adapter, register tools, stay offline
-  OP->>I: Ask Supabase question
+  OP->>I: Ask domain-specific question
   I-->>OP: Answer + optional on-device tool call
 ```
 
@@ -304,12 +306,13 @@ That fallback ladder is part of the product design, not an afterthought.
 
 ## Current focus
 
-The current specialist target is **Supabase**. The architecture is reusable for other product surfaces, but the strongest path right now is:
+The current demo path is a reusable specialist-model pipeline. The same architecture can be pointed at different product surfaces, knowledge domains, or tool environments with the same core loop:
 
-- Supabase corpus discovery
-- Supabase tool manifest generation
-- Supabase training/eval data
-- Supabase-focused offline mobile proof
+- corpus discovery
+- tool manifest generation
+- training and eval data synthesis
+- local fine-tuning
+- offline mobile proof
 
 ---
 
