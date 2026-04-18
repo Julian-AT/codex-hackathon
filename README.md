@@ -4,11 +4,19 @@
   <strong>Agentic product-to-model pipeline: discovery swarm, dynamic tool design, judge-gated data generation, local MLX fine-tuning, and offline iPhone inference in one deployable system</strong>
 </p>
 
-<div align="center" style="display: flex; justify-content: center; align-items: flex-start; gap: 24px;">
-    https://github.com/user-attachments/assets/b3b7906b-b16d-4755-8b06-12855f8ec9de
-    
-    https://github.com/user-attachments/assets/2039d6d2-f806-4e9d-8255-d179653d646d
-</div>
+<p align="center">
+  
+
+https://github.com/user-attachments/assets/b3b7906b-b16d-4755-8b06-12855f8ec9de
+
+
+https://github.com/user-attachments/assets/2039d6d2-f806-4e9d-8255-d179653d646d
+
+</p>
+
+<p align="center">
+  
+</p>
 
 <p align="center">
   <a href="https://github.com/Julian-AT/codex-hackathon"><img src="https://img.shields.io/badge/OpenClaw-Hack__001-blue?style=flat-square" alt="OpenClaw Hack_001"></a>
