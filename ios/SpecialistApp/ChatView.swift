@@ -27,7 +27,18 @@ struct ChatView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            StatusPill()
+            HStack {
+                Circle()
+                    .fill(monitor.isOnline ? .green : .red)
+                    .frame(width: 8, height: 8)
+                Text(monitor.isOnline ? "Online" : "Offline")
+                    .font(.caption)
+                Spacer()
+                if let adapter = model.currentAdapter {
+                    Text(adapter).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal)
 
             ScrollViewReader { proxy in
                 ScrollView {
@@ -65,12 +76,18 @@ struct ChatView: View {
     private func bubble(for message: ChatMessage) -> some View {
         switch message.role {
         case .toolCall:
-            ToolCallBubble(
-                messageContent: message.content,
-                toolName: message.toolName ?? "Tool call",
-                toolArgs: message.toolArgs,
-                toolResult: message.toolResult
-            )
+            VStack(alignment: .leading, spacing: 4) {
+                Text(message.toolName ?? "Tool call")
+                    .font(.caption.bold())
+                if let args = message.toolArgs {
+                    Text(args).font(.caption2).foregroundStyle(.secondary)
+                }
+                if let result = message.toolResult {
+                    Text(result).font(.caption2)
+                }
+            }
+            .padding(8)
+            .background(Color.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
             .frame(maxWidth: .infinity, alignment: .leading)
         default:
             standardBubble(for: message)

@@ -1,6 +1,5 @@
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import * as Sentry from '@sentry/nextjs';
+import { generateObject, type LanguageModel } from 'ai';
+import { getModel } from '@/lib/model';
 import pLimit from 'p-limit';
 import { z } from 'zod';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
@@ -40,29 +39,25 @@ export interface EvalGenOptions {
 }
 
 const generateQAItem = async (
-  model: ReturnType<typeof openai>,
+  model: LanguageModel,
   kind: 'factual' | 'reasoning',
   chunks: Chunk[],
   idx: number,
 ): Promise<EvalItem> => {
-  const { object } = await Sentry.startSpan(
-    { op: 'ai.agent', name: `eval-gen.${kind}` },
-    () =>
-      generateObject({
-        model,
-        schema: EVAL_QA_SCHEMA,
-        system:
-          kind === 'factual'
-            ? 'Generate a factual question answerable from the documentation below. Include the expected answer.'
-            : 'Generate a multi-hop reasoning question requiring synthesis across the documentation below. Include the expected answer.',
-        prompt: chunks.map((c) => c.text).join('\n---\n'),
-        temperature: 0.5,
-        experimental_telemetry: {
-          isEnabled: true,
-          functionId: `eval-gen.${kind}`,
-        },
-      }),
-  );
+  const { object } = await generateObject({
+    model,
+    schema: EVAL_QA_SCHEMA,
+    system:
+      kind === 'factual'
+        ? 'Generate a factual question answerable from the documentation below. Include the expected answer.'
+        : 'Generate a multi-hop reasoning question requiring synthesis across the documentation below. Include the expected answer.',
+    prompt: chunks.map((c) => c.text).join('\n---\n'),
+    temperature: 0.5,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: `eval-gen.${kind}`,
+    },
+  });
   return {
     id: `eval-${kind}-${idx}`,
     kind,
@@ -73,7 +68,7 @@ const generateQAItem = async (
 };
 
 const generateToolItem = async (
-  model: ReturnType<typeof openai>,
+  model: LanguageModel,
   kind: 'single-turn-tool' | 'multi-turn-tool',
   chunks: Chunk[],
   selectedTools: DynamicToolSpec[],
@@ -85,24 +80,20 @@ const generateToolItem = async (
         `- ${t.function.name}: ${t.function.description} (params: ${JSON.stringify(t.function.parameters)})`,
     )
     .join('\n');
-  const { object } = await Sentry.startSpan(
-    { op: 'ai.agent', name: `eval-gen.${kind}` },
-    () =>
-      generateObject({
-        model,
-        schema: EVAL_TOOL_SCHEMA,
-        system:
-          kind === 'single-turn-tool'
-            ? `Generate a user query that requires calling exactly one of these tools with correct arguments:\n${toolDescs}\nInclude the expected tool call.`
-            : `Generate a multi-turn user scenario (2-4 turns) that requires calling 2+ of these tools:\n${toolDescs}\nInclude all expected tool calls in order.`,
-        prompt: chunks.map((c) => c.text).join('\n---\n'),
-        temperature: 0.5,
-        experimental_telemetry: {
-          isEnabled: true,
-          functionId: `eval-gen.${kind}`,
-        },
-      }),
-  );
+  const { object } = await generateObject({
+    model,
+    schema: EVAL_TOOL_SCHEMA,
+    system:
+      kind === 'single-turn-tool'
+        ? `Generate a user query that requires calling exactly one of these tools with correct arguments:\n${toolDescs}\nInclude the expected tool call.`
+        : `Generate a multi-turn user scenario (2-4 turns) that requires calling 2+ of these tools:\n${toolDescs}\nInclude all expected tool calls in order.`,
+    prompt: chunks.map((c) => c.text).join('\n---\n'),
+    temperature: 0.5,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: `eval-gen.${kind}`,
+    },
+  });
   const expectedToolCalls: ToolCall[] = object.expectedToolCalls.map(
     (tc, i) => ({
       id: `eval_call_${idx}_${i}`,
@@ -142,7 +133,7 @@ export async function generateEvalSet(
     },
   } = opts;
   const limit = pLimit(concurrency);
-  const model = openai('gpt-5');
+  const model = getModel();
   const items: EvalItem[] = [];
 
   const tasks: Promise<void>[] = [];

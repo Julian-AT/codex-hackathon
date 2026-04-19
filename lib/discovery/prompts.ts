@@ -1,8 +1,18 @@
 import type { Chunk } from './types';
 
 export const BANNED_LIST = [
-  'fetch','require','import','process','globalThis','eval','Function',
-  'crypto','performance','Math.random','Date.now','constructor.constructor',
+	'fetch',
+	'require',
+	'import',
+	'process',
+	'globalThis',
+	'eval',
+	'Function',
+	'crypto',
+	'performance',
+	'Math.random',
+	'Date.now',
+	'constructor.constructor',
 ];
 
 const SYSTEM = `You are a tool-design worker in a parallel swarm of 4. Read the Supabase documentation chunks below and propose 3–6 JavaScript tools the downstream Gemma 4 adapter can call.
@@ -20,10 +30,13 @@ Your output passes 5 validation gates: schema well-formedness, AST parse + deny-
 
 Output shape: { tools: DynamicToolSpec[] } with 3–6 entries. Stop when you have enough; do not pad.`;
 
-export function buildToolDesignPrompt(workerId: string, slice: Chunk[]): { system: string; user: string } {
-  const body = slice
-    .map((c) => `<chunk id="${c.id}" source="${c.source}">\n${c.text}\n</chunk>`)
-    .join('\n\n');
-  const user = `Worker id: ${workerId}. Slice of ${slice.length} chunks below. Design 3–6 tools that could answer Supabase developer questions grounded in these chunks.\n\n${body}`;
-  return { system: SYSTEM, user };
+export function buildToolDesignPrompt(
+	workerId: string,
+	slice: Chunk[],
+): { system: string; user: string } {
+	const body = slice
+		.map((c) => `<chunk id="${c.id}" source="${c.source}">\n${c.text}\n</chunk>`)
+		.join('\n\n');
+	const user = `Worker id: ${workerId}. Slice of ${slice.length} chunks below. Design 3–6 tools that could answer Supabase developer questions grounded in these chunks.\n\n${body}`;
+	return { system: SYSTEM, user };
 }

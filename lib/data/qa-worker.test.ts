@@ -16,14 +16,8 @@ vi.mock('ai', () => ({
   }),
 }));
 
-vi.mock('@ai-sdk/anthropic', () => ({
-  createAnthropic: vi.fn(() => vi.fn(() => 'mocked-model')),
-}));
-
-vi.mock('@sentry/nextjs', () => ({
-  startSpan: vi.fn((_opts: unknown, fn: (span: unknown) => unknown) =>
-    fn({ setAttribute: vi.fn() }),
-  ),
+vi.mock('@/lib/model', () => ({
+  getModel: vi.fn(() => 'mocked-local-model'),
 }));
 
 /* ------------------------------------------------------------------ */
@@ -96,30 +90,9 @@ describe('generateQABatch', () => {
 
     expect(result.meta.length).toBe(result.examples.length);
     for (const m of result.meta) {
-      expect(m.generator).toBe('gpt-5-mini');
+      expect(m.generator).toBe('local');
       expect(['easy', 'medium', 'hard']).toContain(m.difficulty);
     }
-  });
-
-  it('calls Sentry.startSpan for telemetry', async () => {
-    const Sentry = await import('@sentry/nextjs');
-    const { generateQABatch } = await import('./qa-worker.js');
-
-    await generateQABatch({
-      trainChunks: mockChunks,
-      tools: mockTools,
-      count: 1,
-      concurrency: 1,
-      seed: 'sentry-test',
-    });
-
-    expect(Sentry.startSpan).toHaveBeenCalled();
-    const callArgs = vi.mocked(Sentry.startSpan).mock.calls[0][0] as {
-      op: string;
-      name: string;
-    };
-    expect(callArgs.op).toBe('ai.agent');
-    expect(callArgs.name).toBe('data-gen-qa');
   });
 
   it('invokes schema-gate on tool_calls and rejects invalid ones', async () => {

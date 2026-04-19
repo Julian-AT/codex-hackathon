@@ -8,9 +8,6 @@
  * Plan 04-05, Task 2.
  */
 
-import * as Sentry from '@sentry/nextjs';
-import { embedMany } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { DynamicToolSpec } from '../discovery/types';
@@ -21,6 +18,7 @@ import { generateQABatch } from './qa-worker';
 import { generateTrajBatch } from './traj-worker';
 import { judgeJury } from './judge';
 import { dedupeByMinHash, dedupeByEmbedding } from './dedupe';
+import { embedTexts } from './embed';
 import { checkStratification } from './stratify';
 import { generateEvalSet } from './eval-gen';
 import {
@@ -95,30 +93,22 @@ export async function runDataGenPipeline(
   // 3. Fan out QA + Traj workers in PARALLEL
   emit('generation', 'start');
   const [qaResult, trajResult] = await Promise.all([
-    Sentry.startSpan(
-      { op: 'ai.agent', name: 'data-gen-qa-batch' },
-      () =>
-        generateQABatch({
-          trainChunks,
-          tools,
-          count: opts.qaCounts ?? 500,
-          concurrency,
-          onProgress: (done, total) =>
-            emit('qa-gen', 'start', `${done}/${total}`),
-        }),
-    ),
-    Sentry.startSpan(
-      { op: 'ai.agent', name: 'data-gen-traj-batch' },
-      () =>
-        generateTrajBatch({
-          trainChunks,
-          tools,
-          counts: opts.trajCounts,
-          concurrency,
-          onProgress: (done, total, type) =>
-            emit(`traj-gen-${type}`, 'start', `${done}/${total}`),
-        }),
-    ),
+    generateQABatch({
+      trainChunks,
+      tools,
+      count: opts.qaCounts ?? 500,
+      concurrency,
+      onProgress: (done, total) =>
+        emit('qa-gen', 'start', `${done}/${total}`),
+    }),
+    generateTrajBatch({
+      trainChunks,
+      tools,
+      counts: opts.trajCounts,
+      concurrency,
+      onProgress: (done, total, type) =>
+        emit(`traj-gen-${type}`, 'start', `${done}/${total}`),
+    }),
   ]);
   const allExamples = [...qaResult.examples, ...trajResult.examples];
   const allMeta = [...qaResult.meta, ...trajResult.meta];
@@ -130,10 +120,7 @@ export async function runDataGenPipeline(
 
   // 4. Judge-jury filter (DAT-04 + DAT-05)
   emit('judging', 'start');
-  const juryResult = await Sentry.startSpan(
-    { op: 'ai.agent', name: 'judge-jury' },
-    () => judgeJury(allExamples, { concurrency }),
-  );
+  const juryResult = await judgeJury(allExamples, { concurrency });
   emit(
     'judging',
     'ok',
@@ -163,17 +150,13 @@ export async function runDataGenPipeline(
     text: ex.messages
       .map((m) => m.content)
       .join(' ')
-      .slice(0, 8000), // truncate for embedding
+      .slice(0, 8000),
   }));
-  // Batch embeddings (max 2048 per call)
-  const batchSize = 2048;
+  const batchSize = 256;
   const allEmbeddings: number[][] = [];
   for (let i = 0; i < textsToEmbed.length; i += batchSize) {
     const batch = textsToEmbed.slice(i, i + batchSize);
-    const { embeddings } = await embedMany({
-      model: openai.embedding('text-embedding-3-small'),
-      values: batch.map((t) => t.text),
-    });
+    const embeddings = await embedTexts(batch.map((t) => t.text));
     allEmbeddings.push(...embeddings);
   }
   const embeddingItems = textsToEmbed.map((t, i) => ({
@@ -208,10 +191,7 @@ export async function runDataGenPipeline(
 
   // 9. Generate eval set (DAT-10)
   emit('eval-gen', 'start');
-  const evalItems = await Sentry.startSpan(
-    { op: 'ai.agent', name: 'eval-gen' },
-    () => generateEvalSet({ evalChunks, tools, concurrency }),
-  );
+  const evalItems = await generateEvalSet({ evalChunks, tools, concurrency });
   emit('eval-gen', 'ok', `${evalItems.length} items`);
 
   // 10. Emit eval.jsonl

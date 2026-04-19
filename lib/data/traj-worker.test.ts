@@ -24,21 +24,11 @@ const mockCorpus = JSON.parse(
 const mockChunks: Chunk[] = mockCorpus.chunks.slice(0, 5);
 
 /* ------------------------------------------------------------------ */
-/*  Mock: @ai-sdk/anthropic                                          */
+/*  Mock: @/lib/model                                                */
 /* ------------------------------------------------------------------ */
 
-vi.mock('@ai-sdk/anthropic', () => ({
-  createAnthropic: vi.fn(() => {
-    return (modelId: string) => ({ modelId, provider: 'anthropic-mock' });
-  }),
-}));
-
-/* ------------------------------------------------------------------ */
-/*  Mock: @sentry/nextjs                                             */
-/* ------------------------------------------------------------------ */
-
-vi.mock('@sentry/nextjs', () => ({
-  startSpan: vi.fn((_opts: unknown, cb: () => unknown) => cb()),
+vi.mock('@/lib/model', () => ({
+  getModel: vi.fn(() => 'mocked-local-model'),
 }));
 
 /* ------------------------------------------------------------------ */

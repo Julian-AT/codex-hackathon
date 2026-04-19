@@ -14,8 +14,7 @@
  */
 
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import * as Sentry from '@sentry/nextjs';
+import { getModel } from '@/lib/model';
 import pLimit from 'p-limit';
 import { z } from 'zod';
 import type { TrainingExample, JudgeScore } from './types';
@@ -59,29 +58,24 @@ Rate each dimension as an integer 1-5. Be strict — only rate 4 or 5 if the exa
 
 export async function judgeExample(
   example: TrainingExample,
-  judgeModel: 'gpt-5' | 'gpt-5-mini',
+  _judgeModel: 'gpt-5' | 'gpt-5-mini',
 ): Promise<JudgeScore> {
-  const model =
-    judgeModel === 'gpt-5' ? openai('gpt-5') : openai('gpt-5-mini');
+  const model = getModel();
   const formatted = formatExampleForJudge(example);
 
-  const { object } = await Sentry.startSpan(
-    { op: 'ai.agent', name: `judge.${judgeModel}` },
-    () =>
-      generateObject({
-        model,
-        schema: JUDGE_SCHEMA,
-        system: JUDGE_SYSTEM,
-        prompt: formatted,
-        temperature: 0,
-        experimental_telemetry: {
-          isEnabled: true,
-          functionId: `judge.${judgeModel}`,
-        },
-      }),
-  );
+  const { object } = await generateObject({
+    model,
+    schema: JUDGE_SCHEMA,
+    system: JUDGE_SYSTEM,
+    prompt: formatted,
+    temperature: 0,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: 'judge',
+    },
+  });
 
-  return { ...object, judge: judgeModel } as JudgeScore;
+  return { ...object, judge: _judgeModel } as JudgeScore;
 }
 
 /* ------------------------------------------------------------------ */

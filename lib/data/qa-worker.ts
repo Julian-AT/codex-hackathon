@@ -7,8 +7,7 @@
  */
 
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import * as Sentry from '@sentry/nextjs';
+import { getModel } from '@/lib/model';
 import pLimit from 'p-limit';
 import type { Chunk, DynamicToolSpec } from '../discovery/types';
 import type {
@@ -27,8 +26,7 @@ import {
   buildQAUserPrompt,
 } from './qa-prompts';
 
-const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gpt-5-mini';
-const MODEL = openai(DATA_GEN_MODEL);
+const MODEL = getModel();
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                      */
@@ -99,34 +97,23 @@ export async function generateQABatch(
     const chunkIds = chunks.map((c) => c.id);
 
     try {
-      const result = await Sentry.startSpan(
-        { op: 'ai.agent', name: 'data-gen-qa' },
-        async (span) => {
-          span.setAttribute('persona', persona.id);
-          span.setAttribute('difficulty', difficulty);
-          span.setAttribute('chunkIds', chunkIds.join(','));
-          span.setAttribute('attempt', attempt);
+      const systemPrompt = buildQASystemPrompt(persona, tools);
+      let userPrompt = buildQAUserPrompt(difficulty, chunks);
+      if (negFeedback) {
+        userPrompt += `\n\n[PREVIOUS ATTEMPT REJECTED: ${negFeedback}. Fix the issue.]`;
+      }
 
-          const systemPrompt = buildQASystemPrompt(persona, tools);
-          let userPrompt = buildQAUserPrompt(difficulty, chunks);
-          if (negFeedback) {
-            userPrompt += `\n\n[PREVIOUS ATTEMPT REJECTED: ${negFeedback}. Fix the issue.]`;
-          }
-
-          const { object } = await generateObject({
-            model: MODEL,
-            schema: QA_RESPONSE_SCHEMA,
-            system: systemPrompt,
-            prompt: userPrompt,
-            temperature: 0.7,
-            experimental_telemetry: {
-              isEnabled: true,
-              functionId: 'data-gen-qa',
-            },
-          });
-          return object;
+      const { object: result } = await generateObject({
+        model: MODEL,
+        schema: QA_RESPONSE_SCHEMA,
+        system: systemPrompt,
+        prompt: userPrompt,
+        temperature: 0.7,
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: 'data-gen-qa',
         },
-      );
+      });
 
       /* Schema-gate: validate any tool_calls (DAT-03 reject-never-patch) */
       if (result.toolCalls && result.toolCalls.length > 0) {
@@ -191,7 +178,7 @@ export async function generateQABatch(
         persona: persona.id,
         difficulty,
         sourceChunks: chunkIds,
-        generator: DATA_GEN_MODEL,
+        generator: 'local',
       } satisfies DataGenMeta;
 
       examples.push(example);

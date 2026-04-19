@@ -13,8 +13,8 @@ vi.mock('@ai-sdk/openai', () => ({
   openai: vi.fn((id: string) => `mocked-openai:${id}`),
 }));
 
-vi.mock('@sentry/nextjs', () => ({
-  startSpan: vi.fn((_opts: unknown, fn: () => unknown) => fn()),
+vi.mock('@/lib/model', () => ({
+  getModel: vi.fn(() => 'mocked-local-model'),
 }));
 
 /* ------------------------------------------------------------------ */

@@ -1,7 +1,6 @@
-import { openai } from '@ai-sdk/openai';
+import { getModel } from '@/lib/model';
 import { generateObject } from 'ai';
 import pLimit from 'p-limit';
-import * as Sentry from '@sentry/nextjs';
 
 import type { Chunk, DynamicToolSpec, TrainingExample, ChatMessage, DataGenMeta } from './types';
 import { samplePersona, sampleDifficulty, makeRng } from './personas';
@@ -19,8 +18,7 @@ import {
   buildRefusalPrompt,
 } from './traj-prompts';
 
-const DATA_GEN_MODEL = process.env.DATA_GEN_MODEL || 'gpt-5-mini';
-const MODEL = openai(DATA_GEN_MODEL);
+const MODEL = getModel();
 
 export interface TrajCounts {
   singleTurn?: number;
@@ -102,25 +100,12 @@ async function generateSingleTurn(
         ? `${prompt.system}\n\nPrevious attempt was rejected: ${lastError}. Fix the tool call arguments.`
         : prompt.system;
 
-    const result = await Sentry.startSpan(
-      {
-        op: 'ai.agent',
-        name: 'data-gen-traj',
-        attributes: {
-          trajType: 'single',
-          toolNames: tool.function.name,
-          chunkIds: chunks.map((c) => c.id).join(','),
-        },
-      },
-      async () => {
-        return generateObject({
-          model: MODEL,
-          schema: SINGLE_TURN_SCHEMA,
-          system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
-          prompt: prompt.user,
-        });
-      },
-    );
+    const result = await generateObject({
+      model: MODEL,
+      schema: SINGLE_TURN_SCHEMA,
+      system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
+      prompt: prompt.user,
+    });
 
     const obj = result.object;
 
@@ -167,7 +152,7 @@ async function generateSingleTurn(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: DATA_GEN_MODEL,
+        generator: 'local',
       },
     };
   }
@@ -192,25 +177,12 @@ async function generateMultiTurn(
         ? `${prompt.system}\n\nPrevious attempt was rejected: ${lastError}. Fix the tool call arguments.`
         : prompt.system;
 
-    const result = await Sentry.startSpan(
-      {
-        op: 'ai.agent',
-        name: 'data-gen-traj',
-        attributes: {
-          trajType: 'multi',
-          toolNames: tools.map((t) => t.function.name).join(','),
-          chunkIds: chunks.map((c) => c.id).join(','),
-        },
-      },
-      async () => {
-        return generateObject({
-          model: MODEL,
-          schema: MULTI_TURN_SCHEMA,
-          system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
-          prompt: prompt.user,
-        });
-      },
-    );
+    const result = await generateObject({
+      model: MODEL,
+      schema: MULTI_TURN_SCHEMA,
+      system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
+      prompt: prompt.user,
+    });
 
     const obj = result.object;
 
@@ -274,7 +246,7 @@ async function generateMultiTurn(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: DATA_GEN_MODEL,
+        generator: 'local',
       },
     };
   }
@@ -300,25 +272,12 @@ async function generateParallelDep(
         ? `${prompt.system}\n\nPrevious attempt was rejected: ${lastError}. Fix the tool call arguments.`
         : prompt.system;
 
-    const result = await Sentry.startSpan(
-      {
-        op: 'ai.agent',
-        name: 'data-gen-traj',
-        attributes: {
-          trajType: 'parallel-dep',
-          toolNames: toolPair.map((t) => t.function.name).join(','),
-          chunkIds: chunks.map((c) => c.id).join(','),
-        },
-      },
-      async () => {
-        return generateObject({
-          model: MODEL,
-          schema: PARALLEL_DEP_SCHEMA,
-          system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
-          prompt: prompt.user,
-        });
-      },
-    );
+    const result = await generateObject({
+      model: MODEL,
+      schema: PARALLEL_DEP_SCHEMA,
+      system: `${systemWithFeedback}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
+      prompt: prompt.user,
+    });
 
     const obj = result.object;
 
@@ -372,7 +331,7 @@ async function generateParallelDep(
         persona: persona.id,
         difficulty,
         sourceChunks: chunks.map((c) => c.id),
-        generator: DATA_GEN_MODEL,
+        generator: 'local',
       },
     };
   }
@@ -388,25 +347,12 @@ async function generateRefusal(
 ): Promise<{ example: TrainingExample; meta: DataGenMeta }> {
   const prompt = buildRefusalPrompt(chunks);
 
-  const result = await Sentry.startSpan(
-    {
-      op: 'ai.agent',
-      name: 'data-gen-traj',
-      attributes: {
-        trajType: 'refusal',
-        toolNames: '',
-        chunkIds: chunks.map((c) => c.id).join(','),
-      },
-    },
-    async () => {
-      return generateObject({
-        model: MODEL,
-        schema: REFUSAL_SCHEMA,
-        system: `${prompt.system}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
-        prompt: prompt.user,
-      });
-    },
-  );
+  const result = await generateObject({
+    model: MODEL,
+    schema: REFUSAL_SCHEMA,
+    system: `${prompt.system}\n\nPersona: ${persona.voice}\nDifficulty: ${difficulty}`,
+    prompt: prompt.user,
+  });
 
   const obj = result.object;
 
@@ -422,7 +368,7 @@ async function generateRefusal(
       persona: persona.id,
       difficulty,
       sourceChunks: chunks.map((c) => c.id),
-      generator: DATA_GEN_MODEL,
+      generator: 'local',
     },
   };
 }

@@ -11,34 +11,33 @@
 
 import { ToolLoopAgent as Agent, stepCountIs } from 'ai';
 import type { UIMessageStreamWriter } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import pLimit from 'p-limit';
 
 import { createSpawnWorkerTool } from '@/lib/coordinator/spawnWorker';
+import { getModel } from '@/lib/model';
 
-const COORDINATOR_MODEL = 'gpt-5';
 const COORDINATOR_STEP_CAP = 8; // PITFALLS P10 — equivalent to stepCountIs(8)
 const COORDINATOR_WORKER_CONCURRENCY = 15; // PITFALLS P22
 
 const SYSTEM = [
-  'You are a coordinator agent in a multi-worker pipeline.',
-  'You NEVER perform domain work yourself. You ONLY call the spawnWorker tool to delegate.',
-  'When asked to launch N workers in parallel, emit N tool calls in a single turn before observing any result.',
-  'Available roles: discovery, tool-design, data-gen-qa, data-gen-traj, eval-gen.',
-  'Always provide a unique id per worker (e.g. "discovery-1", "discovery-2").',
+	'You are a coordinator agent in a multi-worker pipeline.',
+	'You NEVER perform domain work yourself. You ONLY call the spawnWorker tool to delegate.',
+	'When asked to launch N workers in parallel, emit N tool calls in a single turn before observing any result.',
+	'Available roles: discovery, tool-design, data-gen-qa, data-gen-traj, eval-gen.',
+	'Always provide a unique id per worker (e.g. "discovery-1", "discovery-2").',
 ].join(' ');
 
 export function createCoordinator(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  writer: UIMessageStreamWriter<any>,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	writer: UIMessageStreamWriter<any>,
 ) {
-  const limiter = pLimit(COORDINATOR_WORKER_CONCURRENCY);
-  return new Agent({
-    model: openai(COORDINATOR_MODEL),
-    instructions: SYSTEM,
-    stopWhen: stepCountIs(COORDINATOR_STEP_CAP),
-    tools: {
-      spawnWorker: createSpawnWorkerTool(writer, limiter),
-    },
-  });
+	const limiter = pLimit(COORDINATOR_WORKER_CONCURRENCY);
+	return new Agent({
+		model: getModel(),
+		instructions: SYSTEM,
+		stopWhen: stepCountIs(COORDINATOR_STEP_CAP),
+		tools: {
+			spawnWorker: createSpawnWorkerTool(writer, limiter),
+		},
+	});
 }
