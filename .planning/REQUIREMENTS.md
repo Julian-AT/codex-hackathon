@@ -179,16 +179,138 @@
 
 ## Traceability
 
-Traceability is populated during roadmap creation. Every v1 requirement must map to exactly one phase.
+Every v1 requirement maps to exactly one roadmap phase.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| IDEN-01 | Phase 1 | Pending |
+| IDEN-02 | Phase 1 | Pending |
+| IDEN-03 | Phase 1 | Pending |
+| IDEN-04 | Phase 1 | Pending |
+| IDEN-05 | Phase 1 | Pending |
+| IDEN-06 | Phase 1 | Pending |
+| IDEN-07 | Phase 1 | Pending |
+| IDEN-08 | Phase 1 | Pending |
+| IDEN-09 | Phase 1 | Pending |
+| IDEN-10 | Phase 1 | Pending |
+| FNDN-01 | Phase 2 | Pending |
+| FNDN-02 | Phase 2 | Pending |
+| FNDN-03 | Phase 2 | Pending |
+| FNDN-04 | Phase 2 | Pending |
+| FNDN-05 | Phase 2 | Pending |
+| FNDN-06 | Phase 2 | Pending |
+| FNDN-07 | Phase 2 | Pending |
+| FNDN-08 | Phase 2 | Pending |
+| FNDN-09 | Phase 2 | Pending |
+| FNDN-10 | Phase 2 | Pending |
+| FNDN-11 | Phase 2 | Pending |
+| FNDN-12 | Phase 2 | Pending |
+| REPO-01 | Phase 3 | Pending |
+| REPO-02 | Phase 3 | Pending |
+| REPO-03 | Phase 3 | Pending |
+| REPO-04 | Phase 3 | Pending |
+| REPO-05 | Phase 3 | Pending |
+| REPO-06 | Phase 3 | Pending |
+| REPO-07 | Phase 3 | Pending |
+| REPO-08 | Phase 3 | Pending |
+| REPO-09 | Phase 3 | Pending |
+| REPO-10 | Phase 3 | Pending |
+| REPO-11 | Phase 3 | Pending |
+| REPO-12 | Phase 3 | Pending |
+| REPO-13 | Phase 3 | Pending |
+| REPO-14 | Phase 3 | Pending |
+| REPO-15 | Phase 3 | Pending |
+| REPO-16 | Phase 3 | Pending |
+| REPO-17 | Phase 3 | Pending |
+| REPO-18 | Phase 3 | Pending |
+| EVID-01 | Phase 4 | Pending |
+| EVID-02 | Phase 4 | Pending |
+| EVID-03 | Phase 4 | Pending |
+| EVID-04 | Phase 4 | Pending |
+| EVID-05 | Phase 4 | Pending |
+| EVID-06 | Phase 4 | Pending |
+| EVID-07 | Phase 4 | Pending |
+| EVID-08 | Phase 4 | Pending |
+| EVID-09 | Phase 4 | Pending |
+| EVID-10 | Phase 4 | Pending |
+| EVID-11 | Phase 4 | Pending |
+| EVID-12 | Phase 4 | Pending |
+| EVID-13 | Phase 4 | Pending |
+| EVID-14 | Phase 4 | Pending |
+| EVID-15 | Phase 4 | Pending |
+| DATA-01 | Phase 5 | Pending |
+| DATA-02 | Phase 5 | Pending |
+| DATA-03 | Phase 5 | Pending |
+| DATA-04 | Phase 5 | Pending |
+| DATA-05 | Phase 5 | Pending |
+| DATA-06 | Phase 5 | Pending |
+| DATA-07 | Phase 5 | Pending |
+| DATA-08 | Phase 5 | Pending |
+| DATA-09 | Phase 5 | Pending |
+| DATA-10 | Phase 5 | Pending |
+| DATA-11 | Phase 5 | Pending |
+| DATA-12 | Phase 5 | Pending |
+| DATA-13 | Phase 5 | Pending |
+| DATA-14 | Phase 5 | Pending |
+| DATA-15 | Phase 5 | Pending |
+| DATA-16 | Phase 5 | Pending |
+| DATA-17 | Phase 5 | Pending |
+| DATA-18 | Phase 5 | Pending |
+| DATA-19 | Phase 5 | Pending |
+| DATA-20 | Phase 5 | Pending |
+| DATA-21 | Phase 5 | Pending |
+| DATA-22 | Phase 5 | Pending |
+| DATA-23 | Phase 5 | Pending |
+| DATA-24 | Phase 5 | Pending |
+| BNCH-01 | Phase 6 | Pending |
+| BNCH-02 | Phase 6 | Pending |
+| BNCH-03 | Phase 6 | Pending |
+| BNCH-04 | Phase 6 | Pending |
+| BNCH-05 | Phase 6 | Pending |
+| BNCH-06 | Phase 6 | Pending |
+| BNCH-07 | Phase 6 | Pending |
+| BNCH-08 | Phase 6 | Pending |
+| BNCH-09 | Phase 6 | Pending |
+| BNCH-10 | Phase 6 | Pending |
+| BNCH-11 | Phase 6 | Pending |
+| BNCH-12 | Phase 6 | Pending |
+| BNCH-13 | Phase 6 | Pending |
+| BNCH-14 | Phase 6 | Pending |
+| BNCH-15 | Phase 6 | Pending |
+| BNCH-16 | Phase 6 | Pending |
+| TRNG-01 | Phase 7 | Pending |
+| TRNG-02 | Phase 7 | Pending |
+| TRNG-03 | Phase 7 | Pending |
+| TRNG-04 | Phase 7 | Pending |
+| TRNG-05 | Phase 7 | Pending |
+| TRNG-06 | Phase 7 | Pending |
+| TRNG-07 | Phase 7 | Pending |
+| TRNG-08 | Phase 7 | Pending |
+| TRNG-09 | Phase 7 | Pending |
+| TRNG-10 | Phase 7 | Pending |
+| STUD-01 | Phase 8 | Pending |
+| STUD-02 | Phase 8 | Pending |
+| STUD-03 | Phase 8 | Pending |
+| STUD-04 | Phase 8 | Pending |
+| STUD-05 | Phase 8 | Pending |
+| STUD-06 | Phase 8 | Pending |
+| STUD-07 | Phase 8 | Pending |
+| STUD-08 | Phase 8 | Pending |
+| STUD-09 | Phase 8 | Pending |
+| STUD-10 | Phase 8 | Pending |
+| STUD-11 | Phase 8 | Pending |
+| STUD-12 | Phase 8 | Pending |
+| STUD-13 | Phase 8 | Pending |
+| STUD-14 | Phase 8 | Pending |
+| STUD-15 | Phase 8 | Pending |
+| STUD-16 | Phase 8 | Pending |
+| STUD-17 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 122 total
-- Mapped to phases: 0
-- Unmapped: 122
+- Mapped to phases: 122
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-15*
-*Last updated: 2026-07-15 after initial definition*
+*Last updated: 2026-07-15 after roadmap creation*
