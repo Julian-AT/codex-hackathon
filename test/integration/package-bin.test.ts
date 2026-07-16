@@ -1,6 +1,16 @@
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { chmod, lstat, mkdir, mkdtemp, readFile, readlink, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+	chmod,
+	lstat,
+	mkdir,
+	mkdtemp,
+	readFile,
+	readlink,
+	rm,
+	symlink,
+	writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -35,7 +45,9 @@ interface PackageOwnershipMarker {
 }
 
 afterEach(async () => {
-	await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+	await Promise.all(
+		temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })),
+	);
 });
 
 async function createTemporaryRoot(): Promise<string> {
@@ -68,7 +80,9 @@ async function fingerprint(root: string, fixture: PackageFixture): Promise<Recor
 	for (const sentinel of fixture.sentinels) {
 		const targetPath = path.join(root, sentinel.path);
 		const stat = await lstat(targetPath);
-		const value = stat.isSymbolicLink() ? `link:${await readlink(targetPath)}` : await readFile(targetPath);
+		const value = stat.isSymbolicLink()
+			? `link:${await readlink(targetPath)}`
+			: await readFile(targetPath);
 		const payload = typeof value === 'string' ? value : value.toString('base64');
 		result[sentinel.path] = createHash('sha256')
 			.update(`${stat.mode & 0o7777}:${payload}`)
@@ -79,23 +93,19 @@ async function fingerprint(root: string, fixture: PackageFixture): Promise<Recor
 
 async function packRepository(destination: string, filename: string): Promise<string> {
 	const tarball = path.join(destination, filename);
-	await execFileAsync(
-		'bun',
-		['pm', 'pack', '--ignore-scripts', '--filename', tarball, '--quiet'],
-		{
-			cwd: repositoryRoot,
-			env: {
-				...process.env,
-				CI: '1',
-				NO_PROXY: '*',
-				http_proxy: 'http://127.0.0.1:9',
-				https_proxy: 'http://127.0.0.1:9',
-				HTTP_PROXY: 'http://127.0.0.1:9',
-				HTTPS_PROXY: 'http://127.0.0.1:9',
-			},
-			timeout: 10_000,
+	await execFileAsync('bun', ['pm', 'pack', '--ignore-scripts', '--filename', tarball, '--quiet'], {
+		cwd: repositoryRoot,
+		env: {
+			...process.env,
+			CI: '1',
+			NO_PROXY: '*',
+			http_proxy: 'http://127.0.0.1:9',
+			https_proxy: 'http://127.0.0.1:9',
+			HTTP_PROXY: 'http://127.0.0.1:9',
+			HTTPS_PROXY: 'http://127.0.0.1:9',
 		},
-	);
+		timeout: 10_000,
+	});
 	return tarball;
 }
 
@@ -105,7 +115,9 @@ async function installPackedArtifact(tarball: string, installationRoot: string):
 	await mkdir(extractionRoot, { recursive: true });
 	await execFileAsync('tar', ['-xzf', tarball, '-C', extractionRoot], { timeout: 10_000 });
 	await mkdir(path.dirname(packageRoot), { recursive: true });
-	await execFileAsync('mv', [path.join(extractionRoot, 'package'), packageRoot], { timeout: 10_000 });
+	await execFileAsync('mv', [path.join(extractionRoot, 'package'), packageRoot], {
+		timeout: 10_000,
+	});
 
 	const manifest = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8')) as {
 		bin?: Record<string, string>;
@@ -125,9 +137,12 @@ async function installPackedArtifact(tarball: string, installationRoot: string):
 
 describe('packed mlx executable ownership', () => {
 	it('declares exactly one mlx bin and a matching versioned ownership marker', async () => {
-		const packageJson = JSON.parse(await readFile(path.join(repositoryRoot, 'package.json'), 'utf8')) as {
+		const packageJson = JSON.parse(
+			await readFile(path.join(repositoryRoot, 'package.json'), 'utf8'),
+		) as {
 			name?: string;
 			description?: string;
+			private?: boolean;
 			bin?: Record<string, string>;
 			files?: string[];
 			scripts?: Record<string, string>;
@@ -137,9 +152,9 @@ describe('packed mlx executable ownership', () => {
 		) as Partial<PackageOwnershipMarker>;
 
 		expect(packageJson.name).toBe('mlx-personal-coding-pipeline');
-		expect(packageJson.description?.startsWith('MLX — the personal coding dataset and model pipeline')).toBe(
-			true,
-		);
+		expect(
+			packageJson.description?.startsWith('MLX — the personal coding dataset and model pipeline'),
+		).toBe(true);
 		expect(packageJson.private).not.toBe(false);
 		expect(packageJson.bin).toEqual({ mlx: './src/cli.tsx' });
 		expect(packageJson.files).toContain('mlx.package.json');
