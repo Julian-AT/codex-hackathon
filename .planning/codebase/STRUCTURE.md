@@ -15,7 +15,7 @@ repository-root/
 ├── bun.lock               # Bun dependency lockfile
 ├── requirements.txt       # Python MLX tooling requirements
 ├── docs/                  # Authoritative MLX product, dataset, benchmark, and runbook docs
-├── src/                   # Operator CLI, Ink REPL, commands, UI components, local app config
+├── src/                   # Public MLX CLI contract plus inventoried brownfield REPL/command code
 ├── lib/                   # Pipeline, model, discovery, data, evaluation, training, adapter logic
 ├── scripts/               # Shell/TS operational scripts for MLX-LM, fuse, deploy, smoke checks
 ├── ios/                   # Swift iOS runtime and upstream MLX Swift example source
@@ -33,9 +33,14 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - Key files: `docs/MLX_PROJECT_SPEC.md`, `docs/MLX_DATASET_CONTRACT.md`, `docs/MLX_BENCHMARK_SPEC.md`, `docs/MLX_RESEARCH_RATIONALE.md`.
 
 **`src/`:**
-- Purpose: Operator-facing CLI, Ink UI shell, command modules, and local config/conversation helpers.
-- Contains: `src/cli.tsx`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
-- Key files: `src/cli.tsx`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/index.ts`.
+- Purpose: Side-effect-free public MLX CLI plus brownfield Ink UI, command modules, and local config/conversation helpers retained for migration inventory.
+- Contains: `src/cli.tsx`, `src/cli/`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
+- Key files: `src/cli.tsx`, `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/repl.tsx`, `src/commands/index.ts`.
+
+**`src/cli/`:**
+- Purpose: Public command identity, parsing, help projection, orchestration, and isolated human/JSON rendering.
+- Contains: One literal typed command catalog, pure `runCli` boundary, separate renderers, and colocated contract tests.
+- Key files: `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/cli/render-human.ts`, `src/cli/render-json.ts`.
 
 **`src/commands/`:**
 - Purpose: Slash commands and one-shot command implementations.
@@ -137,7 +142,7 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 ## Key File Locations
 
 **Entry Points:**
-- `src/cli.tsx`: Bun executable entry point for interactive REPL, one-shot stages, and standalone model server.
+- `src/cli.tsx`: Thin Bun executable entry for the side-effect-free public `mlx` command contract; it delegates once to `runCli` and performs one final write.
 - `src/repl.tsx`: Interactive Ink application and slash-command dispatch.
 - `src/app-oneshot.tsx`: One-shot Ink app for stage commands.
 - `src/commands/pipeline.ts`: REPL full-pipeline command.
@@ -167,6 +172,8 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - `lib/adapter/run-adapter.ts`: Adapter fuse/deploy subprocess wrapper.
 
 **Contracts and Types:**
+- `src/cli/command-tree.ts`: Public command paths, aliases, owner phases, arguments/options, availability, parse results, and help projections.
+- `src/cli/main.ts`: CLI envelopes, injected IO/dependencies, handlers, exit codes, and orchestration result types.
 - `lib/discovery/types.ts`: Corpus, chunk, dynamic tool, and validation result types.
 - `lib/data/types.ts`: Tool call, chat message, training example, judge score, eval item, and data-gen metadata types.
 - `src/commands/index.ts`: Command and command-context types.
@@ -175,6 +182,8 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 
 **Testing:**
 - `vitest.config.ts`: Includes `lib/**/*.test.ts`, `lib/**/*.spec.ts`, and `src/**/*.test.ts`.
+- `src/cli/*.test.ts`: Public catalog, parser, orchestration, deterministic renderer, and terminal edge contracts.
+- `test/integration/cli-contract.test.ts`: Isolated explicit-Bun public process contract with filesystem/network/process sentinels.
 - `lib/discovery/validate/*.test.ts`: Tool validation gate tests.
 - `lib/data/*.test.ts`: Data split, dedupe, schema, emit, judge, and worker tests.
 - `lib/training/*.test.ts`: Training transform, supervisor, and rollback tests.
@@ -210,7 +219,7 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - Shell scripts use kebab-case: `scripts/deploy-adapter.sh`, `scripts/smoke-pipeline.ts`.
 
 **Directories:**
-- Source domain directories use lowercase singular/plural names by function: `lib/discovery/`, `lib/data/`, `lib/training/`, `src/commands/`, `src/components/`.
+- Source domain directories use lowercase singular/plural names by function: `lib/discovery/`, `lib/data/`, `lib/training/`, `src/cli/`, `src/commands/`, `src/components/`.
 - Validation submodules live under `lib/discovery/validate/`.
 - Generated data is grouped under `data/` by artifact purpose: `data/training/`, `data/checkpoints/`, `data/bench/`.
 
@@ -223,11 +232,11 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 ## Where to Add New Code
 
 **New CLI Command:**
-- Implementation: `src/commands/<name>.ts`
-- Registry entry: `src/commands/index.ts`
-- UI component, if needed: `src/components/<name>-view.tsx`
-- Tests: `src/commands/<name>.test.ts` or `src/commands/index.test.ts`
-- Keep domain work in `lib/<domain>/`; command modules should orchestrate and render/log.
+- Public identity/owner/arguments/options: one entry in `src/cli/command-tree.ts`.
+- Handler seam: inject through `src/cli/main.ts`; unavailable later-phase leaves must not import a handler.
+- Human/JSON output: keep projections in `src/cli/render-human.ts` and `src/cli/render-json.ts` without cross-renderer side effects.
+- Tests: colocate pure contracts under `src/cli/*.test.ts` and add process behavior under `test/integration/` when the boundary changes.
+- Treat `src/commands/` and Ink components as brownfield inventory during Phase 1, not as the public command registry.
 
 **New Pipeline Stage in Existing Layout:**
 - Domain code: `lib/<stage>/`

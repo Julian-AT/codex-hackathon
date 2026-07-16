@@ -7,12 +7,12 @@
 
 ### Identity, Baseline, and Migration
 
-- [ ] **IDEN-01**: Operator-facing product text identifies the product on first mention as "MLX — the personal coding dataset and model pipeline" and contains no legacy Forgeprint, forgeprint, or codex product branding
+- [x] **IDEN-01**: Operator-facing product text identifies the product on first mention as "MLX — the personal coding dataset and model pipeline" and contains no legacy Forgeprint, forgeprint, or codex product branding
 - [ ] **IDEN-02**: Operator can invoke the product through the sole intended executable name `mlx`
 - [ ] **IDEN-03**: Operator can use `MLX_HOME` to override a default local state root of `~/.mlx`
 - [ ] **IDEN-04**: Operator can run `mlx doctor` to detect an unrelated existing `mlx` executable without MLX overwriting or shadowing it automatically
-- [ ] **IDEN-05**: Operator can access the complete documented command surface for initialization, auth, repositories, mirrors, metrics, evidence, preferences, datasets, benchmarks, training, models, agents, Studio, pipeline execution, and garbage collection
-- [ ] **IDEN-06**: Operator and automation can request deterministic `--json` output from practical CLI commands while human-readable output remains available
+- [x] **IDEN-05**: Operator can access the complete documented command surface for initialization, auth, repositories, mirrors, metrics, evidence, preferences, datasets, benchmarks, training, models, agents, Studio, pipeline execution, and garbage collection
+- [x] **IDEN-06**: Operator and automation can request deterministic `--json` output from practical CLI commands while human-readable output remains available
 - [ ] **IDEN-07**: Maintainer can inspect a migration inventory that classifies every legacy command, artifact path, generated dataset, script, product string, dynamic-tool path, and iOS component before destructive cleanup
 - [ ] **IDEN-08**: A legacy component can be removed only after its replacement owner and acceptance coverage are recorded
 - [ ] **IDEN-09**: Automation can run stable `check`, `typecheck`, unit, integration, Studio build, dataset validation, benchmark smoke, and local capability-check commands through the repository scripts
@@ -183,12 +183,12 @@ Every v1 requirement maps to exactly one roadmap phase.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| IDEN-01 | Phase 1 | Pending |
+| IDEN-01 | Phase 1 | Complete |
 | IDEN-02 | Phase 1 | Pending |
 | IDEN-03 | Phase 1 | Pending |
 | IDEN-04 | Phase 1 | Pending |
-| IDEN-05 | Phase 1 | Pending |
-| IDEN-06 | Phase 1 | Pending |
+| IDEN-05 | Phase 1 | Complete |
+| IDEN-06 | Phase 1 | Complete |
 | IDEN-07 | Phase 1 | Pending |
 | IDEN-08 | Phase 1 | Pending |
 | IDEN-09 | Phase 1 | Pending |
@@ -307,6 +307,7 @@ Every v1 requirement maps to exactly one roadmap phase.
 | STUD-17 | Phase 8 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 122 total
 - Mapped to phases: 122
 - Unmapped: 0
