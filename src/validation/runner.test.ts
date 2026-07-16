@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { CHECK_CATALOG, getCheckDescriptor, type CheckDescriptor } from './check-catalog';
 import type { CapabilityEvidence } from './capabilities';
+import { CHECK_CATALOG, type CheckDescriptor, getCheckDescriptor } from './check-catalog';
 import type { ValidationAggregate, ValidationResult } from './result';
 
 interface ProcessRequestShape {
@@ -64,11 +64,13 @@ class RecordingProcessPort {
 
 	async run(request: ProcessRequestShape): Promise<ProcessResultShape> {
 		this.calls.push(request);
-		return this.results[this.calls.length - 1] ?? {
-			exitCode: 0,
-			stdout: '',
-			stderr: '',
-		};
+		return (
+			this.results[this.calls.length - 1] ?? {
+				exitCode: 0,
+				stdout: '',
+				stderr: '',
+			}
+		);
 	}
 }
 
@@ -127,11 +129,7 @@ describe('runValidationCheck', () => {
 			{ exitCode: null, stdout: '', stderr: '', error: 'ENOENT' },
 			/(?:start|spawn).*ENOENT/i,
 		],
-		[
-			'timeout',
-			{ exitCode: null, stdout: 'partial', stderr: '', timedOut: true },
-			/timed out/i,
-		],
+		['timeout', { exitCode: null, stdout: 'partial', stderr: '', timedOut: true }, /timed out/i],
 		[
 			'interruption',
 			{ exitCode: null, signal: 'SIGINT', stdout: '', stderr: '', interrupted: true },
@@ -162,6 +160,22 @@ describe('runValidationCheck', () => {
 		expect(Buffer.byteLength(result.reason)).toBeLessThan(1_000);
 	});
 
+	it('distinguishes exactly-at-limit output from one-byte-over output on both streams', async () => {
+		const port = new RecordingProcessPort([
+			{ exitCode: 1, stdout: '12345678', stderr: 'abcdefgh' },
+			{ exitCode: 1, stdout: '123456789', stderr: 'abcdefghi' },
+		]);
+		const { runValidationCheck } = await requireRunnerApi();
+		const configured = dependencies(port, { maxOutputBytes: 8 });
+		const atLimit = await runValidationCheck(descriptor('check'), configured);
+		const overLimit = await runValidationCheck(descriptor('check'), configured);
+
+		expect(atLimit.reason).toContain('stdout="12345678"');
+		expect(atLimit.reason).toContain('stderr="abcdefgh"');
+		expect(atLimit.reason).not.toContain('[truncated]');
+		expect(overLimit.reason.match(/\[truncated\]/g)).toHaveLength(2);
+	});
+
 	it('returns absent products as explicit LIVE failures without invoking a process', async () => {
 		const port = new RecordingProcessPort([]);
 		const { runValidationCheck } = await requireRunnerApi();
@@ -179,20 +193,23 @@ describe('runValidationCheck', () => {
 	it.each([
 		[true, 'PASS'],
 		[false, 'SKIP'],
-	] as const)('maps a probed apple-silicon capability available=%s to %s', async (available, status) => {
-		const port = new RecordingProcessPort([]);
-		const { runValidationCheck } = await requireRunnerApi();
-		const result = await runValidationCheck(
-			descriptor('local:check'),
-			dependencies(port, {
-				probeCapability: async (id) => ({ id, available, reason: `Available: ${available}.` }),
-			}),
-		);
+	] as const)(
+		'maps a probed apple-silicon capability available=%s to %s',
+		async (available, status) => {
+			const port = new RecordingProcessPort([]);
+			const { runValidationCheck } = await requireRunnerApi();
+			const result = await runValidationCheck(
+				descriptor('local:check'),
+				dependencies(port, {
+					probeCapability: async (id) => ({ id, available, reason: `Available: ${available}.` }),
+				}),
+			);
 
-		expect(result).toMatchObject({ checkId: 'local:check', status, source: 'LIVE' });
-		expect(result.capability).toMatchObject({ id: 'apple-silicon', available });
-		expect(port.calls).toEqual([]);
-	});
+			expect(result).toMatchObject({ checkId: 'local:check', status, source: 'LIVE' });
+			expect(result.capability).toMatchObject({ id: 'apple-silicon', available });
+			expect(port.calls).toEqual([]);
+		},
+	);
 
 	it('requires explicit external integration evidence and never invokes the process port', async () => {
 		const port = new RecordingProcessPort([]);
@@ -256,7 +273,11 @@ describe('runValidationBaseline', () => {
 
 	it('is byte-stable for repeated controlled runs', async () => {
 		const { runValidationBaseline } = await requireRunnerApi();
-		const selected = [descriptor('check'), descriptor('test:integration'), descriptor('local:check')];
+		const selected = [
+			descriptor('check'),
+			descriptor('test:integration'),
+			descriptor('local:check'),
+		];
 		const firstPort = new RecordingProcessPort([success]);
 		const secondPort = new RecordingProcessPort([success]);
 		const first = await runValidationBaseline(dependencies(firstPort), selected);

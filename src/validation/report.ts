@@ -28,26 +28,94 @@ function counts(results: readonly ValidationResult[]): Record<ValidationStatus, 
 	);
 }
 
-function renderWide(results: readonly ValidationResult[]): string[] {
+function splitLongWord(word: string, width: number): string[] {
+	const characters = [...word];
+	const chunks: string[] = [];
+	for (let index = 0; index < characters.length; index += width) {
+		chunks.push(characters.slice(index, index + width).join(''));
+	}
+	return chunks;
+}
+
+function wrapText(value: string, width: number): string[] {
+	if (width < 1) return [value];
+	const words = value.split(/\s+/).filter(Boolean);
+	if (words.length === 0) return [''];
+	const lines: string[] = [];
+	let current = '';
+
+	for (const word of words) {
+		const parts = [...word].length > width ? splitLongWord(word, width) : [word];
+		for (const part of parts) {
+			if (current.length === 0) {
+				current = part;
+			} else if ([...`${current} ${part}`].length <= width) {
+				current = `${current} ${part}`;
+			} else {
+				lines.push(current);
+				current = part;
+			}
+			if ([...current].length === width && parts.length > 1) {
+				lines.push(current);
+				current = '';
+			}
+		}
+	}
+	if (current.length > 0) lines.push(current);
+	return lines;
+}
+
+function prefixedLines(prefix: string, value: string, columns: number, indent = 4): string[] {
+	const firstWidth = Math.max(1, columns - [...prefix].length);
+	const continuationPrefix = ' '.repeat(Math.min(indent, Math.max(0, columns - 1)));
+	const continuationWidth = Math.max(1, columns - continuationPrefix.length);
+	const firstPass = wrapText(value, firstWidth);
+	const lines = [`${prefix}${firstPass[0] ?? ''}`];
+	for (const overflow of firstPass.slice(1)) {
+		for (const line of wrapText(overflow, continuationWidth)) {
+			lines.push(`${continuationPrefix}${line}`);
+		}
+	}
+	return lines;
+}
+
+function renderWide(results: readonly ValidationResult[], columns: number): string[] {
 	const lines = ['STATUS  SOURCE   CHECK ID                 REASON'];
 	for (const result of results) {
 		lines.push(
-			`${result.status.padEnd(6)}  ${result.source.padEnd(7)}  ${result.checkId.padEnd(23)}  ${sanitizeHumanText(result.reason)}`,
+			...prefixedLines(
+				`${result.status.padEnd(6)}  ${result.source.padEnd(7)}  ${result.checkId.padEnd(23)}  `,
+				sanitizeHumanText(result.reason),
+				columns,
+			),
 		);
 	}
 	return lines;
 }
 
-function renderNarrow(results: readonly ValidationResult[]): string[] {
+function renderMedium(results: readonly ValidationResult[], columns: number): string[] {
+	const lines = ['STATUS  SOURCE   CHECK ID'];
+	for (const result of results) {
+		lines.push(`${result.status.padEnd(6)}  ${result.source.padEnd(7)}  ${result.checkId}`);
+		lines.push(...prefixedLines('    ', sanitizeHumanText(result.reason), columns));
+	}
+	return lines;
+}
+
+function renderNarrow(results: readonly ValidationResult[], columns: number): string[] {
 	const lines: string[] = [];
 	for (const [index, result] of results.entries()) {
 		if (index > 0) lines.push('');
 		lines.push(`Status: ${result.status}`);
 		lines.push(`Source: ${result.source}`);
 		lines.push(`Check ID: ${result.checkId}`);
-		lines.push(`Reason: ${sanitizeHumanText(result.reason)}`);
+		lines.push(...prefixedLines('Reason: ', sanitizeHumanText(result.reason), columns));
 	}
 	return lines;
+}
+
+function appendWrapped(lines: string[], value: string, columns: number): void {
+	lines.push(...wrapText(value, Math.max(1, columns)));
 }
 
 export function renderValidationReport(
@@ -56,16 +124,26 @@ export function renderValidationReport(
 ): string {
 	const columns = options.columns ?? 80;
 	const lines = ['Validation baseline', ''];
-	lines.push(...(columns < 40 ? renderNarrow(aggregate.results) : renderWide(aggregate.results)));
+	if (columns < 40) {
+		lines.push(...renderNarrow(aggregate.results, columns));
+	} else if (columns < 80) {
+		lines.push(...renderMedium(aggregate.results, columns));
+	} else {
+		lines.push(...renderWide(aggregate.results, columns));
+	}
 
 	if (aggregate.results.some(({ checkId }) => checkId === 'validation.empty')) {
-		lines.push('', EMPTY_HEADING, EMPTY_BODY);
+		lines.push('');
+		appendWrapped(lines, EMPTY_HEADING, columns);
+		appendWrapped(lines, EMPTY_BODY, columns);
 	}
 
 	const totals = counts(aggregate.results);
-	lines.push(
-		'',
+	lines.push('');
+	appendWrapped(
+		lines,
 		`Result: ${aggregate.status} — ${totals.PASS} PASS, ${totals.FAIL} FAIL, ${totals.SKIP} SKIP`,
+		columns,
 	);
 	return `${lines.join('\n')}\n`;
 }

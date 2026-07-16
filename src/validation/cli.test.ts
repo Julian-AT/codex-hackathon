@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import type { CheckDescriptor } from './check-catalog';
-import { aggregateValidationResults, type ValidationAggregate, type ValidationResult } from './result';
+import {
+	type ValidationAggregate,
+	type ValidationResult,
+	aggregateValidationResults,
+} from './result';
 
 interface ValidationCliIoShape {
 	readonly columns: number;
@@ -104,9 +108,17 @@ describe('runValidationCli', () => {
 		expect(io.stderr).toEqual([]);
 		expect(io.stdout).toHaveLength(1);
 		expect(io.stdout[0]?.endsWith('\n')).toBe(true);
-		expect(io.stdout[0]).not.toMatch(/\u001b|RUNNING|Validation baseline/);
+		expect(io.stdout[0]).not.toContain(String.fromCharCode(27));
+		expect(io.stdout[0]).not.toMatch(/RUNNING|Validation baseline/);
 		const parsed = JSON.parse(io.stdout[0] ?? '') as Record<string, unknown>;
-		expect(Object.keys(parsed)).toEqual(['schemaVersion', 'ok', 'command', 'status', 'data', 'error']);
+		expect(Object.keys(parsed)).toEqual([
+			'schemaVersion',
+			'ok',
+			'command',
+			'status',
+			'data',
+			'error',
+		]);
 		expect(parsed).toMatchObject({ schemaVersion: '1', ok: true, command, status: 'PASS' });
 	});
 
@@ -134,6 +146,19 @@ describe('runValidationCli', () => {
 		expect(parsed.data.results).toHaveLength(2);
 	});
 
+	it('emits byte-identical JSON for repeated controlled baselines', async () => {
+		const firstIo = memoryIo();
+		const secondIo = memoryIo();
+		const { runValidationCli } = await requireCliApi();
+		const configured = dependencies();
+
+		await runValidationCli(['baseline', '--json'], firstIo, configured);
+		await runValidationCli(['baseline', '--json'], secondIo, configured);
+
+		expect(secondIo.stdout).toEqual(firstIo.stdout);
+		expect(secondIo.stderr).toEqual(firstIo.stderr);
+	});
+
 	it('pins malformed or unknown run requests to exit 2 without calling a checker', async () => {
 		const io = memoryIo();
 		let calls = 0;
@@ -141,7 +166,12 @@ describe('runValidationCli', () => {
 		const exitCode = await runValidationCli(
 			['run', 'unknown', '--json'],
 			io,
-			dependencies({ runCheck: async () => (calls += 1, pass) }),
+			dependencies({
+				runCheck: async () => {
+					calls += 1;
+					return pass;
+				},
+			}),
 		);
 
 		expect(exitCode).toBe(2);

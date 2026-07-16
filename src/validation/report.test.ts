@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { aggregateValidationResults, type ValidationAggregate } from './result';
+import { type ValidationAggregate, aggregateValidationResults } from './result';
 
 interface ReportApi {
 	renderValidationReport(aggregate: ValidationAggregate, options?: { columns?: number }): string;
@@ -65,7 +65,7 @@ describe('renderValidationReport', () => {
 		const output = renderValidationReport(aggregateValidationResults([]), { columns: 80 });
 
 		expect(output).toContain('No validation results were produced.');
-		expect(output).toContain(
+		expect(output.replaceAll(/\s+/g, ' ')).toContain(
 			'The validation run is invalid and is reported as FAIL. Inspect the checker configuration and run the command again.',
 		);
 		expect(output).toContain('Result: FAIL');
@@ -81,13 +81,26 @@ describe('renderValidationReport', () => {
 				expect(output).toContain(result.status);
 				expect(output).toContain(result.source);
 				expect(output).toContain(result.checkId);
-				expect(output).toContain(result.reason);
+				expect(output.replaceAll(/\s+/g, ' ')).toContain(result.reason);
 			}
 			if (columns < 40) {
 				expect(output).toContain('Status: PASS');
 				expect(output).toContain('Check ID: check');
 			} else {
 				expect(output).toContain('STATUS');
+			}
+		},
+	);
+
+	it.each([80, 40, 39] as const)(
+		'wraps every ordinary line to the configured %i-column boundary without ellipsis',
+		async (columns) => {
+			const { renderValidationReport } = await requireReportApi();
+			const output = renderValidationReport(populated, { columns });
+
+			expect(output).not.toContain('…');
+			for (const line of output.trimEnd().split('\n')) {
+				expect([...line].length, line).toBeLessThanOrEqual(columns);
 			}
 		},
 	);
@@ -99,9 +112,9 @@ describe('renderValidationReport', () => {
 		]);
 
 		expect(renderValidationReport(one, { columns: 80 })).toContain('typecheck');
-		expect(renderValidationReport(populated, { columns: 80 }).match(/\b(?:PASS|FAIL|SKIP)\b/g)).toHaveLength(
-			8,
-		);
+		expect(
+			renderValidationReport(populated, { columns: 80 }).match(/\b(?:PASS|FAIL|SKIP)\b/g),
+		).toHaveLength(8);
 		expect(renderValidationReport(aggregateValidationResults([]), { columns: 80 })).toContain(
 			'validation.empty',
 		);
@@ -122,7 +135,7 @@ describe('renderValidationReport', () => {
 		expect(output).not.toContain('\u001b');
 		expect(output).not.toContain('\u0007');
 		expect(output).toContain('[31m');
-		expect(output).toContain('very-long-évidence very-long-évidence');
+		expect(output.replaceAll(/\s+/g, ' ')).toContain('very-long-évidence very-long-évidence');
 	});
 
 	it('is byte-stable for identical controlled input', async () => {
