@@ -41,10 +41,7 @@ export const runManifestSchema = z
 		inputHashes: z.array(digestSchema),
 		configHash: digestSchema,
 		implementationVersion: identifierSchema,
-		parent: z
-			.object({ runId: identifierSchema, manifestDigest: digestSchema })
-			.strict()
-			.nullable(),
+		parent: z.object({ runId: identifierSchema, manifestDigest: digestSchema }).strict().nullable(),
 		outputs: z.array(outputSchema),
 		validation: z.array(validationSchema),
 	})
@@ -204,7 +201,10 @@ function assertIdentifier(value: string, field: string, max = 256): void {
 export function createRun(database: CatalogDatabase, input: CreateRunInput): RunRecord {
 	assertIdentifier(input.runId, 'runId');
 	assertIdentifier(input.stageType, 'stageType', 128);
-	if (!digestSchema.safeParse(input.stageKey).success || !timestampSchema.safeParse(input.createdAt).success) {
+	if (
+		!digestSchema.safeParse(input.stageKey).success ||
+		!timestampSchema.safeParse(input.createdAt).success
+	) {
 		throw new RunManifestError('RUN_CONFLICT', 'Run identity or timestamp is invalid.');
 	}
 	try {
@@ -234,11 +234,11 @@ export function createRun(database: CatalogDatabase, input: CreateRunInput): Run
 
 function nextEventSequence(database: CatalogDatabase, runId: string): number {
 	return (
-		(database
+		database
 			.query<{ readonly sequence: number }, [string]>(
 				'SELECT coalesce(max(sequence), 0) + 1 AS sequence FROM run_events WHERE run_id = ?',
 			)
-			.get(runId)?.sequence ?? 1)
+			.get(runId)?.sequence ?? 1
 	);
 }
 
@@ -257,7 +257,13 @@ function insertEvent(
 		.query<never, [string, number, string, string, string]>(
 			'INSERT INTO run_events (run_id, sequence, event_type, event_json, created_at) VALUES (?, ?, ?, ?, ?)',
 		)
-		.run(runId, nextEventSequence(database, runId), eventType, canonicalJsonBytes(payload).toString(), createdAt);
+		.run(
+			runId,
+			nextEventSequence(database, runId),
+			eventType,
+			canonicalJsonBytes(payload).toString(),
+			createdAt,
+		);
 }
 
 export function appendRunEvent(
@@ -340,7 +346,9 @@ export function commitRunManifest(
 					`UPDATE runs SET status = 'committed', manifest_digest = ?, manifest_size = ?, terminal_at = ?
 					 WHERE run_id = ? AND status = 'running'`,
 				)
-				.run(object.digest, object.size, committedAt, manifest.runId) as { readonly changes?: number };
+				.run(object.digest, object.size, committedAt, manifest.runId) as {
+				readonly changes?: number;
+			};
 			if (changed.changes !== 1) {
 				throw new RunManifestError('TERMINAL_RUN', `Run ${manifest.runId} became terminal.`);
 			}
@@ -354,7 +362,12 @@ export function commitRunManifest(
 		})
 		.immediate();
 	const committed = getRunRecord(database, manifest.runId);
-	if (!committed || committed.status !== 'committed' || !committed.manifestDigest || committed.manifestSize === null) {
+	if (
+		!committed ||
+		committed.status !== 'committed' ||
+		!committed.manifestDigest ||
+		committed.manifestSize === null
+	) {
 		throw new RunManifestError('RUN_CONFLICT', 'Committed manifest record was not durable.');
 	}
 	return committed as CommittedRun;
@@ -406,5 +419,7 @@ export function verifyCommittedRun(
 }
 
 export function manifestChecksum(manifest: RunManifest): string {
-	return createHash('sha256').update(canonicalJsonBytes(parseManifest(manifest))).digest('hex');
+	return createHash('sha256')
+		.update(canonicalJsonBytes(parseManifest(manifest)))
+		.digest('hex');
 }

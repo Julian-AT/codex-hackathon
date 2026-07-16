@@ -80,9 +80,7 @@ describe('canonical immutable run manifests', () => {
 		const first = { '\u{10000}': 1, z: { beta: 2, alpha: 1 }, '\uE000': 3 };
 		const second = { '\uE000': 3, z: { alpha: 1, beta: 2 }, '\u{10000}': 1 };
 		expect(canonicalJsonBytes(first)).toEqual(canonicalJsonBytes(second));
-		expect(canonicalJsonBytes(first).toString()).toBe(
-			'{"z":{"alpha":1,"beta":2},"":3,"𐀀":1}',
-		);
+		expect(canonicalJsonBytes(first).toString()).toBe('{"z":{"alpha":1,"beta":2},"":3,"𐀀":1}');
 	});
 
 	it('stores canonical bytes in CAS and atomically commits immutable catalog lineage', async () => {
@@ -97,7 +95,10 @@ describe('canonical immutable run manifests', () => {
 		});
 		const input = manifest(output);
 		const committed = commitRunManifest(database, store, input);
-		expect(committed).toMatchObject({ status: 'committed', manifestDigest: manifestChecksum(input) });
+		expect(committed).toMatchObject({
+			status: 'committed',
+			manifestDigest: manifestChecksum(input),
+		});
 		expect(store.openVerified(committed.manifestDigest)).toEqual(canonicalJsonBytes(input));
 		expect(verifyCommittedRun(database, store, 'run-1', ['schema']).ok).toBe(true);
 
@@ -107,7 +108,8 @@ describe('canonical immutable run manifests', () => {
 		).toThrow(/immutable/);
 		appendRunEvent(database, 'run-1', 'inspection', { ok: true });
 		expect(
-			database.query<{ count: number }, []>('SELECT count(*) AS count FROM run_events').get()?.count,
+			database.query<{ count: number }, []>('SELECT count(*) AS count FROM run_events').get()
+				?.count,
 		).toBe(2);
 		database.close();
 	});

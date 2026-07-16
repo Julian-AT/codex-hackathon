@@ -1,8 +1,10 @@
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, realpathSync, rmSync, truncateSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { fileURLToPath } from 'node:url';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { type CatalogDatabase, runCatalogMigrations } from '../../src/catalog/migration-runner';
 import {
 	appendRunEvent,
@@ -12,13 +14,27 @@ import {
 	verifyCommittedRun,
 } from '../../src/runs/run-manifest';
 import {
+	type StageIdentity,
 	claimOrExecuteStage,
 	fingerprintStage,
-	type StageIdentity,
 } from '../../src/runs/stage-reuse';
 import { ObjectStore } from '../../src/storage/object-store';
 
 const roots: string[] = [];
+const isBunRuntime = 'bun' in process.versions;
+let delegatedFailure: string | null = null;
+
+beforeAll(() => {
+	if (isBunRuntime) return;
+	const result = spawnSync('bun', ['test', fileURLToPath(import.meta.url)], { encoding: 'utf8' });
+	if (result.status !== 0) delegatedFailure = `${result.stdout}\n${result.stderr}`;
+});
+
+function requireBunRuntime(): boolean {
+	if (isBunRuntime) return true;
+	expect(delegatedFailure).toBeNull();
+	return false;
+}
 
 function makeRoot(): string {
 	const root = realpathSync(mkdtempSync(path.join(tmpdir(), 'mlx-run-reuse-')));
@@ -64,6 +80,7 @@ afterEach(() => {
 
 describe('run lineage and verified deterministic stage reuse', () => {
 	it('commits canonical child lineage and retains timestamps and run IDs outside the stage key', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		const database = await openDatabase(root);
 		const store = new ObjectStore(path.join(root, 'objects'));
@@ -125,6 +142,7 @@ describe('run lineage and verified deterministic stage reuse', () => {
 	});
 
 	it('executes equal deterministic work once and changed deterministic identity again', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		const database = await openDatabase(root);
 		const store = new ObjectStore(path.join(root, 'objects'));
@@ -132,9 +150,7 @@ describe('run lineage and verified deterministic stage reuse', () => {
 		const execute = () => {
 			sideEffects += 1;
 			return {
-				outputs: [
-					{ name: 'evidence', ...store.put(Buffer.from(`result-${sideEffects}`, 'utf8')) },
-				],
+				outputs: [{ name: 'evidence', ...store.put(Buffer.from(`result-${sideEffects}`, 'utf8')) }],
 				validation: [{ name: 'schema', status: 'pass' as const }],
 			};
 		};
@@ -176,6 +192,7 @@ describe('run lineage and verified deterministic stage reuse', () => {
 	});
 
 	it('never reuses nonterminal, invalid, missing, corrupt, or interrupted evidence', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		const database = await openDatabase(root);
 		const store = new ObjectStore(path.join(root, 'objects'));
@@ -240,6 +257,39 @@ describe('run lineage and verified deterministic stage reuse', () => {
 		expect(recovered.kind).toBe('produced');
 		expect(getRunRecord(database, 'corrupt-run')?.reuseValidity).toBe('invalid');
 
+		const missingIdentity = identity({ stageType: 'missing-candidate' });
+		const missingOutput = store.put(Buffer.from('will be missing'));
+		createRun(database, {
+			runId: 'missing-run',
+			stageKey: fingerprintStage(missingIdentity),
+			stageType: missingIdentity.stageType,
+			createdAt: '2026-07-16T09:00:00.000Z',
+		});
+		commitRunManifest(database, store, {
+			schemaVersion: 1,
+			runId: 'missing-run',
+			stageId: missingIdentity.stageType,
+			stageKey: fingerprintStage(missingIdentity),
+			createdAt: '2026-07-16T09:00:00.000Z',
+			inputHashes: missingIdentity.inputHashes,
+			configHash: missingIdentity.configHash,
+			implementationVersion: missingIdentity.implementationVersion,
+			parent: null,
+			outputs: [{ name: 'evidence', digest: missingOutput.digest, size: missingOutput.size }],
+			validation: [{ name: 'schema', status: 'pass' }],
+		});
+		rmSync(missingOutput.path);
+		expect(
+			claimOrExecuteStage(database, store, {
+				identity: missingIdentity,
+				runId: 'missing-replacement',
+				createdAt: '2026-07-16T10:00:00.000Z',
+				expectedValidation: ['schema'],
+				execute,
+			}).kind,
+		).toBe('produced');
+		expect(getRunRecord(database, 'missing-run')?.reuseValidity).toBe('invalid');
+
 		const crashRunId = 'crash-after-manifest-publication';
 		createRun(database, {
 			runId: crashRunId,
@@ -265,13 +315,46 @@ describe('run lineage and verified deterministic stage reuse', () => {
 					outputs: [{ name: 'evidence', digest: crashOutput.digest, size: crashOutput.size }],
 					validation: [{ name: 'schema', status: 'pass' }],
 				},
-				{ afterManifestStored: () => { throw new Error('injected crash'); } },
+				{
+					afterManifestStored: () => {
+						throw new Error('injected crash');
+					},
+				},
 			),
 		).toThrow('injected crash');
 		expect(getRunRecord(database, crashRunId)).toMatchObject({ status: 'running' });
 		expect(existsSync(path.join(root, 'objects', 'sha256'))).toBe(true);
 
-		expect(sideEffects).toBe(4);
+		const beforePublicationRun = 'crash-before-manifest-publication';
+		createRun(database, {
+			runId: beforePublicationRun,
+			stageKey: fingerprintStage(identity({ stageType: 'crash-before' })),
+			stageType: 'crash-before',
+			createdAt: '2026-07-16T09:00:00.000Z',
+		});
+		const interruptedStore = new ObjectStore(path.join(root, 'objects'), {
+			afterFileSync: () => {
+				throw new Error('injected pre-publication crash');
+			},
+		});
+		expect(() =>
+			commitRunManifest(database, interruptedStore, {
+				schemaVersion: 1,
+				runId: beforePublicationRun,
+				stageId: 'crash-before',
+				stageKey: fingerprintStage(identity({ stageType: 'crash-before' })),
+				createdAt: '2026-07-16T09:00:00.000Z',
+				inputHashes: identity().inputHashes,
+				configHash: identity().configHash,
+				implementationVersion: identity().implementationVersion,
+				parent: null,
+				outputs: [{ name: 'evidence', digest: crashOutput.digest, size: crashOutput.size }],
+				validation: [{ name: 'schema', status: 'pass' }],
+			}),
+		).toThrow('injected pre-publication crash');
+		expect(getRunRecord(database, beforePublicationRun)).toMatchObject({ status: 'running' });
+
+		expect(sideEffects).toBe(5);
 		database.close();
 	});
 });

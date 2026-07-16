@@ -12,6 +12,7 @@
     "src/cli/**/*.ts",
     "src/catalog/**/*.ts",
     "src/core/**/*.ts",
+    "src/runs/**/*.ts",
     "src/storage/**/*.ts"
   ],
   "bin": {

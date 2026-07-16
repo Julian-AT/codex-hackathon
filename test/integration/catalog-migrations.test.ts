@@ -185,7 +185,7 @@ describe('catalog migrations', () => {
 					.query(
 						'INSERT INTO schema_migrations (migration_number, name, checksum) VALUES (?, ?, ?)',
 					)
-					.run(3, '0003-future.sql', '1'.repeat(64));
+					.run(4, '0004-future.sql', '1'.repeat(64));
 			}
 			database.close();
 			await expect(catalog.openCatalog({ env: { MLX_HOME: root } })).rejects.toThrow(
