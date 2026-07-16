@@ -37,7 +37,7 @@ function successfulRunner(requests: ProcessRequest[]): CheckRunnerPort {
 }
 
 describe('runValidationProcessEntry', () => {
-	it.each(['check', 'typecheck', 'test', 'studio:build', 'dataset:validate', 'benchmark:smoke']) (
+	it.each(['check', 'typecheck', 'test', 'studio:build', 'dataset:validate', 'benchmark:smoke'])(
 		'reaches the correct production branch for run %s',
 		async (checkId) => {
 			const subject = await loadSubject();
@@ -137,28 +137,28 @@ describe('runValidationProcessEntry', () => {
 	it.each(malformedModes.map((argv) => [argv] as const))(
 		'rejects malformed or recursive mode %j before creating a runner',
 		async (argv) => {
-		const subject = await loadSubject();
-		expect(subject?.runValidationProcessEntry).toBeTypeOf('function');
-		if (!subject) return;
+			const subject = await loadSubject();
+			expect(subject?.runValidationProcessEntry).toBeTypeOf('function');
+			if (!subject) return;
 
-		const createRunner = vi.fn(() => successfulRunner([]));
-		const writes: string[] = [];
-		const exits: number[] = [];
-		await subject.runValidationProcessEntry(argv, {
-			createRunner,
-			createProbe: () => async () => {
-				throw new Error('probe must not run');
-			},
-			write: (value) => writes.push(value),
-			setExitCode: (value) => exits.push(value),
-			columns: 80,
-			isTTY: false,
-		});
+			const createRunner = vi.fn(() => successfulRunner([]));
+			const writes: string[] = [];
+			const exits: number[] = [];
+			await subject.runValidationProcessEntry(argv, {
+				createRunner,
+				createProbe: () => async () => {
+					throw new Error('probe must not run');
+				},
+				write: (value) => writes.push(value),
+				setExitCode: (value) => exits.push(value),
+				columns: 80,
+				isTTY: false,
+			});
 
-		expect(createRunner).not.toHaveBeenCalled();
-		expect(writes).toHaveLength(1);
-		expect(writes[0]).toMatch(/invalid|expected|external/i);
-		expect(exits).toEqual([2]);
+			expect(createRunner).not.toHaveBeenCalled();
+			expect(writes).toHaveLength(1);
+			expect(writes[0]).toMatch(/invalid|expected|external/i);
+			expect(exits).toEqual([2]);
 		},
 	);
 
