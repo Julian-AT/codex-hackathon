@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 2
 current_phase_name: "Foundation: configuration, SQLite, CAS, runs, and job queue"
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-07-16T10:37:34.759Z"
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-07-16T10:56:20.016Z"
 last_activity: 2026-07-16
-last_activity_desc: Completed Phase 2 Plan 03 SQLite capability and catalog-owner gate
+last_activity_desc: Completed Phase 2 Plan 05 run lineage and deterministic reuse
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 18
-  completed_plans: 12
+  completed_plans: 14
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-16)
 ## Current Position
 
 Phase: 2 — Foundation: configuration, SQLite, CAS, runs, and job queue
-Plan: 3 of 9 complete
+Plan: 5 of 9 complete
 Status: Ready to execute
-Last activity: 2026-07-16 — Completed SQLite capability and catalog-owner gate
+Last activity: 2026-07-16 — Completed run lineage and deterministic reuse
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 78%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [███████░░░] 67%
 | Phase 01 P09 | 8 min | 3 tasks | 8 files |
 | Phase 02 P01 | 7 min | 3 tasks | 7 files |
 | Phase 02 P03 | 7 min | 3 tasks | 7 files |
+| Phase 02 P05 | 8 min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Keep configured destinations relative and expose resolved absolute destinations only through an immutable runtime-path projection. — Portable serialized configuration cannot weaken the canonical MLX_HOME containment boundary.
 - [Phase 02]: Grant multi-owner catalog mutation only from a passing executable WAL concurrency probe; version strings never authorize it.
 - [Phase 02]: Quarantine the whole owner directory atomically before compare/release or stale recovery so renewal races fail closed.
+- [Phase 02]: Exclude run IDs and timestamps from domain-separated stage fingerprints while retaining both in immutable manifest lineage.
+- [Phase 02]: Keep terminal run rows immutable and record reuse invalidation only through append-only events.
+- [Phase 02]: Return pending for live unique producer claims and recover only after terminal invalid evidence is recorded.
 
 ### Pending Todos
 
@@ -126,6 +130,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T10:37:34.753Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-07-16T10:56:12.202Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None

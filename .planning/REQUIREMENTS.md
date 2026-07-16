@@ -26,8 +26,8 @@
 - [ ] **FNDN-04**: Operator can initialize a fresh catalog and upgrade every supported prior schema without ad hoc mutation or data loss
 - [x] **FNDN-05**: `mlx doctor` reports the embedded SQLite version and enforces a single catalog-owner gate until the runtime is proven free of the relevant WAL-reset race
 - [ ] **FNDN-06**: Immutable source, patch, trace, report, and generated blobs are stored by SHA-256 digest with atomic writes, integrity verification, and references from catalog or analytical records
-- [ ] **FNDN-07**: Every run records an immutable manifest containing input/configuration hashes, implementation versions, parent/child lineage, outputs, and checksums
-- [ ] **FNDN-08**: Repeating a long-running stage with identical deterministic inputs reuses completed valid work instead of repeating expensive side effects
+- [x] **FNDN-07**: Every run records an immutable manifest containing input/configuration hashes, implementation versions, parent/child lineage, outputs, and checksums
+- [x] **FNDN-08**: Repeating a long-running stage with identical deterministic inputs reuses completed valid work instead of repeating expensive side effects
 - [ ] **FNDN-09**: Long-running work is represented by durable leased jobs with fencing, heartbeats, bounded retries, checkpoints, cancellation, and stale-lease recovery
 - [ ] **FNDN-10**: Operator can resume a terminated job without duplicating committed outputs and can inspect structured status, progress, attempts, and failure events
 - [ ] **FNDN-11**: Process supervision terminates and records child processes after success, failure, timeout, cancellation, or crash without leaving orphan work
@@ -199,8 +199,8 @@ Every v1 requirement maps to exactly one roadmap phase.
 | FNDN-04 | Phase 2 | Pending |
 | FNDN-05 | Phase 2 | Complete |
 | FNDN-06 | Phase 2 | Pending |
-| FNDN-07 | Phase 2 | Pending |
-| FNDN-08 | Phase 2 | Pending |
+| FNDN-07 | Phase 2 | Complete |
+| FNDN-08 | Phase 2 | Complete |
 | FNDN-09 | Phase 2 | Pending |
 | FNDN-10 | Phase 2 | Pending |
 | FNDN-11 | Phase 2 | Pending |

@@ -61,15 +61,15 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 4. Every run has an immutable, checksummed lineage manifest, and repeating a deterministic stage with identical valid inputs reuses its committed output.
 5. Operator can inspect, cancel, crash, recover, and resume durable leased work without duplicate outputs or orphan child processes, then apply retention or garbage collection without deleting referenced artifacts.
 
-**Plans:** 3/9 plans executed
+**Plans:** 5/9 plans executed
 
 Plans:
 
 - [x] 02-01-PLAN.md — Validate contained configuration, filesystem paths, and archive members
 - [x] 02-02-PLAN.md — Open and upgrade a persisted WAL SQLite catalog through numbered migrations
 - [x] 02-03-PLAN.md — Report real SQLite capability and enforce the catalog-owner gate
-- [ ] 02-04-PLAN.md — Store verified immutable artifacts in SHA-256 CAS with durable references
-- [ ] 02-05-PLAN.md — Commit checksummed run lineage and reuse verified deterministic stages
+- [x] 02-04-PLAN.md — Store verified immutable artifacts in SHA-256 CAS with durable references
+- [x] 02-05-PLAN.md — Commit checksummed run lineage and reuse verified deterministic stages
 - [ ] 02-06-PLAN.md — Lease, inspect, cancel, recover, and resume durable jobs
 - [ ] 02-07-PLAN.md — Supervise allowlisted child processes without orphan work
 - [ ] 02-08-PLAN.md — Compute disk usage and perform reference-safe mark/recheck/sweep
@@ -204,7 +204,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Identity, cleanup, baseline, and migration map | 9/9 | Complete    | 2026-07-16 |
-| 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 3/9 | In Progress|  |
+| 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 5/9 | In Progress|  |
 | 3. GitHub inventory, mirrors, identities, and accurate metrics | 0/TBD | Not started | - |
 | 4. Evidence extraction, accepted-state quality, and preference profile | 0/TBD | Not started | - |
 | 5. Hugging Face dataset compiler, deduplication, and leakage-safe splits | 0/TBD | Not started | - |
