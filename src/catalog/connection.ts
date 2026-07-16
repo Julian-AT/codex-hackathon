@@ -10,6 +10,8 @@ import {
 } from './migration-runner';
 
 const BUSY_TIMEOUT_MS = 5_000;
+const JOURNAL_MODE_RETRY_LIMIT = 50;
+const JOURNAL_MODE_RETRY_DELAY_MS = 10;
 interface DatabaseConstructor {
 	new (
 		filename: string,
@@ -21,6 +23,27 @@ async function loadDatabaseConstructor(): Promise<DatabaseConstructor> {
 	const specifier = 'bun:sqlite';
 	const module = (await import(specifier)) as { readonly Database: DatabaseConstructor };
 	return module.Database;
+}
+
+function isSqliteBusy(error: unknown): boolean {
+	return (
+		typeof error === 'object' &&
+		error !== null &&
+		'code' in error &&
+		(error as { readonly code?: unknown }).code === 'SQLITE_BUSY'
+	);
+}
+
+async function enableWal(database: CatalogDatabase): Promise<void> {
+	for (let attempt = 0; ; attempt += 1) {
+		try {
+			database.exec('PRAGMA journal_mode = WAL');
+			return;
+		} catch (error) {
+			if (!isSqliteBusy(error) || attempt >= JOURNAL_MODE_RETRY_LIMIT) throw error;
+			await new Promise((resolve) => setTimeout(resolve, JOURNAL_MODE_RETRY_DELAY_MS));
+		}
+	}
 }
 
 export interface CatalogPragmas {
@@ -159,7 +182,7 @@ export async function openCatalog(
 	try {
 		database.exec(`PRAGMA busy_timeout = ${BUSY_TIMEOUT_MS}`);
 		database.exec('PRAGMA foreign_keys = ON');
-		database.exec('PRAGMA journal_mode = WAL');
+		await enableWal(database);
 		inspectPragmas(database);
 		runCatalogMigrations(database, dependencies);
 		inspectPragmas(database);
