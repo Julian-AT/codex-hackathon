@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 interface FixtureSource {
 	path: string;
 	category: string;
+	allowExclusion?: boolean;
 	content: string;
 }
 
@@ -66,9 +67,10 @@ function optionsFromFixture(fixture: IdentityFixture) {
 	const content = new Map(fixture.sources.map((source) => [source.path, source.content]));
 	return {
 		root: '/synthetic/mlx-identity-root',
-		sources: fixture.sources.map(({ path: sourcePath, category }) => ({
+		sources: fixture.sources.map(({ path: sourcePath, category, allowExclusion }) => ({
 			path: sourcePath,
 			category,
+			allowExclusion,
 		})),
 		rules: fixture.rules,
 		exclusions: fixture.exclusions,
@@ -136,6 +138,11 @@ describe('auditIdentity', () => {
 		options.exclusions = [
 			...options.exclusions,
 			{
+				path: 'README.md',
+				ruleId: 'forbidden-product-brand',
+				rationale: 'An exact user-facing path still cannot be excluded.',
+			},
+			{
 				path: 'generated/**',
 				ruleId: 'forbidden-product-brand',
 				rationale: 'Broad exclusion that must be rejected.',
@@ -148,6 +155,12 @@ describe('auditIdentity', () => {
 		expect(report.findings).toContainEqual({
 			category: 'configuration',
 			path: 'generated/**',
+			ruleId: 'invalid-exclusion',
+			message: 'Identity exclusions must name one exact safe relative path and rule.',
+		});
+		expect(report.findings).toContainEqual({
+			category: 'configuration',
+			path: 'README.md',
 			ruleId: 'invalid-exclusion',
 			message: 'Identity exclusions must name one exact safe relative path and rule.',
 		});

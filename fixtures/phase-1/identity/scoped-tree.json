@@ -22,11 +22,13 @@
 		{
 			"path": "docs/internal/legacy-history.md",
 			"category": "documentation",
+			"allowExclusion": true,
 			"content": "Historical codex implementation notes.\n"
 		},
 		{
 			"path": "metadata/git-remote.txt",
 			"category": "package",
+			"allowExclusion": true,
 			"content": "git@github.com:example/codex-hackathon.git\n"
 		}
 	],

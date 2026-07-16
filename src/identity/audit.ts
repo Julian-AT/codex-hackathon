@@ -35,6 +35,7 @@ export interface IdentityAuditRule {
 export interface IdentityAuditSource {
 	readonly path: string;
 	readonly category: string;
+	readonly allowExclusion?: boolean;
 }
 
 export interface IdentityAuditExclusion {
@@ -124,13 +125,16 @@ async function readContainedText(root: string, relativePath: string): Promise<st
 function validatesExclusion(
 	exclusion: IdentityAuditExclusion,
 	rulesById: ReadonlyMap<string, IdentityAuditRule>,
+	sourcesByPath: ReadonlyMap<string, IdentityAuditSource>,
 ): boolean {
 	const rule = rulesById.get(exclusion.ruleId);
+	const source = sourcesByPath.get(exclusion.path);
 	return (
 		isSafeRelativePath(exclusion.path) &&
 		exclusion.rationale.trim().length > 0 &&
 		rule !== undefined &&
-		rule.paths.includes(exclusion.path)
+		rule.paths.includes(exclusion.path) &&
+		source?.allowExclusion === true
 	);
 }
 
@@ -173,9 +177,10 @@ function findingForRule(
 export async function auditIdentity(options: IdentityAuditOptions): Promise<IdentityAuditReport> {
 	const findings: IdentityFinding[] = [];
 	const rulesById = new Map(options.rules.map((rule) => [rule.id, rule]));
+	const sourcesByPath = new Map(options.sources.map((source) => [source.path, source]));
 	const validExclusions = options.exclusions
 		.filter((exclusion) => {
-			const valid = validatesExclusion(exclusion, rulesById);
+			const valid = validatesExclusion(exclusion, rulesById, sourcesByPath);
 			if (!valid) {
 				findings.push({
 					category: 'configuration',
