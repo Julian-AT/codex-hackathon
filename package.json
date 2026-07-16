@@ -11,7 +11,8 @@
     "src/cli.tsx",
     "src/cli/**/*.ts",
     "src/catalog/**/*.ts",
-    "src/core/**/*.ts"
+    "src/core/**/*.ts",
+    "src/storage/**/*.ts"
   ],
   "bin": {
     "mlx": "./src/cli.tsx"
