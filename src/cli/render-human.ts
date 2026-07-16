@@ -63,10 +63,10 @@ function renderRows(rows: readonly HelpRow[], columns: number): string[] {
 		]);
 	}
 	if (columns < 80) {
-		return rows.flatMap((row) => [
-			`  ${sanitizeTerminalText(row.command)}`,
-			...wrap(`${row.description}${availability(row)}`, columns, '    ', '    '),
-		]);
+		return rows.flatMap((row) => {
+			const prefix = `  ${sanitizeTerminalText(row.command)}  `;
+			return wrap(`${row.description}${availability(row)}`, columns, prefix, '    ');
+		});
 	}
 	const commandWidth = Math.max(...rows.map((row) => row.command.length), 0);
 	return rows.flatMap((row) => {

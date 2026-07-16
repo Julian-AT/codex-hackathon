@@ -17,6 +17,7 @@ export interface CommandOptionSpec {
 
 export interface CommandLeaf {
 	readonly path: readonly string[];
+	readonly aliases?: readonly (readonly string[])[];
 	readonly description: string;
 	readonly ownerPhase: OwnerPhase;
 	readonly availability: CommandAvailability;
@@ -155,12 +156,14 @@ function command(
 	description: string,
 	ownerPhase: OwnerPhase,
 	shape: {
+		readonly aliases?: readonly (readonly string[])[];
 		readonly arguments?: readonly CommandArgumentSpec[];
 		readonly options?: readonly CommandOptionSpec[];
 	} = {},
 ): CommandLeaf {
 	return {
 		path,
+		aliases: shape.aliases ?? [],
 		description,
 		ownerPhase,
 		availability: ownerPhase === 1 ? 'implemented' : 'unavailable',
@@ -174,23 +177,52 @@ export function validateCommandTree(tree: readonly CommandLeaf[]): void {
 		throw new CommandTreeInvariantError('The command tree must contain at least one leaf.');
 	}
 
-	const paths = new Set<string>();
+	const paths = new Map<string, string>();
+	const registeredPaths: Array<{ readonly path: readonly string[]; readonly key: string }> = [];
+	const registerPath = (path: readonly string[], owner: string): void => {
+		if (path.length === 0 || path.some((part) => !/^[a-z][a-z0-9-]*$/.test(part))) {
+			throw new CommandTreeInvariantError(
+				'Every command leaf and alias must have a valid literal path.',
+			);
+		}
+		const key = path.join(' ');
+		const existing = paths.get(key);
+		if (existing) {
+			throw new CommandTreeInvariantError(
+				`Duplicate command or alias path: ${key} (${existing}, ${owner}).`,
+			);
+		}
+		paths.set(key, owner);
+		registeredPaths.push({ path, key });
+	};
 	for (const leaf of tree) {
-		if (leaf.path.length === 0 || leaf.path.some((part) => !/^[a-z][a-z0-9-]*$/.test(part))) {
-			throw new CommandTreeInvariantError('Every command leaf must have a valid literal path.');
-		}
 		const key = leaf.path.join(' ');
-		if (paths.has(key)) {
-			throw new CommandTreeInvariantError(`Duplicate command path: ${key}.`);
+		registerPath(leaf.path, `leaf ${key}`);
+		for (const alias of leaf.aliases ?? []) registerPath(alias, `alias for ${key}`);
+		if (!Number.isInteger(leaf.ownerPhase) || !Object.hasOwn(PHASE_NAMES, leaf.ownerPhase)) {
+			throw new CommandTreeInvariantError(`Command ${key} must have a valid owner phase.`);
 		}
-		paths.add(key);
+		if (leaf.availability !== 'implemented' && leaf.availability !== 'unavailable') {
+			throw new CommandTreeInvariantError(`Command ${key} must have valid availability metadata.`);
+		}
 		if (leaf.description.trim().length === 0) {
 			throw new CommandTreeInvariantError(`Command ${key} must have a description.`);
 		}
 		const argumentNames = new Set<string>();
+		let sawOptionalArgument = false;
 		for (const argument of leaf.arguments) {
-			if (!/^[a-z][a-z0-9-]*$/.test(argument.name) || argumentNames.has(argument.name)) {
+			if (
+				!/^[a-z][a-z0-9-]*$/.test(argument.name) ||
+				argumentNames.has(argument.name) ||
+				typeof argument.required !== 'boolean'
+			) {
 				throw new CommandTreeInvariantError(`Command ${key} has an invalid argument registry.`);
+			}
+			if (!argument.required) sawOptionalArgument = true;
+			else if (sawOptionalArgument) {
+				throw new CommandTreeInvariantError(
+					`Command ${key} cannot place required arguments after optional arguments.`,
+				);
 			}
 			argumentNames.add(argument.name);
 		}
@@ -210,17 +242,33 @@ export function validateCommandTree(tree: readonly CommandLeaf[]): void {
 			}
 		}
 	}
+
+	for (const parent of registeredPaths) {
+		for (const child of registeredPaths) {
+			if (
+				parent.key !== child.key &&
+				parent.path.length < child.path.length &&
+				isPrefix(parent.path, child.path)
+			) {
+				throw new CommandTreeInvariantError(
+					`Command or alias ${parent.key} cannot also be a structural parent of ${child.key}.`,
+				);
+			}
+		}
+	}
 }
 
 function freezeCommandTree(tree: readonly CommandLeaf[]): readonly CommandLeaf[] {
 	validateCommandTree(tree);
 	for (const leaf of tree) {
+		for (const alias of leaf.aliases ?? []) Object.freeze(alias);
 		for (const option of leaf.options) {
 			if (option.allowedValues) Object.freeze(option.allowedValues);
 			Object.freeze(option);
 		}
 		for (const argument of leaf.arguments) Object.freeze(argument);
 		Object.freeze(leaf.path);
+		if (leaf.aliases) Object.freeze(leaf.aliases);
 		Object.freeze(leaf.arguments);
 		Object.freeze(leaf.options);
 		Object.freeze(leaf);
@@ -232,6 +280,10 @@ export const COMMAND_TREE: readonly CommandLeaf[] = freezeCommandTree(COMMAND_DE
 
 function isPrefix(prefix: readonly string[], value: readonly string[]): boolean {
 	return prefix.every((part, index) => value[index] === part);
+}
+
+function commandPaths(leaf: CommandLeaf): readonly (readonly string[])[] {
+	return [leaf.path, ...(leaf.aliases ?? [])];
 }
 
 function parentPaths(tree: readonly CommandLeaf[]): readonly string[][] {
@@ -270,7 +322,15 @@ function levenshtein(left: string, right: string): number {
 
 function suggestionFor(input: readonly string[], tree: readonly CommandLeaf[]): string | null {
 	if (input.length === 0) return null;
-	const firstParts = [...new Set(tree.map((leaf) => leaf.path[0]).filter(Boolean))];
+	const firstParts = [
+		...new Set(
+			tree.flatMap((leaf) =>
+				commandPaths(leaf)
+					.map((path) => path[0])
+					.filter(Boolean),
+			),
+		),
+	].sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
 	const candidates = firstParts.filter((part) => {
 		const candidate = part ?? '';
 		const entered = input[0] ?? '';
@@ -433,12 +493,13 @@ export function parseCommand(
 
 	if (tokens.length === 0) return { kind: 'help', json, path: [] };
 
-	const leaf = [...tree]
-		.sort((left, right) => right.path.length - left.path.length)
-		.find((candidate) => isPrefix(candidate.path, tokens));
-	if (leaf) {
-		if (help) return { kind: 'help', json, path: leaf.path };
-		return parseLeafValues(leaf, tokens.slice(leaf.path.length), json);
+	const match = tree
+		.flatMap((leaf) => commandPaths(leaf).map((matchedPath) => ({ leaf, matchedPath })))
+		.sort((left, right) => right.matchedPath.length - left.matchedPath.length)
+		.find((candidate) => isPrefix(candidate.matchedPath, tokens));
+	if (match) {
+		if (help) return { kind: 'help', json, path: match.leaf.path };
+		return parseLeafValues(match.leaf, tokens.slice(match.matchedPath.length), json);
 	}
 
 	const parent = parentPaths(tree).find(
