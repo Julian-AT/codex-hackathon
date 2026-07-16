@@ -1,3 +1,4 @@
 # Deferred Items
 
 - `bun run check` remains red on pre-existing operator-owned files outside Plan 02-01, including `lib/discovery/validate/parse.test.ts`. The seven Plan 02-01 files pass a scoped Biome check, all 30 focused tests, and typecheck. No unrelated file was changed to repair the repository-wide baseline.
+- Plan 02-03's full `bun run test` gate reaches 498 passing tests but remains red on two pre-existing `src/commands/commands.test.ts` config-command cases because the default `~/.mlx` root does not exist. All 11 Plan 02-03 focused tests pass under Vitest and Bun, and no unrelated command/config test hunk was changed.

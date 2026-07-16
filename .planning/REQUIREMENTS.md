@@ -24,7 +24,7 @@
 - [x] **FNDN-02**: Every mutable artifact path resolves beneath the configured `MLX_HOME` root and traversal, symlink escape, and unsafe archive paths fail closed
 - [ ] **FNDN-03**: Operational state is stored in SQLite through persisted numbered migrations with WAL mode and foreign keys enabled
 - [ ] **FNDN-04**: Operator can initialize a fresh catalog and upgrade every supported prior schema without ad hoc mutation or data loss
-- [ ] **FNDN-05**: `mlx doctor` reports the embedded SQLite version and enforces a single catalog-owner gate until the runtime is proven free of the relevant WAL-reset race
+- [x] **FNDN-05**: `mlx doctor` reports the embedded SQLite version and enforces a single catalog-owner gate until the runtime is proven free of the relevant WAL-reset race
 - [ ] **FNDN-06**: Immutable source, patch, trace, report, and generated blobs are stored by SHA-256 digest with atomic writes, integrity verification, and references from catalog or analytical records
 - [ ] **FNDN-07**: Every run records an immutable manifest containing input/configuration hashes, implementation versions, parent/child lineage, outputs, and checksums
 - [ ] **FNDN-08**: Repeating a long-running stage with identical deterministic inputs reuses completed valid work instead of repeating expensive side effects
@@ -197,7 +197,7 @@ Every v1 requirement maps to exactly one roadmap phase.
 | FNDN-02 | Phase 2 | Complete |
 | FNDN-03 | Phase 2 | Pending |
 | FNDN-04 | Phase 2 | Pending |
-| FNDN-05 | Phase 2 | Pending |
+| FNDN-05 | Phase 2 | Complete |
 | FNDN-06 | Phase 2 | Pending |
 | FNDN-07 | Phase 2 | Pending |
 | FNDN-08 | Phase 2 | Pending |

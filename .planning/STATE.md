@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 2
 current_phase_name: "Foundation: configuration, SQLite, CAS, runs, and job queue"
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-07-16T10:18:30.889Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-07-16T10:37:34.759Z"
 last_activity: 2026-07-16
-last_activity_desc: Completed Phase 2 Plan 01 contained configuration foundation
+last_activity_desc: Completed Phase 2 Plan 03 SQLite capability and catalog-owner gate
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 18
-  completed_plans: 10
+  completed_plans: 12
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-16)
 ## Current Position
 
 Phase: 2 — Foundation: configuration, SQLite, CAS, runs, and job queue
-Plan: 1 of 9 complete
-Status: In progress
-Last activity: 2026-07-16 — Completed contained configuration, path, and archive guards
+Plan: 3 of 9 complete
+Status: Ready to execute
+Last activity: 2026-07-16 — Completed SQLite capability and catalog-owner gate
 
-Progress: [██████░░░░] 56%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Progress: [██████░░░░] 56%
 | Phase 01 P08 | 5 min | 3 tasks | 6 files |
 | Phase 01 P09 | 8 min | 3 tasks | 8 files |
 | Phase 02 P01 | 7 min | 3 tasks | 7 files |
+| Phase 02 P03 | 7 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Preserve immutable operator evidence and record overlapping Phase hunks explicitly in the final manifest. — Keeps the operator-owned src/app.tsx deletion and unrelated dirty bytes outside Phase ownership.
 - [Phase 01]: Disable formatting only for the exact operator-owned dirty test that blocked portable check. — Preserves operator bytes while retaining lint analysis and honest visible warnings.
 - [Phase 02]: Keep configured destinations relative and expose resolved absolute destinations only through an immutable runtime-path projection. — Portable serialized configuration cannot weaken the canonical MLX_HOME containment boundary.
+- [Phase 02]: Grant multi-owner catalog mutation only from a passing executable WAL concurrency probe; version strings never authorize it.
+- [Phase 02]: Quarantine the whole owner directory atomically before compare/release or stale recovery so renewal races fail closed.
 
 ### Pending Todos
 
@@ -111,7 +114,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 2]: Keep the SQLite catalog-owner gate until the embedded version and concurrency suite prove the WAL-reset race is resolved.
 - [Phase 7]: Apple Silicon acceptance requires real M4 Pro evidence and cannot be closed by portable mocks or skips.
 
 ## Deferred Items
@@ -124,6 +126,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T10:18:30.884Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-07-16T10:37:34.753Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
