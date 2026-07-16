@@ -93,6 +93,9 @@ describe('validation privacy boundaries', () => {
 					phase1Hunks?: unknown[];
 				}>;
 				pendingFinalTask?: { paths?: Array<{ path?: string; patchSha256?: string }> };
+				postAcceptanceRepair?: {
+					paths?: Array<{ path?: string; patchSha256?: string }>;
+				};
 				productionSourceDeletions?: unknown[];
 			};
 		};
@@ -140,6 +143,13 @@ describe('validation privacy boundaries', () => {
 			]),
 		);
 		for (const path of ownership?.pendingFinalTask?.paths ?? []) {
+			expect(path.patchSha256).toMatch(/^[a-f0-9]{64}$/);
+		}
+		expect(ownership?.postAcceptanceRepair?.paths?.map(({ path }) => path)).toEqual([
+			'biome.json',
+			'test/integration/privacy-boundaries.test.ts',
+		]);
+		for (const path of ownership?.postAcceptanceRepair?.paths ?? []) {
 			expect(path.patchSha256).toMatch(/^[a-f0-9]{64}$/);
 		}
 		expect(ownership?.productionSourceDeletions).toEqual([]);

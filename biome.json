@@ -28,5 +28,11 @@
 	},
 	"files": {
 		"ignore": ["node_modules", "data", ".venv", "ios", "bun.lock", "*.json", ".next"]
-	}
+	},
+	"overrides": [
+		{
+			"include": ["lib/discovery/worker.test.ts"],
+			"formatter": { "enabled": false }
+		}
+	]
 }
