@@ -1,9 +1,11 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { DoctorResult } from '../core/doctor';
 import { runDoctor } from './doctor';
+import { runInit } from './init';
+import { renderHuman } from './render-human';
 
 const roots: string[] = [];
 
@@ -34,7 +36,9 @@ afterEach(async () => {
 async function ownedRoot(): Promise<string> {
 	const root = await mkdtemp(path.join(tmpdir(), 'mlx-doctor-capability-'));
 	roots.push(root);
-	await mkdir(path.join(root, 'catalog'));
+	await rm(root, { recursive: true });
+	const initialized = await runInit({ adopt: false }, { env: { MLX_HOME: root } });
+	if (!initialized.ok) throw new Error(initialized.reason);
 	return root;
 }
 
@@ -67,6 +71,28 @@ describe('SQLite doctor evidence', () => {
 				catalogOwner: { required: false, status: 'available' },
 			},
 		});
+		const human = renderHuman(execution.envelope);
+		expect(human).toContain('SQLite: 3.49.2');
+		expect(human).toContain('WAL: pass');
+		expect(human).toContain('Catalog owner: not required');
+	});
+
+	it('sanitizes probe failures and reports the owner gate as blocked', async () => {
+		const execution = await runDoctor({
+			inspectExecutable: async () => OWNED_EXECUTABLE,
+			probeSqlite: async () => {
+				throw new Error('/private/operator/path: secret details');
+			},
+		});
+		expect(execution.envelope.data).toMatchObject({
+			sqlite: {
+				sqliteVersion: null,
+				concurrency: { status: 'error', error: 'Error' },
+				multiOwnerMutationAllowed: false,
+			},
+			catalogOwner: { required: true, status: 'blocked' },
+		});
+		expect(JSON.stringify(execution.envelope)).not.toContain('/private/operator/path');
 	});
 
 	it('preserves a collision as the primary failure when SQLite is healthy', async () => {

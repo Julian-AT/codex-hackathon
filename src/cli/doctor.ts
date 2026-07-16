@@ -1,6 +1,7 @@
 import { lstat, readFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { type DoctorFsPort, type DoctorResult, inspectExecutableCandidates } from '../core/doctor';
+import { type SqliteCapabilityEvidence, probeSqliteCapability } from '../core/sqlite-capability';
 import type { CommandExecution } from './main';
 
 const PACKAGE_ROOT = path.resolve(import.meta.dirname, '../..');
@@ -19,6 +20,8 @@ export interface DoctorDependencies {
 	readonly declaredEntry?: string;
 	readonly markerPath?: string;
 	readonly fs?: DoctorFsPort;
+	readonly inspectExecutable?: () => Promise<DoctorResult>;
+	readonly probeSqlite?: () => Promise<SqliteCapabilityEvidence>;
 }
 
 const NODE_DOCTOR_FS: DoctorFsPort = Object.freeze({
@@ -28,7 +31,18 @@ const NODE_DOCTOR_FS: DoctorFsPort = Object.freeze({
 	readTextFile: async (file: string) => await readFile(file, 'utf8'),
 });
 
-function envelope(result: DoctorResult): CommandExecution {
+export interface CatalogOwnerDoctorEvidence {
+	readonly required: boolean;
+	readonly status: 'available' | 'blocked';
+	readonly action?: string;
+}
+
+export interface DoctorData extends DoctorResult {
+	readonly sqlite: SqliteCapabilityEvidence;
+	readonly catalogOwner: CatalogOwnerDoctorEvidence;
+}
+
+function envelope(result: DoctorData): CommandExecution {
 	if (result.classification === 'owned') {
 		return {
 			envelope: {
@@ -60,17 +74,51 @@ function envelope(result: DoctorResult): CommandExecution {
 	};
 }
 
+function failedSqliteProbe(error: unknown): SqliteCapabilityEvidence {
+	const code =
+		typeof error === 'object' && error !== null && 'code' in error && typeof error.code === 'string'
+			? error.code
+			: error instanceof Error
+				? error.name
+				: 'SQLITE_PROBE_FAILED';
+	return {
+		sqliteVersion: null,
+		journalMode: 'unavailable',
+		foreignKeys: false,
+		concurrency: { status: 'error', contenders: 2, committedWrites: 0, error: code },
+		multiOwnerMutationAllowed: false,
+	};
+}
+
+function catalogOwnerEvidence(sqlite: SqliteCapabilityEvidence): CatalogOwnerDoctorEvidence {
+	if (sqlite.multiOwnerMutationAllowed) return { required: false, status: 'available' };
+	return {
+		required: true,
+		status: sqlite.concurrency.status === 'error' ? 'blocked' : 'available',
+		action:
+			'Acquire the exclusive catalog owner before mutation; wait for release or use the explicit stale-owner recovery protocol.',
+	};
+}
+
 export async function runDoctor(dependencies: DoctorDependencies = {}): Promise<CommandExecution> {
-	const result = await inspectExecutableCandidates(
-		{
-			pathValue: dependencies.pathValue ?? process.env.PATH ?? '',
-			delimiter: dependencies.delimiter ?? path.delimiter,
-			cwd: dependencies.cwd ?? process.cwd(),
-			declaredEntry: dependencies.declaredEntry ?? path.join(PACKAGE_ROOT, 'src/cli.tsx'),
-			markerPath: dependencies.markerPath ?? path.join(PACKAGE_ROOT, 'mlx.package.json'),
-			expectedMarker: EXPECTED_MARKER,
-		},
-		dependencies.fs ?? NODE_DOCTOR_FS,
-	);
-	return envelope(result);
+	const inspectExecutable =
+		dependencies.inspectExecutable ??
+		(async () =>
+			await inspectExecutableCandidates(
+				{
+					pathValue: dependencies.pathValue ?? process.env.PATH ?? '',
+					delimiter: dependencies.delimiter ?? path.delimiter,
+					cwd: dependencies.cwd ?? process.cwd(),
+					declaredEntry: dependencies.declaredEntry ?? path.join(PACKAGE_ROOT, 'src/cli.tsx'),
+					markerPath: dependencies.markerPath ?? path.join(PACKAGE_ROOT, 'mlx.package.json'),
+					expectedMarker: EXPECTED_MARKER,
+				},
+				dependencies.fs ?? NODE_DOCTOR_FS,
+			));
+	const probeSqlite = dependencies.probeSqlite ?? (async () => await probeSqliteCapability());
+	const [result, sqlite] = await Promise.all([
+		inspectExecutable(),
+		probeSqlite().catch(failedSqliteProbe),
+	]);
+	return envelope({ ...result, sqlite, catalogOwner: catalogOwnerEvidence(sqlite) });
 }

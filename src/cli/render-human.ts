@@ -239,10 +239,42 @@ function renderDoctor(envelope: CliEnvelope): string {
 		}[];
 		readonly reason: string;
 		readonly action: string;
+		readonly sqlite?: {
+			readonly sqliteVersion: string | null;
+			readonly journalMode: 'wal' | 'other' | 'unavailable';
+			readonly foreignKeys: boolean;
+			readonly concurrency: {
+				readonly status: 'pass' | 'fail' | 'error';
+				readonly contenders: number;
+				readonly committedWrites: number;
+			};
+			readonly multiOwnerMutationAllowed: boolean;
+		};
+		readonly catalogOwner?: {
+			readonly required: boolean;
+			readonly status: 'available' | 'blocked';
+			readonly action?: string;
+		};
 	};
 	const classification =
 		result.classification === 'not-found' ? 'NOT FOUND' : result.classification.toUpperCase();
 	const lines = ['mlx doctor', '', `Executable: ${classification}`];
+	if (result.sqlite) {
+		lines.push(
+			`SQLite: ${sanitizeTerminalText(result.sqlite.sqliteVersion ?? 'unavailable')}`,
+			`SQLite pragmas: journal_mode=${result.sqlite.journalMode}, foreign_keys=${result.sqlite.foreignKeys ? 'on' : 'off'}`,
+			`WAL: ${result.sqlite.concurrency.status} (${result.sqlite.concurrency.committedWrites} writes, ${result.sqlite.concurrency.contenders} contenders)`,
+			`Multi-owner mutation: ${result.sqlite.multiOwnerMutationAllowed ? 'allowed' : 'not allowed'}`,
+		);
+	}
+	if (result.catalogOwner) {
+		lines.push(
+			`Catalog owner: ${result.catalogOwner.required ? result.catalogOwner.status : 'not required'}`,
+		);
+		if (result.catalogOwner.required && result.catalogOwner.action) {
+			lines.push(`Catalog action: ${sanitizeTerminalText(result.catalogOwner.action)}`);
+		}
+	}
 	if (result.effective) {
 		lines.push('Effective path:', `  ${sanitizeTerminalText(result.effective.path)}`);
 		for (const error of result.effective.errors) {
