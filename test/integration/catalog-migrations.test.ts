@@ -90,11 +90,11 @@ describe('catalog migrations', () => {
 		const catalog = requireCatalog(await catalogModule());
 		const first = await catalog.openCatalog({ env: { MLX_HOME: root } });
 		expect(first?.pragmas()).toEqual({ busyTimeout: 5_000, foreignKeys: true, journalMode: 'wal' });
-		expect(first?.schemaVersion()).toBe(2);
+		expect(first?.schemaVersion()).toBe(3);
 		first?.close();
 
 		const second = await catalog.openCatalog({ env: { MLX_HOME: root } });
-		expect(second?.schemaVersion()).toBe(2);
+		expect(second?.schemaVersion()).toBe(3);
 		second?.close();
 	});
 
@@ -114,7 +114,7 @@ describe('catalog migrations', () => {
 
 		for (let reopen = 0; reopen < 2; reopen += 1) {
 			const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
-			expect(connection?.schemaVersion()).toBe(2);
+			expect(connection?.schemaVersion()).toBe(3);
 			connection?.close();
 		}
 		const verified = new Database(catalogPath, { readonly: true });
@@ -133,7 +133,7 @@ describe('catalog migrations', () => {
 		);
 		const catalog = requireCatalog(await catalogModule());
 		const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
-		expect(connection.schemaVersion()).toBe(2);
+		expect(connection.schemaVersion()).toBe(3);
 		connection.close();
 	});
 
