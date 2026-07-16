@@ -5,7 +5,7 @@ import {
 	parseCommand,
 	projectHelp,
 } from './command-tree';
-import { type InitDependencies, type InitResult, runInit } from './init';
+import type { InitDependencies, InitResult } from './init';
 import { renderHuman } from './render-human';
 import { renderJson } from './render-json';
 
@@ -95,6 +95,7 @@ async function initialize(
 	invocation: CommandInvocation,
 	dependencies: CliDependencies,
 ): Promise<CommandExecution> {
+	const { runInit } = await import('./init');
 	const result = await runInit(
 		{ adopt: invocation.options['--adopt'] === true },
 		dependencies.init,
