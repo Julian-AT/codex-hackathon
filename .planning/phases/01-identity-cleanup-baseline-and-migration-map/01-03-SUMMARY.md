@@ -30,6 +30,8 @@ key-files:
     - src/cli/render-human.ts
     - src/lib/config.ts
     - src/lib/config.test.ts
+    - package.json
+    - test/integration/package-bin.test.ts
 key-decisions:
   - "Use a distinct .mlx-state-owner.json manifest with exclusive creation; package ownership evidence never authorizes state mutation."
   - "Keep the legacy setProjectConfig export temporarily callable while redirecting its only write target to MLX_HOME/config/config.json."
@@ -48,6 +50,9 @@ coverage:
       - kind: integration
         ref: "test/integration/state-cli.test.ts"
         status: pass
+      - kind: integration
+        ref: "test/integration/package-bin.test.ts#packs and locally installs a runnable help surface"
+        status: pass
     human_judgment: false
   - id: D2
     description: "Operator configuration reads and writes only MLX_HOME/config/config.json and reports invalid roots or config content actionably."
@@ -57,7 +62,7 @@ coverage:
         ref: "src/lib/config.test.ts"
         status: pass
     human_judgment: false
-duration: 12 min
+duration: 16 min
 completed: 2026-07-16
 status: complete
 ---
@@ -68,9 +73,9 @@ status: complete
 
 ## Performance
 
-- **Duration:** 12 min
+- **Duration:** 16 min
 - **Started:** 2026-07-16T08:03:00Z
-- **Completed:** 2026-07-16T08:15:08Z
+- **Completed:** 2026-07-16T08:17:41Z
 - **Tasks:** 3
 - **Files modified:** 12
 
@@ -88,6 +93,8 @@ Each task was committed atomically:
 2. **Task 2: GREEN — Implement owned initialization through the public CLI** — `48c0ae3` (feat)
 3. **Task 3: REFACTOR — Redirect operator configuration while preserving legacy evidence** — `63d6dbd` (refactor)
 4. **Repository formatting normalization** — `686761a` (style)
+5. **Repair RED: expose missing packed state modules** — `099b76e` (test)
+6. **Repair GREEN: package state modules and lazy-load init** — `e7e1d2a` (fix)
 
 ## Files Created/Modified
 
@@ -99,6 +106,8 @@ Each task was committed atomically:
 - `src/cli/render-human.ts` — Exact root, reason, changed-state, and safe-action output for init.
 - `src/lib/config.ts` — Actionable canonical MLX configuration boundary.
 - `test/integration/state-cli.test.ts` — Process coverage for default, override, adoption, idempotence, and no-creation behavior.
+- `package.json` — Includes canonical state-core modules in packed MLX artifacts.
+- `test/integration/package-bin.test.ts` — Pins the state-core package payload and runnable installed help surface.
 
 ## Decisions Made
 
@@ -118,10 +127,18 @@ Each task was committed atomically:
 - **Verification:** State process integration and renderer/unit suites passed; JSON remains a single independent envelope.
 - **Committed in:** `48c0ae3`
 
+**2. [Rule 1 - Bug] Included the new state-core dependency graph in packed artifacts**
+- **Found during:** Wave 2 post-merge package integration
+- **Issue:** Plan 01-03 added a static CLI dependency on `src/core`, while the Plan 01-02 package allowlist still shipped only `src/cli`; an installed tarball could not resolve `../core/mlx-home` even for help.
+- **Fix:** Added `src/core/**/*.ts` to the package payload and changed the init implementation import to load only when `mlx init` executes, keeping static help dependency-free in the isolated no-network install fixture.
+- **Files modified:** `package.json`, `src/cli/main.ts`, `test/integration/package-bin.test.ts`
+- **Verification:** The exact combined package/state/CLI integration gate passed all 14 tests; typecheck and focused Biome passed.
+- **Committed in:** `099b76e` (RED), `e7e1d2a` (GREEN)
+
 ---
 
-**Total deviations:** 1 auto-fixed (1 missing critical functionality).
-**Impact on plan:** The additional focused renderer change was required by the plan's own UI contract and introduced no new state or later-phase subsystem.
+**Total deviations:** 2 auto-fixed (1 missing critical functionality, 1 cross-plan packaging bug).
+**Impact on plan:** Both changes close the intended public contract without adding new state or later-phase subsystems; the package repair extends the existing allowlist only to Plan 01-03 runtime modules.
 
 ## Issues Encountered
 
@@ -138,6 +155,7 @@ None - no external service configuration required.
 - `bun x vitest run --config vitest.integration.config.ts test/integration/state-cli.test.ts test/integration/cli-contract.test.ts` — 11 tests passed.
 - `bun run typecheck` — passed.
 - Scoped Biome check across all changed source/test files — passed.
+- `bun x vitest run --config vitest.integration.config.ts test/integration/package-bin.test.ts test/integration/state-cli.test.ts test/integration/cli-contract.test.ts` — 14 tests passed after the packaging repair.
 - Deletion inspection from the RED base through final code commits — zero deleted paths.
 
 ## Known Stubs
@@ -158,7 +176,7 @@ None. Empty objects found by the stub scan are typed accumulator/default values,
 ## Self-Check: PASSED
 
 - All six created files exist.
-- All four task/refactor commits resolve in repository history.
+- All six task, repair, and refactor commits resolve in repository history.
 - The recorded unit, integration, typecheck, formatting, and deletion checks passed on the final tree.
 
 ---
