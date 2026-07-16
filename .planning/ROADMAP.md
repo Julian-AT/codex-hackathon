@@ -11,7 +11,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions marked as `INSERTED`
 
-- [ ] **Phase 1: Identity, cleanup, baseline, and migration map** - Establish collision-safe MLX identity, stable validation, and proven ownership for every brownfield component.
+- [x] **Phase 1: Identity, cleanup, baseline, and migration map** - Establish collision-safe MLX identity, stable validation, and proven ownership for every brownfield component. (completed 2026-07-16)
 - [ ] **Phase 2: Foundation: configuration, SQLite, CAS, runs, and job queue** - Establish contained, durable, immutable, and recoverable local operations.
 - [ ] **Phase 3: GitHub inventory, mirrors, identities, and accurate metrics** - Turn explicitly selected repositories into pinned snapshots and defensible engineering metrics.
 - [ ] **Phase 4: Evidence extraction, accepted-state quality, and preference profile** - Produce immutable accepted-state evidence and challengeable, scoped coding preferences.
@@ -24,7 +24,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 
 ### Phase 1: Identity, cleanup, baseline, and migration map
 
-**Goal:** Operators and maintainers have one collision-safe MLX product surface, an honest validation baseline, and a complete replacement map for brownfield assets.
+**Goal:** As a developer operating and maintaining MLX, I want to establish one collision-safe MLX surface backed by honest validation and complete brownfield replacement mapping, so that I can evolve the pipeline without identity conflicts or unsafe removals.
 **Mode:** mvp
 **Depends on:** Nothing (first phase)
 **Requirements:** IDEN-01, IDEN-02, IDEN-03, IDEN-04, IDEN-05, IDEN-06, IDEN-07, IDEN-08, IDEN-09, IDEN-10
@@ -35,7 +35,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 3. A maintainer can trace every legacy command, path, dataset, script, product string, dynamic-tool path, and iOS component to a recorded disposition, replacement owner, and acceptance coverage before removal.
 4. Repository validation commands produce an inspectable baseline that distinguishes pass, failure, and capability-gated skip and never represents fixture, replay, mock, or skipped evidence as live success.
 
-**Plans:** 9/9 plans executed
+**Plans:** 9/9 plans complete
 
 - [x] 01-01-PLAN.md
 - [x] 01-02-PLAN.md
@@ -191,7 +191,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Identity, cleanup, baseline, and migration map | 9/9 | In Progress|  |
+| 1. Identity, cleanup, baseline, and migration map | 9/9 | Complete    | 2026-07-16 |
 | 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 0/TBD | Not started | - |
 | 3. GitHub inventory, mirrors, identities, and accurate metrics | 0/TBD | Not started | - |
 | 4. Evidence extraction, accepted-state quality, and preference profile | 0/TBD | Not started | - |

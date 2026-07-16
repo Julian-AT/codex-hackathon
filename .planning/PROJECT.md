@@ -17,10 +17,10 @@ Produce a privacy-preserving, provenance-rich personal coding dataset whose qual
 - ✓ The current data layer can generate chat and tool-use JSONL, apply deterministic chunk splits, judge candidates, deduplicate examples, and emit a local evaluation set — existing
 - ✓ Fixed local scripts and TypeScript wrappers exist for MLX-LM SFT/GRPO training, checkpoint supervision, adapter fusion, and device deployment — existing
 - ✓ An iOS MLX Swift runtime exists for adapter loading, Gemma tool-call parsing, and JavaScriptCore tool dispatch — existing but outside the target product's required deployment path
+- ✓ MLX product identity, the sole `mlx` executable, safe `MLX_HOME` resolution, collision detection, eight stable validation scripts, and a complete reviewed brownfield migration inventory — Phase 1
 
 ### Active
 
-- [ ] Establish MLX product identity, the `mlx` executable, safe `MLX_HOME` paths, collision detection, required validation scripts, and a migration inventory for legacy architecture
 - [ ] Implement typed configuration, SQLite migrations, content-addressed objects, immutable run manifests, and resumable leased jobs with recovery
 - [ ] Inventory only explicitly authorized GitHub repositories, maintain mirrors, normalize identities, and compute accurate provenance-labeled engineering metrics
 - [ ] Extract immutable accepted-state evidence and synthesize hierarchical coding preferences with support, counter-evidence, exceptions, and uncertainty
@@ -74,7 +74,8 @@ The primary target machine is an Apple M4 Pro with 24 GB unified memory. The Jul
 | Make Parquet/Arrow with explicit Hugging Face configs the canonical release | This preserves rich provenance while supporting `datasets.load_dataset`, Dataset Viewer, TRL, MLX-LM, and analytical queries | — Pending |
 | Evaluate with task-group, temporal, whole-repository, and future holdouts | Random rows and sibling leakage would overstate personalization and memorization resistance | — Pending |
 | Preserve the eight acceptance boundaries mandated by the project specification | Identity/foundation, repository ingestion, evidence, datasets, runtime benchmark, training, and Studio each need independently verifiable completion | — Pending |
-| Migrate brownfield code only after inventory and replacement coverage | Existing demo and iOS paths contain useful components but also unsafe storage, weak splits, and legacy product assumptions | — Pending |
+| Migrate brownfield code only after inventory and replacement coverage | Existing demo and iOS paths contain useful components but also unsafe storage, weak splits, and legacy product assumptions | Phase 1 established a reconciled 167-record inventory and fail-closed removal authority |
+| Separate executable ownership from state ownership | A shared `mlx` filename or package marker must not authorize PATH changes or mutation of unrelated local state | Phase 1 requires exact entry/marker agreement for executable ownership and a distinct state-owner manifest |
 
 ## Evolution
 
@@ -94,4 +95,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-15 after initialization*
+*Last updated: 2026-07-16 after Phase 1*
