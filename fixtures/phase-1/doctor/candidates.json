@@ -6,6 +6,8 @@
     "collision": "COLLISION",
     "notFound": "NOT FOUND"
   },
+  "repeatCalls": 2,
+  "parallelCalls": 6,
   "scenarios": [
     "owned-first",
     "foreign-first-owned-shadowed",

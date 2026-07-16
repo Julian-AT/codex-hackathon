@@ -20,6 +20,11 @@ const repositoryRoot = path.resolve(import.meta.dirname, '../..');
 const cliEntry = path.join(repositoryRoot, 'src/cli.tsx');
 const temporaryRoots: string[] = [];
 
+interface DoctorFixture {
+	readonly repeatCalls: number;
+	readonly parallelCalls: number;
+}
+
 afterEach(async () => {
 	await Promise.all(
 		temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })),
@@ -30,6 +35,12 @@ async function root(): Promise<string> {
 	const value = await mkdtemp(path.join(tmpdir(), 'mlx-doctor-cli-'));
 	temporaryRoots.push(value);
 	return value;
+}
+
+async function loadFixture(): Promise<DoctorFixture> {
+	return JSON.parse(
+		await readFile(path.join(repositoryRoot, 'fixtures/phase-1/doctor/candidates.json'), 'utf8'),
+	) as DoctorFixture;
 }
 
 async function executable(file: string, body: string): Promise<void> {
@@ -127,7 +138,9 @@ describe('public mlx doctor', () => {
 		const collisionPath = [foreignDir, ownedDir].join(path.delimiter);
 		const collisionHuman = await invoke(collisionPath, false, packageEntry);
 		const collisionJson = await invoke(collisionPath, true, packageEntry);
-		const none = await invoke(path.join(sandbox, 'none'), true, packageEntry);
+		const nonePath = path.join(sandbox, 'none');
+		const noneHuman = await invoke(nonePath, false, packageEntry);
+		const none = await invoke(nonePath, true, packageEntry);
 
 		expect(ownedHuman).toMatchObject({ code: 0, stderr: '' });
 		expect(ownedHuman.stdout).toContain('Executable: OWNED');
@@ -150,6 +163,12 @@ describe('public mlx doctor', () => {
 			},
 		});
 		expect(none.code).not.toBe(0);
+		expect(noneHuman.code).toBe(none.code);
+		expect(noneHuman.stdout).toContain('Executable: NOT FOUND');
+		expect(noneHuman.stdout).toContain('No mlx executable found in PATH.');
+		expect(noneHuman.stdout).toContain(
+			'Install or link this package as mlx, then run mlx doctor again. No files or shell settings were changed.',
+		);
 		expect(parseEnvelope(none.stdout), 'not-found JSON envelope').toMatchObject({
 			ok: false,
 			status: 'not-found',
@@ -158,6 +177,7 @@ describe('public mlx doctor', () => {
 	});
 
 	it('never executes or mutates a hostile body, symlink, PATH, alias, shell, or state sentinel under repeat and parallel diagnosis', async () => {
+		const fixture = await loadFixture();
 		const sandbox = await root();
 		const foreignDir = path.join(sandbox, 'foreign');
 		const body = path.join(foreignDir, 'mlx');
@@ -174,9 +194,12 @@ describe('public mlx doctor', () => {
 		for (const file of files.slice(1)) await writeFile(file, `sentinel:${file}\n`);
 		const before = await fingerprint(files);
 
-		const repeated = [await invoke(foreignDir, true), await invoke(foreignDir, true)];
+		const repeated: Array<Awaited<ReturnType<typeof invoke>>> = [];
+		for (let index = 0; index < fixture.repeatCalls; index += 1) {
+			repeated.push(await invoke(foreignDir, true));
+		}
 		const parallel = await Promise.all(
-			Array.from({ length: 6 }, async () => await invoke(foreignDir, true)),
+			Array.from({ length: fixture.parallelCalls }, async () => await invoke(foreignDir, true)),
 		);
 
 		expect(repeated[0]).toEqual(repeated[1]);

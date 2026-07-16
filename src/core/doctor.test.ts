@@ -163,33 +163,44 @@ describe('inspectExecutableCandidates', () => {
 		await symlink('mlx', cycle);
 		const interrupted = path.join(root, 'interrupted', 'mlx');
 		await executable(interrupted);
+		const markerMismatch = path.join(root, 'marker-mismatch', 'mlx');
+		await mkdir(path.dirname(markerMismatch), { recursive: true });
+		await symlink(declaredEntry, markerMismatch);
 
 		const result = await doctor.inspectExecutableCandidates(
 			input(
 				root,
 				declaredEntry,
 				markerPath,
-				[nonExecutable, broken, cycle, interrupted]
+				[nonExecutable, broken, cycle, interrupted, markerMismatch]
 					.map((candidate) => path.dirname(candidate))
 					.join(path.delimiter),
 			),
 			nodePort(
 				markerPath,
-				new Set([declaredEntry, nonExecutable, interrupted]),
+				new Set([declaredEntry, nonExecutable, interrupted, markerMismatch]),
 				new Set([interrupted]),
 			),
 		);
 
 		expect(result.classification).toBe('collision');
-		expect(result.candidates).toHaveLength(4);
+		expect(result.candidates).toHaveLength(5);
 		expect(result.candidates.map((candidate) => candidate.path)).toEqual([
 			nonExecutable,
 			broken,
 			cycle,
 			interrupted,
+			markerMismatch,
 		]);
 		expect(result.candidates.every((candidate) => candidate.ownership !== 'owned')).toBe(true);
 		expect(result.candidates.some((candidate) => candidate.errors.length > 0)).toBe(true);
+		expect(result.candidates[0]?.errors).toContain('stat: candidate is not executable');
+		expect(result.candidates[1]?.errors.join('\n')).toContain('ENOENT');
+		expect(result.candidates[2]?.errors.join('\n')).toContain('ELOOP');
+		expect(result.candidates[3]?.errors.join('\n')).toContain('EINTR');
+		expect(result.candidates[4]?.errors).toContain(
+			'marker mismatch: packaged ownership evidence is invalid',
+		);
 	});
 
 	it('returns owned/not-found deterministically and leaves bytes, modes, links, aliases, shell data, and state roots unchanged in repeated and parallel calls', async () => {
