@@ -47,6 +47,8 @@ function fixture(kind = 'source') {
 				discoveredBy: 'controlled-snapshot',
 				source: 'src/cli.tsx',
 				snapshot: 'fixture',
+				sourceDigest: digest('legacy-v1'),
+				sourceVersion: 'fixture-v1',
 			},
 		},
 		context: {
@@ -54,6 +56,14 @@ function fixture(kind = 'source') {
 			validRequirements: ['IDEN-05'],
 			validAcceptanceCriteria: ['AC-09'],
 			currentEvidence: [evidence],
+			requiredEvidenceLocators: [evidence.locator],
+			currentLegacyEvidence: [
+				{
+					locatorKey: 'legacy-command\u0000src/cli.tsx\u0000command\u0000bare-repl',
+					digest: digest('legacy-v1'),
+					version: 'fixture-v1',
+				},
+			],
 		},
 	};
 }
@@ -170,5 +180,41 @@ describe('computeRemovalEligibility', () => {
 		const { record, context } = fixture();
 		context.currentEvidence[0].digest = digest('stale');
 		expect(() => validate(record, context)).toThrow(/declared|blocked|eligib/i);
+	});
+
+	it('blocks deletion when exact current legacy artifact evidence changes', async () => {
+		const module = await loadRemovalModule();
+		const evidenceDigest = requireExport<(evidence: readonly unknown[]) => string>(
+			module,
+			'computeReplacementEvidenceDigest',
+		);
+		const compute = requireExport<
+			(record: unknown, context: unknown) => { eligible: boolean; reasons: string[] }
+		>(module, 'computeRemovalEligibility');
+		const { record, context } = fixture();
+		record.review.evidenceDigest = evidenceDigest(record.replacementEvidence);
+		context.currentLegacyEvidence[0].digest = digest('artifact-changed-after-review');
+		const result = compute(record, context);
+		expect(result.eligible).toBe(false);
+		expect(result.reasons.join(' ')).toMatch(/legacy|target|source|digest/i);
+	});
+
+	it('blocks deletion when required identity replacement evidence is absent', async () => {
+		const module = await loadRemovalModule();
+		const evidenceDigest = requireExport<(evidence: readonly unknown[]) => string>(
+			module,
+			'computeReplacementEvidenceDigest',
+		);
+		const compute = requireExport<
+			(record: unknown, context: unknown) => { eligible: boolean; reasons: string[] }
+		>(module, 'computeRemovalEligibility');
+		const { record, context } = fixture();
+		record.review.evidenceDigest = evidenceDigest(record.replacementEvidence);
+		context.requiredEvidenceLocators = [
+			'src/identity/audit.test.ts#forbidden-product-brand',
+		];
+		const result = compute(record, context);
+		expect(result.eligible).toBe(false);
+		expect(result.reasons.join(' ')).toMatch(/required|identity|evidence|locator/i);
 	});
 });
