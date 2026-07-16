@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { describe, expect, it, vi } from 'vitest';
 
 const moduleUrl = new URL('./repository-scanner.ts', import.meta.url).href;
@@ -19,7 +21,7 @@ function requireExport<T>(module: Record<string, unknown>, name: string): T {
 
 const ARCHIVE_ROOT = '.planning/milestones/legacy-2026-04-pre-mlx-phases';
 
-export const REQUIRED_ARCHIVED_PLANNING_PATHS = [
+const REQUIRED_ARCHIVED_PLANNING_PATHS = [
 	'01-foundation-smoke/01-01-SUMMARY.md',
 	'01-foundation-smoke/01-01-next-scaffold-sentry-providers-PLAN.md',
 	'01-foundation-smoke/01-02-SUMMARY.md',
@@ -100,7 +102,11 @@ function syntheticSnapshot() {
 				},
 				{
 					category: 'runtime-path',
-					locator: { path: 'src/lib/config.ts', kind: 'expression', value: '<cwd>/.codex/settings.json' },
+					locator: {
+						path: 'src/lib/config.ts',
+						kind: 'expression',
+						value: '<cwd>/.codex/settings.json',
+					},
 				},
 				{
 					category: 'product-string',
@@ -108,7 +114,11 @@ function syntheticSnapshot() {
 				},
 				{
 					category: 'dynamic-tool-path',
-					locator: { path: 'lib/discovery/worker.ts', kind: 'symbol', value: 'generateToolCandidate' },
+					locator: {
+						path: 'lib/discovery/worker.ts',
+						kind: 'symbol',
+						value: 'generateToolCandidate',
+					},
 				},
 			],
 			evidencedZeroCategories: [],
@@ -137,10 +147,9 @@ function syntheticSnapshot() {
 describe('scanLegacyAssets', () => {
 	it('discovers all nine categories and all 55 archived planning paths without opening sensitive roots', async () => {
 		const module = await loadScannerModule();
-		const scanLegacyAssets = requireExport<(input: unknown) => readonly { category: string; locator: { path: string } }[]>(
-			module,
-			'scanLegacyAssets',
-		);
+		const scanLegacyAssets = requireExport<
+			(input: unknown) => readonly { category: string; locator: { path: string } }[]
+		>(module, 'scanLegacyAssets');
 		const { input, sensitiveRead } = syntheticSnapshot();
 		const first = scanLegacyAssets(input);
 		const second = scanLegacyAssets(input);
@@ -188,9 +197,16 @@ describe('scanLegacyAssets', () => {
 describe('reconcileInventory', () => {
 	it('fails for omitted, extra, duplicate, or nondeterministically ordered locators', async () => {
 		const module = await loadScannerModule();
-		const scanLegacyAssets = requireExport<(input: unknown) => readonly unknown[]>(module, 'scanLegacyAssets');
+		const scanLegacyAssets = requireExport<(input: unknown) => readonly unknown[]>(
+			module,
+			'scanLegacyAssets',
+		);
 		const reconcileInventory = requireExport<
-			(discovered: readonly unknown[], records: readonly unknown[], categories: readonly unknown[]) => {
+			(
+				discovered: readonly unknown[],
+				records: readonly unknown[],
+				categories: readonly unknown[],
+			) => {
 				ok: boolean;
 				missing: readonly string[];
 				extra: readonly string[];
@@ -223,19 +239,66 @@ describe('reconcileInventory', () => {
 		}));
 
 		expect(reconcileInventory(discovered, records, categories).ok).toBe(true);
-		expect(reconcileInventory(discovered, records.slice(1), categories).missing).not.toHaveLength(0);
-		expect(reconcileInventory(discovered, [...records, records[0]], categories).duplicates).not.toHaveLength(0);
+		expect(reconcileInventory(discovered, records.slice(1), categories).missing).not.toHaveLength(
+			0,
+		);
+		expect(
+			reconcileInventory(discovered, [...records, records[0]], categories).duplicates,
+		).not.toHaveLength(0);
 		expect(
 			reconcileInventory(discovered, [...records].reverse(), categories).orderingErrors,
 		).not.toHaveLength(0);
 		expect(
-			reconcileInventory(discovered, [
-				...records,
-				{
-					...records[0],
-					locator: { path: 'extra.ts', kind: 'file', value: 'extra.ts' },
-				},
-			], categories).extra,
+			reconcileInventory(
+				discovered,
+				[
+					...records,
+					{
+						...records[0],
+						locator: { path: 'extra.ts', kind: 'file', value: 'extra.ts' },
+					},
+				],
+				categories,
+			).extra,
 		).not.toHaveLength(0);
+	});
+
+	it('reconciles the canonical inventory against its controlled Git/source snapshot', async () => {
+		const scannerModule = await loadScannerModule();
+		const schemaModule = (await import(
+			new URL('./inventory-schema.ts', import.meta.url).href
+		)) as Record<string, unknown>;
+		const schema = requireExport<{
+			parse(value: unknown): {
+				scanSnapshot: Record<string, unknown>;
+				exclusions: readonly unknown[];
+				records: readonly { category: string }[];
+				categories: readonly unknown[];
+			};
+		}>(schemaModule, 'MIGRATION_INVENTORY_SCHEMA');
+		const scanLegacyAssets = requireExport<(input: unknown) => readonly unknown[]>(
+			scannerModule,
+			'scanLegacyAssets',
+		);
+		const reconcileInventory = requireExport<
+			(
+				discovered: readonly unknown[],
+				records: readonly unknown[],
+				categories: readonly unknown[],
+			) => {
+				ok: boolean;
+			}
+		>(scannerModule, 'reconcileInventory');
+		const canonical = schema.parse(
+			JSON.parse(readFileSync('migration/legacy-assets.v1.json', 'utf8')),
+		);
+		const discovered = scanLegacyAssets({
+			...canonical.scanSnapshot,
+			exclusions: canonical.exclusions,
+		});
+		expect(reconcileInventory(discovered, canonical.records, canonical.categories).ok).toBe(true);
+		expect(
+			canonical.records.filter(({ category }) => category === 'planning-artifact'),
+		).toHaveLength(55);
 	});
 });

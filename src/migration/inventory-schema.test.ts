@@ -87,7 +87,10 @@ function validInventory() {
 			],
 			sourceDeclarations: CATEGORIES.filter(
 				(category) => !['script', 'planning-artifact', 'product-string'].includes(category),
-			).map((category) => ({ category, locator })),
+			).map((category) => ({
+				category,
+				locator: { ...locator, value: `${locator.value}:${category}` },
+			})),
 			evidencedZeroCategories: ['product-string'],
 		},
 		records: CATEGORIES.filter((category) => category !== 'product-string').map((category) => {
@@ -101,9 +104,11 @@ function validInventory() {
 								value:
 									'.planning/milestones/legacy-2026-04-pre-mlx-phases/01-foundation-smoke/01-01-SUMMARY.md',
 							}
-						: locator;
+						: { ...locator, value: `${locator.value}:${category}` };
 			return {
-				id: digest(`${category}\u0000${exactLocator.path}\u0000${exactLocator.kind}\u0000${exactLocator.value}`),
+				id: digest(
+					`${category}\u0000${exactLocator.path}\u0000${exactLocator.kind}\u0000${exactLocator.value}`,
+				),
 				category,
 				locator: exactLocator,
 				legacyPurpose: `Legacy ${category} retained as migration evidence.`,
@@ -135,7 +140,10 @@ describe('MIGRATION_INVENTORY_SCHEMA', () => {
 	});
 
 	it.each([
-		['duplicate record IDs', (value: ReturnType<typeof validInventory>) => value.records.push(value.records[0])],
+		[
+			'duplicate record IDs',
+			(value: ReturnType<typeof validInventory>) => value.records.push(value.records[0]),
+		],
 		[
 			'duplicate exact locators',
 			(value: ReturnType<typeof validInventory>) => {

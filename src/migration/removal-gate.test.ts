@@ -50,9 +50,7 @@ function fixture(kind = 'source') {
 			},
 		},
 		context: {
-			reconciledLocatorKeys: [
-				'legacy-command\u0000src/cli.tsx\u0000command\u0000bare-repl',
-			],
+			reconciledLocatorKeys: ['legacy-command\u0000src/cli.tsx\u0000command\u0000bare-repl'],
 			validRequirements: ['IDEN-05'],
 			validAcceptanceCriteria: ['AC-09'],
 			currentEvidence: [evidence],
@@ -67,10 +65,12 @@ describe('computeRemovalEligibility', () => {
 			module,
 			'computeReplacementEvidenceDigest',
 		);
-		const compute = requireExport<(record: unknown, context: unknown) => { eligible: boolean; status: string; reasons: string[] }>(
-			module,
-			'computeRemovalEligibility',
-		);
+		const compute = requireExport<
+			(
+				record: unknown,
+				context: unknown,
+			) => { eligible: boolean; status: string; reasons: string[] }
+		>(module, 'computeRemovalEligibility');
 		const { record, context } = fixture();
 		record.review.evidenceDigest = evidenceDigest(record.replacementEvidence);
 		const first = compute(record, context);
@@ -96,14 +96,61 @@ describe('computeRemovalEligibility', () => {
 	);
 
 	it.each([
-		['exact reconciliation', (record: ReturnType<typeof fixture>['record'], context: ReturnType<typeof fixture>['context']) => context.reconciledLocatorKeys.splice(0)],
-		['reviewed owner', (record: ReturnType<typeof fixture>['record']) => (record.replacementOwner.reviewed = false)],
-		['requirement coverage', (record: ReturnType<typeof fixture>['record']) => (record.requirementCoverage = [])],
-		['acceptance coverage', (record: ReturnType<typeof fixture>['record']) => (record.acceptanceCoverage = [])],
-		['replacement evidence', (record: ReturnType<typeof fixture>['record']) => (record.replacementEvidence = [])],
-		['current digest', (_record: ReturnType<typeof fixture>['record'], context: ReturnType<typeof fixture>['context']) => (context.currentEvidence[0].digest = digest('stale'))],
-		['current version', (_record: ReturnType<typeof fixture>['record'], context: ReturnType<typeof fixture>['context']) => (context.currentEvidence[0].version = '2')],
-		['approved review', (record: ReturnType<typeof fixture>['record']) => (record.review.status = 'pending')],
+		[
+			'exact reconciliation',
+			(
+				record: ReturnType<typeof fixture>['record'],
+				context: ReturnType<typeof fixture>['context'],
+			) => context.reconciledLocatorKeys.splice(0),
+		],
+		[
+			'reviewed owner',
+			(record: ReturnType<typeof fixture>['record']) => {
+				record.replacementOwner.reviewed = false;
+			},
+		],
+		[
+			'requirement coverage',
+			(record: ReturnType<typeof fixture>['record']) => {
+				record.requirementCoverage = [];
+			},
+		],
+		[
+			'acceptance coverage',
+			(record: ReturnType<typeof fixture>['record']) => {
+				record.acceptanceCoverage = [];
+			},
+		],
+		[
+			'replacement evidence',
+			(record: ReturnType<typeof fixture>['record']) => {
+				record.replacementEvidence = [];
+			},
+		],
+		[
+			'current digest',
+			(
+				_record: ReturnType<typeof fixture>['record'],
+				context: ReturnType<typeof fixture>['context'],
+			) => {
+				context.currentEvidence[0].digest = digest('stale');
+			},
+		],
+		[
+			'current version',
+			(
+				_record: ReturnType<typeof fixture>['record'],
+				context: ReturnType<typeof fixture>['context'],
+			) => {
+				context.currentEvidence[0].version = '2';
+			},
+		],
+		[
+			'approved review',
+			(record: ReturnType<typeof fixture>['record']) => {
+				record.review.status = 'pending';
+			},
+		],
 	] as const)('blocks missing or stale %s', async (_label, mutate) => {
 		const module = await loadRemovalModule();
 		const compute = requireExport<
