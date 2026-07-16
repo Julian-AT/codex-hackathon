@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 1
 current_phase_name: Identity, cleanup, baseline, and migration map
-status: executing
-stopped_at: Completed 01-08-PLAN.md
-last_updated: "2026-07-16T09:26:29.223Z"
+status: verifying
+stopped_at: Completed 01-09-PLAN.md
+last_updated: "2026-07-16T09:40:43.930Z"
 last_activity: 2026-07-16
 last_activity_desc: Phase 1 execution started
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-07-15)
 
 Phase: 1 (Identity, cleanup, baseline, and migration map) — EXECUTING
 Plan: 9 of 9
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-16 — Phase 1 execution started
 
-Progress: [█████████░] 89%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [█████████░] 89%
 | Phase 01 P06 | 8 min | 3 tasks | 6 files |
 | Phase 01 P07 | 5 min | 3 tasks | 6 files |
 | Phase 01 P08 | 5 min | 3 tasks | 6 files |
+| Phase 01 P09 | 8 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,10 @@ Recent decisions affecting current work:
 - [Phase 01]: Revalidate each production process request against the exact immutable catalog executable and argument vector before Bun spawn. — Keeps the host boundary deny-by-default without adding a generic command-string API.
 - [Phase 01]: Reserve direct integration Vitest execution for explicit external test:integration mode. — Ordinary run mode and in-suite baselines cannot recurse through a package script.
 - [Phase 01]: Derive named Apple Silicon evidence only from platform and architecture captured at probe construction. — Missing or unknown probe behavior fails instead of authorizing SKIP.
+- [Phase 01]: Map every stable validation script directly to one canonical process-entry mode and check ID. — Prevents aliases, recursion, and caller-selected executable or argument tokens.
+- [Phase 01]: Use a committed synthetic adapter-tools fixture through a test-only filesystem seam. — Makes schema validation deterministic without reading or rewriting mutable repository data.
+- [Phase 01]: Preserve immutable operator evidence and record overlapping Phase hunks explicitly in the final manifest. — Keeps the operator-owned src/app.tsx deletion and unrelated dirty bytes outside Phase ownership.
+- [Phase 01]: Disable formatting only for the exact operator-owned dirty test that blocked portable check. — Preserves operator bytes while retaining lint analysis and honest visible warnings.
 
 ### Pending Todos
 
@@ -116,6 +121,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T09:26:29.218Z
-Stopped at: Completed 01-08-PLAN.md
+Last session: 2026-07-16T09:40:43.925Z
+Stopped at: Completed 01-09-PLAN.md
 Resume file: None

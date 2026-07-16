@@ -21,9 +21,14 @@ This map covers MLX — the personal coding dataset and model pipeline. Tests ar
 **Run Commands:**
 ```bash
 bun run test          # Run all Vitest tests once
+bun run test:integration # Run the external-only integration Vitest config
 bun run test:watch    # Run Vitest in watch mode
 bun run typecheck     # Type-check TypeScript with no emit
 bun run check         # Run Biome lint/format checks
+bun run studio:build  # Explicit LIVE FAIL until the Phase 8 product exists
+bun run dataset:validate # Explicit LIVE FAIL until the Phase 5 product exists
+bun run benchmark:smoke # Explicit LIVE FAIL until the Phase 6 product exists
+bun run local:check   # Probed LIVE host capability result
 ```
 
 Coverage is not configured in `package.json` or `vitest.config.ts`. There is no enforced coverage threshold.
@@ -156,7 +161,7 @@ const mockChunks: Chunk[] = [
 # Not configured. Add Vitest coverage tooling before using a coverage command.
 ```
 
-The practical quality gate is the stable script set in `package.json`: `bun run test`, `bun run typecheck`, and `bun run check`. `AGENTS.md` also requires additional project-level scripts such as `test:integration`, `studio:build`, `dataset:validate`, `benchmark:smoke`, and `local:check`, but these scripts are not present in the current `package.json`.
+The stable script set in `package.json` is `check`, `typecheck`, `test`, `test:integration`, `studio:build`, `dataset:validate`, `benchmark:smoke`, and `local:check`. All eight enter `src/validation/process-entry.ts` through fixed modes and canonical check IDs. Portable commands pass; absent later products fail explicitly with `LIVE` source and owner phase; local host behavior is a probed `LIVE` result. Unit and integration success remains labeled `FIXTURE` and is not later-product acceptance.
 
 ## Test Types
 
