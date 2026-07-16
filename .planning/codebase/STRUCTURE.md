@@ -34,13 +34,18 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 
 **`src/`:**
 - Purpose: Side-effect-free public MLX CLI plus brownfield Ink UI, command modules, and local config/conversation helpers retained for migration inventory.
-- Contains: `src/cli.tsx`, `src/cli/`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
-- Key files: `src/cli.tsx`, `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/repl.tsx`, `src/commands/index.ts`.
+- Contains: `src/cli.tsx`, `src/cli/`, `src/core/`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
+- Key files: `src/cli.tsx`, `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/core/mlx-home.ts`, `src/repl.tsx`, `src/commands/index.ts`.
 
 **`src/cli/`:**
 - Purpose: Public command identity, parsing, help projection, orchestration, and isolated human/JSON rendering.
-- Contains: One literal typed command catalog, pure `runCli` boundary, separate renderers, and colocated contract tests.
-- Key files: `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/cli/render-human.ts`, `src/cli/render-json.ts`.
+- Contains: One literal typed command catalog, pure `runCli` boundary, explicit state-init adapter, separate renderers, and colocated contract tests.
+- Key files: `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/cli/init.ts`, `src/cli/render-human.ts`, `src/cli/render-json.ts`.
+
+**`src/core/`:**
+- Purpose: Focused local product boundaries that are independent of legacy pipeline and presentation modules.
+- Contains: Pure `MLX_HOME` resolution plus versioned state-root ownership inspection and initialization.
+- Key files: `src/core/mlx-home.ts`, `src/core/state-ownership.ts`.
 
 **`src/commands/`:**
 - Purpose: Slash commands and one-shot command implementations.
@@ -157,7 +162,7 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - `biome.json`: Formatter/linter rules.
 - `requirements.txt`: Python MLX-LM package requirements.
 - `.env.example`: Example environment configuration; do not read or copy `.env.local`.
-- `src/lib/config.ts`: Runtime config schema, default values, user/project config paths, env overrides.
+- `src/lib/config.ts`: Runtime config schema, defaults, canonical `MLX_HOME/config/config.json` path, actionable load errors, and env overrides.
 
 **Core Logic:**
 - `lib/model.ts`: Local OpenAI-compatible model provider.
@@ -174,6 +179,8 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 **Contracts and Types:**
 - `src/cli/command-tree.ts`: Public command paths, aliases, owner phases, arguments/options, availability, parse results, and help projections.
 - `src/cli/main.ts`: CLI envelopes, injected IO/dependencies, handlers, exit codes, and orchestration result types.
+- `src/core/mlx-home.ts`: Pure default/absolute-override root resolver with no filesystem access.
+- `src/core/state-ownership.ts`: Non-following final-path inspection and exclusive state ownership marker creation.
 - `lib/discovery/types.ts`: Corpus, chunk, dynamic tool, and validation result types.
 - `lib/data/types.ts`: Tool call, chat message, training example, judge score, eval item, and data-gen metadata types.
 - `src/commands/index.ts`: Command and command-context types.
