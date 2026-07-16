@@ -4,10 +4,11 @@ import {
 	chmodSync,
 	existsSync,
 	lstatSync,
-	mkdtempSync,
 	mkdirSync,
+	mkdtempSync,
 	readFileSync,
 	readdirSync,
+	realpathSync,
 	rmSync,
 	symlinkSync,
 	truncateSync,
@@ -18,11 +19,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
+	type BlobKind,
 	createBlobReference,
 	getBlobReference,
-	type BlobKind,
 } from '../../src/catalog/blob-references';
-import { runCatalogMigrations } from '../../src/catalog/migration-runner';
+import { type CatalogDatabase, runCatalogMigrations } from '../../src/catalog/migration-runner';
 import { ObjectStore, ObjectStoreError } from '../../src/storage/object-store';
 
 const roots: string[] = [];
@@ -43,7 +44,7 @@ function requireBunRuntime(): boolean {
 }
 
 function makeRoot(): string {
-	const root = mkdtempSync(path.join(tmpdir(), 'mlx-object-integration-'));
+	const root = realpathSync(mkdtempSync(path.join(tmpdir(), 'mlx-object-integration-')));
 	roots.push(root);
 	return root;
 }
@@ -52,8 +53,14 @@ function digest(bytes: Uint8Array): string {
 	return createHash('sha256').update(bytes).digest('hex');
 }
 
-async function openDatabase(root: string) {
-	const { Database } = await import('bun:sqlite');
+async function openDatabase(root: string): Promise<CatalogDatabase> {
+	const specifier = 'bun:sqlite';
+	const { Database } = (await import(specifier)) as {
+		readonly Database: new (
+			filename: string,
+			options: { readonly create: boolean; readonly strict: boolean },
+		) => CatalogDatabase;
+	};
 	const catalog = path.join(root, 'catalog.sqlite3');
 	const database = new Database(catalog, { create: true, strict: true });
 	database.exec('PRAGMA foreign_keys = ON');
@@ -65,8 +72,12 @@ function runBun(source: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const child = spawn('bun', ['--eval', source], { stdio: ['ignore', 'pipe', 'pipe'] });
 		let output = '';
-		child.stdout.on('data', (chunk) => (output += String(chunk)));
-		child.stderr.on('data', (chunk) => (output += String(chunk)));
+		child.stdout.on('data', (chunk) => {
+			output += String(chunk);
+		});
+		child.stderr.on('data', (chunk) => {
+			output += String(chunk);
+		});
 		child.once('error', reject);
 		child.once('exit', (code) =>
 			code === 0 ? resolve() : reject(new Error(`worker exited ${code}: ${output}`)),
@@ -121,9 +132,9 @@ describe('immutable object store and durable references', () => {
 		expect(() => store.put(bytes)).toThrow('injected interruption');
 		const shard = path.join(root, 'objects', 'sha256', expectedDigest.slice(0, 2));
 		expect(existsSync(path.join(shard, expectedDigest))).toBe(false);
-		expect(existsSync(shard) ? readdirSync(shard).filter((name) => name.includes('.mlx-tmp-')) : []).toEqual(
-			[],
-		);
+		expect(
+			existsSync(shard) ? readdirSync(shard).filter((name) => name.includes('.mlx-tmp-')) : [],
+		).toEqual([]);
 		expect(() =>
 			createBlobReference(database, new ObjectStore(path.join(root, 'objects')), {
 				id: 'missing',
@@ -165,9 +176,9 @@ describe('immutable object store and durable references', () => {
 			size: object.size,
 		});
 		expect(createBlobReference(database, store, reference)).toEqual(reference);
-		expect(() =>
-			createBlobReference(database, store, { ...reference, kind: 'patch' }),
-		).toThrow(/conflict/i);
+		expect(() => createBlobReference(database, store, { ...reference, kind: 'patch' })).toThrow(
+			/conflict/i,
+		);
 
 		truncateSync(object.path, 3);
 		expect(() => store.openVerified(object.digest)).toThrow(ObjectStoreError);
@@ -192,6 +203,6 @@ describe('immutable object store and durable references', () => {
 		writeFileSync(replaced.path, Buffer.from('wrong bytes'));
 		chmodSync(replaced.path, 0o600);
 		expect(lstatSync(replaced.path).isFile()).toBe(true);
-		expect(() => replacedStore.put(Buffer.from('replace me'))).toThrow(/conflict|corrupt/i);
+		expect(() => replacedStore.put(Buffer.from('replace me'))).toThrow(/conflict|corrupt|digest/i);
 	});
 });

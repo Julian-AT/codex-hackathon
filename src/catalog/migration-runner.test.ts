@@ -48,10 +48,11 @@ describe('runCatalogMigrations', () => {
 	it('applies the exact application manifest once', async () => {
 		if (!requireBunRuntime()) return;
 		const db = await database();
-		expect(runCatalogMigrations(db)).toBe(1);
-		expect(runCatalogMigrations(db)).toBe(1);
+		expect(runCatalogMigrations(db)).toBe(2);
+		expect(runCatalogMigrations(db)).toBe(2);
 		expect(db.query('SELECT migration_number, name FROM schema_migrations').all()).toEqual([
 			{ migration_number: 1, name: '0001-catalog.sql' },
+			{ migration_number: 2, name: '0002-blobs.sql' },
 		]);
 		db.close();
 	});
@@ -84,7 +85,7 @@ describe('runCatalogMigrations', () => {
 
 		const gap = await database();
 		runCatalogMigrations(gap);
-		gap.query('UPDATE schema_migrations SET migration_number = 2 WHERE migration_number = 1').run();
+		gap.query('DELETE FROM schema_migrations WHERE migration_number = 1').run();
 		expect(() => runCatalogMigrations(gap)).toThrow('gap');
 		gap.close();
 
@@ -92,7 +93,7 @@ describe('runCatalogMigrations', () => {
 		runCatalogMigrations(future);
 		future
 			.query('INSERT INTO schema_migrations (migration_number, name, checksum) VALUES (?, ?, ?)')
-			.run(2, '0002-future.sql', '1'.repeat(64));
+			.run(3, '0003-future.sql', '1'.repeat(64));
 		expect(() => runCatalogMigrations(future)).toThrow('newer');
 		future.close();
 	});

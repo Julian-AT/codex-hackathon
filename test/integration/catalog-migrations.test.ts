@@ -90,11 +90,11 @@ describe('catalog migrations', () => {
 		const catalog = requireCatalog(await catalogModule());
 		const first = await catalog.openCatalog({ env: { MLX_HOME: root } });
 		expect(first?.pragmas()).toEqual({ busyTimeout: 5_000, foreignKeys: true, journalMode: 'wal' });
-		expect(first?.schemaVersion()).toBe(1);
+		expect(first?.schemaVersion()).toBe(2);
 		first?.close();
 
 		const second = await catalog.openCatalog({ env: { MLX_HOME: root } });
-		expect(second?.schemaVersion()).toBe(1);
+		expect(second?.schemaVersion()).toBe(2);
 		second?.close();
 	});
 
@@ -114,7 +114,7 @@ describe('catalog migrations', () => {
 
 		for (let reopen = 0; reopen < 2; reopen += 1) {
 			const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
-			expect(connection?.schemaVersion()).toBe(1);
+			expect(connection?.schemaVersion()).toBe(2);
 			connection?.close();
 		}
 		const verified = new Database(catalogPath, { readonly: true });
@@ -133,7 +133,7 @@ describe('catalog migrations', () => {
 		);
 		const catalog = requireCatalog(await catalogModule());
 		const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
-		expect(connection.schemaVersion()).toBe(1);
+		expect(connection.schemaVersion()).toBe(2);
 		connection.close();
 	});
 
@@ -179,15 +179,13 @@ describe('catalog migrations', () => {
 					.query('UPDATE schema_migrations SET checksum = ? WHERE migration_number = 1')
 					.run('0'.repeat(64));
 			} else if (scenario === 'gap') {
-				database
-					.query('UPDATE schema_migrations SET migration_number = 2 WHERE migration_number = 1')
-					.run();
+				database.query('DELETE FROM schema_migrations WHERE migration_number = 1').run();
 			} else {
 				database
 					.query(
 						'INSERT INTO schema_migrations (migration_number, name, checksum) VALUES (?, ?, ?)',
 					)
-					.run(2, '0002-future.sql', '1'.repeat(64));
+					.run(3, '0003-future.sql', '1'.repeat(64));
 			}
 			database.close();
 			await expect(catalog.openCatalog({ env: { MLX_HOME: root } })).rejects.toThrow(

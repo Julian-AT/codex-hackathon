@@ -52,7 +52,7 @@ describe('openCatalog', () => {
 			foreignKeys: true,
 			journalMode: 'wal',
 		});
-		expect(connection.schemaVersion()).toBe(1);
+		expect(connection.schemaVersion()).toBe(2);
 		connection.close();
 	});
 

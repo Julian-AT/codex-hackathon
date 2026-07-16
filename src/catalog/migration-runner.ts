@@ -45,6 +45,11 @@ const APPLICATION_MIGRATIONS: readonly MigrationDefinition[] = Object.freeze([
 		name: '0001-catalog.sql',
 		url: new URL('../../migrations/0001-catalog.sql', import.meta.url),
 	}),
+	Object.freeze({
+		number: 2,
+		name: '0002-blobs.sql',
+		url: new URL('../../migrations/0002-blobs.sql', import.meta.url),
+	}),
 ]);
 
 export class MigrationError extends Error {
