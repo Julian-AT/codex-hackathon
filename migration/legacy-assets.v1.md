@@ -2,7 +2,7 @@
 
 > This project is distinct from Apple's MLX project and is not affiliated with or endorsed by Apple.
 
-Canonical source: `migration/legacy-assets.v1.json` (schema 1, inventory 1.0.0).
+Canonical source: `migration/legacy-assets.v1.json` (schema 1, inventory 1.0.1).
 This file is generated from validated JSON. Do not edit it by hand.
 
 ## Coverage
@@ -14,7 +14,7 @@ This file is generated from validated JSON. Do not edit it by hand.
 | runtime-path | records | 22 | 22 | reconciled | controlled tracked paths plus explicit source declarations |
 | generated-artifact | records | 29 | 29 | reconciled | controlled tracked paths plus explicit source declarations |
 | script | records | 15 | 15 | reconciled | controlled tracked paths plus explicit source declarations |
-| product-string | evidenced-zero | 0 | 0 | reconciled | Plan 02 identity audit found no forbidden user-facing product strings in the controlled scope. |
+| product-string | records | 1 | 1 | reconciled | controlled tracked paths plus explicit source declarations |
 | dynamic-tool-path | records | 9 | 9 | reconciled | controlled tracked paths plus explicit source declarations |
 | ios-component | records | 11 | 11 | reconciled | controlled tracked paths plus explicit source declarations |
 | planning-artifact | records | 55 | 55 | reconciled | controlled tracked paths plus explicit source declarations |
@@ -866,7 +866,14 @@ This file is generated from validated JSON. Do not edit it by hand.
 
 ### product-string
 
-- **EVIDENCED ZERO:** Plan 02 identity audit found no forbidden user-facing product strings in the controlled scope.
+- **4e52e5b7239ce8a85cb331f27c8699f9a2091bca702422a2bbe6500e1860f033** — `forgeprint-codex-cloud-master-prompt.md#artifact=root cloud build prompt with prohibited Forgeprint and codex product identity`
+  - Purpose: Legacy root cloud-build prompt prescribed the prohibited Forgeprint product identity, executable, state root, and unsafe broad private-repository scope.
+  - Disposition/removal: remove / eligible
+  - Owner: Phase 1 / canonical-mlx-identity-and-migration-gate / reviewed=true
+  - Coverage: requirements=IDEN-01, IDEN-07, IDEN-08; acceptance=AC-01, AC-13, AC-16, AC-18
+  - Evidence: source:README.md#canonical-product-identity@558c039500ba5dd600415ef1ed2deae3e60f1133#c93cb5129cada7def56bf5275e5e699e32b6823ac7393bdcd2a71221a4f0448e; schema:src/identity/audit.ts#auditIdentity@f0e4a03350e84437f99e3e81fa207632e8a6edd8#c1d8ca8964ca211776369e2c6ab53d22ce254df3026611722c188b0d39456c58; test:src/identity/audit.test.ts#forbidden-product-brand@46521f1ac6fa0ed4fd20b05ee6027e096012447b#0a35e83ab437988dccd2a92858ead4b82244d03be8ec91de0025ec2213d74fb9; executable:mlx.package.json#bin.mlx@f570a1d43899f7057029b437cdbb22135816f0db#c015d05476093512d4716a52d706f71665ff305c43dd34d9d6335819a5af7281
+  - Review: approved / phase-1-incident-remediation / 4b5b109828c0e10afe5059ae619edd7124eaf25772135884567e86fb725bb49f
+  - Provenance: post-merge-root-artifact-reconciliation / 3881d89:forgeprint-codex-cloud-master-prompt.md / merge-3881d89 / source-digest=d27cd18bd26590b013d92a4f5663a9f498f6794ecff8209485b56ffd8f8bc95e / source-version=477b0a7fd8563159ad2eb18349337153e17d94fa
 
 ### dynamic-tool-path
 

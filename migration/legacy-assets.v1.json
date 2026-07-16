@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1",
-  "inventoryVersion": "1.0.0",
+  "inventoryVersion": "1.0.1",
   "categories": [
     {
       "category": "legacy-command",
@@ -45,11 +45,10 @@
     {
       "category": "product-string",
       "scanRule": "controlled tracked paths plus explicit source declarations",
-      "discoveredCount": 0,
-      "recordCount": 0,
+      "discoveredCount": 1,
+      "recordCount": 1,
       "status": "reconciled",
-      "policy": "evidenced-zero",
-      "zeroEvidence": "Plan 02 identity audit found no forbidden user-facing product strings in the controlled scope."
+      "policy": "records"
     },
     {
       "category": "dynamic-tool-path",
@@ -801,11 +800,17 @@
           "kind": "symbol",
           "value": "ToolRegistry"
         }
+      },
+      {
+        "category": "product-string",
+        "locator": {
+          "path": "forgeprint-codex-cloud-master-prompt.md",
+          "kind": "artifact",
+          "value": "root cloud build prompt with prohibited Forgeprint and codex product identity"
+        }
       }
     ],
-    "evidencedZeroCategories": [
-      "product-string"
-    ]
+    "evidencedZeroCategories": []
   },
   "records": [
     {
@@ -3719,6 +3724,72 @@
       },
       "disposition": "adapt",
       "removalStatus": "blocked"
+    },
+    {
+      "id": "4e52e5b7239ce8a85cb331f27c8699f9a2091bca702422a2bbe6500e1860f033",
+      "category": "product-string",
+      "locator": {
+        "path": "forgeprint-codex-cloud-master-prompt.md",
+        "kind": "artifact",
+        "value": "root cloud build prompt with prohibited Forgeprint and codex product identity"
+      },
+      "legacyPurpose": "Legacy root cloud-build prompt prescribed the prohibited Forgeprint product identity, executable, state root, and unsafe broad private-repository scope.",
+      "replacementOwner": {
+        "phase": 1,
+        "component": "canonical-mlx-identity-and-migration-gate",
+        "reviewed": true
+      },
+      "requirementCoverage": [
+        "IDEN-01",
+        "IDEN-07",
+        "IDEN-08"
+      ],
+      "acceptanceCoverage": [
+        "AC-01",
+        "AC-13",
+        "AC-16",
+        "AC-18"
+      ],
+      "replacementEvidence": [
+        {
+          "kind": "source",
+          "locator": "README.md#canonical-product-identity",
+          "digest": "c93cb5129cada7def56bf5275e5e699e32b6823ac7393bdcd2a71221a4f0448e",
+          "version": "558c039500ba5dd600415ef1ed2deae3e60f1133"
+        },
+        {
+          "kind": "schema",
+          "locator": "src/identity/audit.ts#auditIdentity",
+          "digest": "c1d8ca8964ca211776369e2c6ab53d22ce254df3026611722c188b0d39456c58",
+          "version": "f0e4a03350e84437f99e3e81fa207632e8a6edd8"
+        },
+        {
+          "kind": "test",
+          "locator": "src/identity/audit.test.ts#forbidden-product-brand",
+          "digest": "0a35e83ab437988dccd2a92858ead4b82244d03be8ec91de0025ec2213d74fb9",
+          "version": "46521f1ac6fa0ed4fd20b05ee6027e096012447b"
+        },
+        {
+          "kind": "executable",
+          "locator": "mlx.package.json#bin.mlx",
+          "digest": "c015d05476093512d4716a52d706f71665ff305c43dd34d9d6335819a5af7281",
+          "version": "f570a1d43899f7057029b437cdbb22135816f0db"
+        }
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "phase-1-incident-remediation",
+        "evidenceDigest": "4b5b109828c0e10afe5059ae619edd7124eaf25772135884567e86fb725bb49f"
+      },
+      "provenance": {
+        "discoveredBy": "post-merge-root-artifact-reconciliation",
+        "source": "3881d89:forgeprint-codex-cloud-master-prompt.md",
+        "snapshot": "merge-3881d89",
+        "sourceDigest": "d27cd18bd26590b013d92a4f5663a9f498f6794ecff8209485b56ffd8f8bc95e",
+        "sourceVersion": "477b0a7fd8563159ad2eb18349337153e17d94fa"
+      },
+      "disposition": "remove",
+      "removalStatus": "eligible"
     },
     {
       "id": "e83e6390905adcd79a4783759c45630644a811766f380757f90c30c03f70bf29",

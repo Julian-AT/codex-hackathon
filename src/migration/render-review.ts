@@ -98,7 +98,7 @@ export function renderMigrationReview(input: unknown): string {
 				`  - Coverage: requirements=${record.requirementCoverage.join(', ')}; acceptance=${record.acceptanceCoverage.join(', ')}`,
 				`  - Evidence: ${inline(evidenceSummary(record))}`,
 				`  - Review: ${record.review.status}${record.review.status === 'approved' ? ` / ${inline(record.review.reviewer)} / ${record.review.evidenceDigest}` : ''}`,
-				`  - Provenance: ${inline(record.provenance.discoveredBy)} / ${inline(record.provenance.source)} / ${inline(record.provenance.snapshot)}`,
+				`  - Provenance: ${inline(record.provenance.discoveredBy)} / ${inline(record.provenance.source)} / ${inline(record.provenance.snapshot)}${record.provenance.sourceDigest ? ` / source-digest=${record.provenance.sourceDigest}` : ''}${record.provenance.sourceVersion ? ` / source-version=${inline(record.provenance.sourceVersion)}` : ''}`,
 				'',
 			);
 		}

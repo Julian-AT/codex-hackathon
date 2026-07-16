@@ -44,8 +44,14 @@ describe('renderMigrationReview', () => {
 			expect(first).toContain(record.replacementOwner.component);
 			expect(first).toContain(record.provenance.discoveredBy);
 		}
-		expect(first).toContain('EVIDENCED ZERO');
+		expect(first).toContain('### product-string');
+		expect(first).toContain('forgeprint-codex-cloud-master-prompt.md');
 		expect(first).toContain('credentials-private-repositories — not-inspected');
+		const removal = inventory.records.find(
+			(record) => record.locator.path === 'forgeprint-codex-cloud-master-prompt.md',
+		);
+		expect(removal?.provenance.sourceDigest).toBeDefined();
+		expect(first).toContain(`source-digest=${removal?.provenance.sourceDigest}`);
 	});
 
 	it('detects drift without rewriting the supplied review text', () => {

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
@@ -210,11 +211,77 @@ describe('computeRemovalEligibility', () => {
 		>(module, 'computeRemovalEligibility');
 		const { record, context } = fixture();
 		record.review.evidenceDigest = evidenceDigest(record.replacementEvidence);
-		context.requiredEvidenceLocators = [
-			'src/identity/audit.test.ts#forbidden-product-brand',
-		];
+		context.requiredEvidenceLocators = ['src/identity/audit.test.ts#forbidden-product-brand'];
 		const result = compute(record, context);
 		expect(result.eligible).toBe(false);
 		expect(result.reasons.join(' ')).toMatch(/required|identity|evidence|locator/i);
+	});
+
+	it('proves the inventoried prohibited root prompt is eligible only with exact current identity evidence', async () => {
+		const module = await loadRemovalModule();
+		const schemaModule = (await import(
+			new URL('./inventory-schema.ts', import.meta.url).href
+		)) as Record<string, unknown>;
+		const schema = requireExport<{
+			parse(value: unknown): {
+				records: Array<{
+					category: string;
+					locator: { path: string; kind: string; value: string };
+					requirementCoverage: string[];
+					acceptanceCoverage: string[];
+					replacementEvidence: Array<{
+						kind: string;
+						locator: string;
+						digest: string;
+						version: string;
+					}>;
+					provenance: { sourceDigest?: string; sourceVersion?: string };
+				}>;
+			};
+		}>(schemaModule, 'MIGRATION_INVENTORY_SCHEMA');
+		const migrationLocatorKey = requireExport<
+			(category: string, locator: { path: string; kind: string; value: string }) => string
+		>(schemaModule, 'migrationLocatorKey');
+		const compute = requireExport<
+			(
+				record: unknown,
+				context: unknown,
+			) => { eligible: boolean; status: string; reasons: string[] }
+		>(module, 'computeRemovalEligibility');
+		const inventory = schema.parse(
+			JSON.parse(readFileSync('migration/legacy-assets.v1.json', 'utf8')),
+		);
+		const record = inventory.records.find(
+			(candidate) => candidate.locator.path === 'forgeprint-codex-cloud-master-prompt.md',
+		);
+		expect(record).toBeDefined();
+		if (!record) throw new Error('Incident artifact record missing.');
+		const locatorKey = migrationLocatorKey(record.category, record.locator);
+		const context = {
+			reconciledLocatorKeys: [locatorKey],
+			validRequirements: record.requirementCoverage,
+			validAcceptanceCriteria: record.acceptanceCoverage,
+			currentEvidence: record.replacementEvidence,
+			requiredEvidenceLocators: [
+				'README.md#canonical-product-identity',
+				'src/identity/audit.ts#auditIdentity',
+				'src/identity/audit.test.ts#forbidden-product-brand',
+				'mlx.package.json#bin.mlx',
+			],
+			currentLegacyEvidence: [
+				{
+					locatorKey,
+					digest: record.provenance.sourceDigest,
+					version: record.provenance.sourceVersion,
+				},
+			],
+		};
+		expect(compute(record, context)).toMatchObject({
+			eligible: true,
+			status: 'eligible',
+			reasons: [],
+		});
+		context.currentLegacyEvidence[0].digest = digest('changed-after-review');
+		expect(compute(record, context)).toMatchObject({ eligible: false, status: 'blocked' });
 	});
 });

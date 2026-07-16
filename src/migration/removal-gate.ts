@@ -19,6 +19,12 @@ export interface RemovalEligibilityContext {
 		readonly digest: string;
 		readonly version: string;
 	}[];
+	readonly requiredEvidenceLocators: readonly string[];
+	readonly currentLegacyEvidence: readonly {
+		readonly locatorKey: string;
+		readonly digest: string;
+		readonly version: string;
+	}[];
 }
 
 export interface RemovalEligibility {
@@ -65,6 +71,19 @@ export function computeRemovalEligibility(
 	if (!context.reconciledLocatorKeys.includes(locatorKey)) {
 		reasons.push('Exact locator is not reconciled.');
 	}
+	const currentLegacy = context.currentLegacyEvidence.find(
+		(candidate) => candidate.locatorKey === locatorKey,
+	);
+	if (!currentLegacy) {
+		reasons.push('Current exact legacy target evidence is absent.');
+	} else {
+		if (currentLegacy.digest !== record.provenance.sourceDigest) {
+			reasons.push('Current legacy target source digest differs from the reviewed artifact.');
+		}
+		if (currentLegacy.version !== record.provenance.sourceVersion) {
+			reasons.push('Current legacy target source version differs from the reviewed artifact.');
+		}
+	}
 	if (!record.replacementOwner.reviewed) reasons.push('Replacement owner is not reviewed.');
 	if (
 		record.requirementCoverage.length === 0 ||
@@ -80,6 +99,11 @@ export function computeRemovalEligibility(
 	}
 	if (record.replacementEvidence.length === 0) {
 		reasons.push('Replacement evidence is missing.');
+	}
+	for (const requiredLocator of context.requiredEvidenceLocators) {
+		if (!record.replacementEvidence.some((evidence) => evidence.locator === requiredLocator)) {
+			reasons.push(`Required replacement evidence locator is absent: ${requiredLocator}.`);
+		}
 	}
 	for (const evidence of record.replacementEvidence) {
 		if (!ALLOWED_EVIDENCE.has(evidence.kind)) {

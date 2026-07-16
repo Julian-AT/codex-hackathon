@@ -186,6 +186,8 @@ const RECORD_BASE = z.object({
 			discoveredBy: z.string().min(3).max(160),
 			source: z.string().min(1).max(500),
 			snapshot: z.string().min(1).max(160),
+			sourceDigest: z.string().regex(SHA256).optional(),
+			sourceVersion: z.string().min(1).max(160).optional(),
 		})
 		.strict(),
 });
@@ -215,6 +217,17 @@ export const MIGRATION_RECORD_SCHEMA = z
 				code: z.ZodIssueCode.custom,
 				path: ['replacementEvidence'],
 				message: 'Remove candidates require replacement evidence.',
+			});
+		}
+		if (
+			record.disposition === 'remove' &&
+			(record.provenance.sourceDigest === undefined ||
+				record.provenance.sourceVersion === undefined)
+		) {
+			context.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['provenance'],
+				message: 'Remove candidates require current source digest and version evidence.',
 			});
 		}
 	});
