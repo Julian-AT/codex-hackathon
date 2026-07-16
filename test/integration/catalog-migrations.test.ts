@@ -1,10 +1,28 @@
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { fileURLToPath } from 'node:url';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { runInit } from '../../src/cli/init';
 
 const roots: string[] = [];
+const isBunRuntime = 'bun' in process.versions;
+let delegatedFailure: string | null = null;
+
+beforeAll(() => {
+	if (isBunRuntime) return;
+	const result = spawnSync('bun', ['test', fileURLToPath(import.meta.url)], {
+		encoding: 'utf8',
+	});
+	if (result.status !== 0) delegatedFailure = `${result.stdout}\n${result.stderr}`;
+});
+
+function requireBunRuntime(): boolean {
+	if (isBunRuntime) return true;
+	expect(delegatedFailure).toBeNull();
+	return false;
+}
 
 function makeRoot(): string {
 	const root = mkdtempSync(path.join(tmpdir(), 'mlx-catalog-'));
@@ -54,6 +72,7 @@ afterEach(() => {
 
 describe('catalog migrations', () => {
 	it('opens a fresh owned catalog with durable pragmas and reopens idempotently', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
@@ -68,6 +87,7 @@ describe('catalog migrations', () => {
 	});
 
 	it('preserves a supported prior catalog row across repeated upgrades', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
@@ -91,6 +111,7 @@ describe('catalog migrations', () => {
 	});
 
 	it('rolls back an injected migration failure without ad hoc schema mutation', async () => {
+		if (!requireBunRuntime()) return;
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
@@ -116,6 +137,7 @@ describe('catalog migrations', () => {
 	});
 
 	it('refuses checksum drift, ledger gaps, and future versions before mutation', async () => {
+		if (!requireBunRuntime()) return;
 		const catalog = requireCatalog(await catalogModule());
 		const { Database } = await sqliteModule();
 		for (const scenario of ['drift', 'gap', 'future'] as const) {

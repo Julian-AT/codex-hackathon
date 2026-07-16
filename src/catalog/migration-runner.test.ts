@@ -1,11 +1,29 @@
+import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { fileURLToPath } from 'node:url';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import type { CatalogDatabase } from './migration-runner';
 import { runCatalogMigrations } from './migration-runner';
 
 const files: string[] = [];
+const isBunRuntime = 'bun' in process.versions;
+let delegatedFailure: string | null = null;
+
+beforeAll(() => {
+	if (isBunRuntime) return;
+	const result = spawnSync('bun', ['test', fileURLToPath(import.meta.url)], {
+		encoding: 'utf8',
+	});
+	if (result.status !== 0) delegatedFailure = `${result.stdout}\n${result.stderr}`;
+});
+
+function requireBunRuntime(): boolean {
+	if (isBunRuntime) return true;
+	expect(delegatedFailure).toBeNull();
+	return false;
+}
 
 async function database(): Promise<CatalogDatabase & { close(): void }> {
 	const directory = mkdtempSync(path.join(tmpdir(), 'mlx-migrations-'));
@@ -28,6 +46,7 @@ afterEach(() => {
 
 describe('runCatalogMigrations', () => {
 	it('applies the exact application manifest once', async () => {
+		if (!requireBunRuntime()) return;
 		const db = await database();
 		expect(runCatalogMigrations(db)).toBe(1);
 		expect(runCatalogMigrations(db)).toBe(1);
@@ -38,6 +57,7 @@ describe('runCatalogMigrations', () => {
 	});
 
 	it('rolls back SQL and ledger writes when a migration is interrupted', async () => {
+		if (!requireBunRuntime()) return;
 		const db = await database();
 		expect(() =>
 			runCatalogMigrations(db, {
@@ -53,6 +73,7 @@ describe('runCatalogMigrations', () => {
 	});
 
 	it('refuses drift, gaps, and future schemas before applying SQL', async () => {
+		if (!requireBunRuntime()) return;
 		const drift = await database();
 		runCatalogMigrations(drift);
 		drift
