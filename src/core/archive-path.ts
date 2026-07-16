@@ -39,11 +39,21 @@ export function validateArchiveEntry(name: string, linkTarget?: string): Archive
 	if (!member.ok || linkTarget === undefined) return member;
 	const target = validateRelativeArchivePath(linkTarget);
 	if (!target.ok) {
-		return invalid('INVALID_LINK_TARGET', linkTarget, `archive link target is unsafe: ${target.reason}`);
+		return invalid(
+			'INVALID_LINK_TARGET',
+			linkTarget,
+			`archive link target is unsafe: ${target.reason}`,
+		);
 	}
-	const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(member.member), target.member));
+	const resolved = path.posix.normalize(
+		path.posix.join(path.posix.dirname(member.member), target.member),
+	);
 	if (resolved === '..' || resolved.startsWith('../') || path.posix.isAbsolute(resolved)) {
-		return invalid('INVALID_LINK_TARGET', linkTarget, 'archive link target escapes the archive root');
+		return invalid(
+			'INVALID_LINK_TARGET',
+			linkTarget,
+			'archive link target escapes the archive root',
+		);
 	}
 	return { ok: true, member: member.member, linkTarget: target.member };
 }

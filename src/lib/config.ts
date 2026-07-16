@@ -27,7 +27,9 @@ const ConfigSchema = strictObject({
 		}).default({}),
 	}).default({}),
 	eval: strictObject({ limit: z.number().optional() }).default({}),
-	deploy: strictObject({ udid: z.string().optional(), appGroup: z.string().optional() }).default({}),
+	deploy: strictObject({ udid: z.string().optional(), appGroup: z.string().optional() }).default(
+		{},
+	),
 	repl: strictObject({
 		historySize: z.number().default(100),
 		maxVisibleMessages: z.number().default(50),
@@ -94,7 +96,13 @@ function readConfigJson(filePath: string): Record<string, unknown> {
 		}
 		return parsed as Record<string, unknown>;
 	} catch (error) {
-		if (typeof error === 'object' && error !== null && 'code' in error && (error as { readonly code?: unknown }).code === 'ENOENT') return {};
+		if (
+			typeof error === 'object' &&
+			error !== null &&
+			'code' in error &&
+			(error as { readonly code?: unknown }).code === 'ENOENT'
+		)
+			return {};
 		throw new ConfigError(
 			'INVALID_CONFIG',
 			`MLX configuration at "${filePath}" could not be loaded: ${error instanceof Error ? error.message : String(error)}`,
@@ -103,20 +111,35 @@ function readConfigJson(filePath: string): Record<string, unknown> {
 	}
 }
 
-function deepMerge(target: Record<string, unknown>, ...sources: Record<string, unknown>[]): Record<string, unknown> {
+function deepMerge(
+	target: Record<string, unknown>,
+	...sources: Record<string, unknown>[]
+): Record<string, unknown> {
 	const result = { ...target };
 	for (const source of sources) {
 		for (const [key, value] of Object.entries(source)) {
 			if (value === undefined) continue;
-			if (value !== null && typeof value === 'object' && !Array.isArray(value) && typeof result[key] === 'object' && result[key] !== null && !Array.isArray(result[key])) {
-				result[key] = deepMerge(result[key] as Record<string, unknown>, value as Record<string, unknown>);
+			if (
+				value !== null &&
+				typeof value === 'object' &&
+				!Array.isArray(value) &&
+				typeof result[key] === 'object' &&
+				result[key] !== null &&
+				!Array.isArray(result[key])
+			) {
+				result[key] = deepMerge(
+					result[key] as Record<string, unknown>,
+					value as Record<string, unknown>,
+				);
 			} else result[key] = value;
 		}
 	}
 	return result;
 }
 
-function extractEnvOverrides(env: Readonly<Record<string, string | undefined>>): Record<string, unknown> {
+function extractEnvOverrides(
+	env: Readonly<Record<string, string | undefined>>,
+): Record<string, unknown> {
 	const overrides: Record<string, unknown> = {};
 	if (env.MLX_SERVER_URL) overrides.serverUrl = env.MLX_SERVER_URL;
 	if (env.LOCAL_MODEL) overrides.model = env.LOCAL_MODEL;
@@ -126,7 +149,10 @@ function extractEnvOverrides(env: Readonly<Record<string, string | undefined>>):
 }
 
 function resolveRoot(dependencies: ConfigDependencies): string {
-	const resolved = resolveMlxHome({ env: dependencies.env ?? process.env, homedir: dependencies.homedir ?? homedir });
+	const resolved = resolveMlxHome({
+		env: dependencies.env ?? process.env,
+		homedir: dependencies.homedir ?? homedir,
+	});
 	if (!resolved.ok) throw new ConfigError('INVALID_MLX_HOME', resolved.reason, resolved.action);
 	return resolved.root;
 }
@@ -144,11 +170,13 @@ function contained(root: string, relativePath: string, field: string): string {
 }
 
 function describeZodError(error: z.ZodError): string {
-	return error.issues.map((issue) => {
-		const keys = 'keys' in issue && issue.keys.length > 0 ? issue.keys.join(', ') : undefined;
-		const field = issue.path.length > 0 ? issue.path.join('.') : keys ?? '<root>';
-		return `${field}: ${issue.message}`;
-	}).join('; ');
+	return error.issues
+		.map((issue) => {
+			const keys = 'keys' in issue && issue.keys.length > 0 ? issue.keys.join(', ') : undefined;
+			const field = issue.path.length > 0 ? issue.path.join('.') : (keys ?? '<root>');
+			return `${field}: ${issue.message}`;
+		})
+		.join('; ');
 }
 
 export function getUserConfigPath(dependencies: ConfigDependencies = {}): string {
@@ -174,12 +202,22 @@ export function loadRuntimeConfig(dependencies: ConfigDependencies = {}): Runtim
 			'Correct the named fields using the documented MLX configuration schema, then retry.',
 		);
 	}
-	const pathEntries = Object.entries(parsed.paths).map(([field, value]) => [field, contained(root, value, `paths.${field}`)]);
+	const pathEntries = Object.entries(parsed.paths).map(([field, value]) => [
+		field,
+		contained(root, value, `paths.${field}`),
+	]);
 	const canonicalRoot = contained(root, '', 'paths.root');
-	const paths = Object.freeze({ root: canonicalRoot, config: configPath, ...Object.fromEntries(pathEntries) }) as unknown as RuntimePaths;
+	const paths = Object.freeze({
+		root: canonicalRoot,
+		config: configPath,
+		...Object.fromEntries(pathEntries),
+	}) as unknown as RuntimePaths;
 	const config = Object.freeze({
 		...parsed,
-		training: Object.freeze({ ...parsed.training, adapterDir: contained(root, parsed.training.adapterDir, 'training.adapterDir') }),
+		training: Object.freeze({
+			...parsed.training,
+			adapterDir: contained(root, parsed.training.adapterDir, 'training.adapterDir'),
+		}),
 		paths: Object.freeze({ ...parsed.paths }),
 	});
 	return Object.freeze({ config, paths });
@@ -206,18 +244,28 @@ export function setProjectConfig(dotPath: string, value: unknown): void {
 	let current = existing;
 	for (let index = 0; index < parts.length - 1; index++) {
 		const part = parts[index];
-		if (typeof current[part] !== 'object' || current[part] === null || Array.isArray(current[part])) current[part] = {};
+		if (typeof current[part] !== 'object' || current[part] === null || Array.isArray(current[part]))
+			current[part] = {};
 		current = current[part] as Record<string, unknown>;
 	}
 	const lastKey = parts.at(-1);
-	if (!lastKey) throw new ConfigError('INVALID_CONFIG', 'Configuration field path must not be empty.', 'Provide a named configuration field.');
+	if (!lastKey)
+		throw new ConfigError(
+			'INVALID_CONFIG',
+			'Configuration field path must not be empty.',
+			'Provide a named configuration field.',
+		);
 	if (value === undefined) delete current[lastKey];
 	else current[lastKey] = value;
 	// Validate before any write so unknown/wrong fields cannot corrupt production configuration.
 	try {
 		ConfigSchema.parse(existing);
 	} catch (error) {
-		throw new ConfigError('INVALID_CONFIG', `MLX configuration field "${dotPath}" is invalid: ${error instanceof z.ZodError ? describeZodError(error) : String(error)}`, 'Provide a value matching the documented MLX configuration schema.');
+		throw new ConfigError(
+			'INVALID_CONFIG',
+			`MLX configuration field "${dotPath}" is invalid: ${error instanceof z.ZodError ? describeZodError(error) : String(error)}`,
+			'Provide a value matching the documented MLX configuration schema.',
+		);
 	}
 	mkdirSync(dirname(configPath), { recursive: true });
 	const temporaryPath = `${configPath}.tmp-${process.pid}-${Date.now()}`;
@@ -234,7 +282,8 @@ export function formatConfig(config: ResolvedConfig): string {
 	function walk(object: Record<string, unknown>, prefix: string): void {
 		for (const [key, value] of Object.entries(object)) {
 			const field = prefix ? `${prefix}.${key}` : key;
-			if (value !== null && typeof value === 'object' && !Array.isArray(value)) walk(value as Record<string, unknown>, field);
+			if (value !== null && typeof value === 'object' && !Array.isArray(value))
+				walk(value as Record<string, unknown>, field);
 			else lines.push(`  ${field} = ${JSON.stringify(value)}`);
 		}
 	}

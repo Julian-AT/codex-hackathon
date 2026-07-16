@@ -1,6 +1,6 @@
 import {
-	mkdtempSync,
 	mkdirSync,
+	mkdtempSync,
 	readFileSync,
 	realpathSync,
 	rmSync,
@@ -101,7 +101,14 @@ describe('foundation configuration containment', () => {
 			name: string,
 			linkTarget?: string,
 		) => { readonly ok: boolean };
-		for (const name of ['/etc/passwd', '../escape', 'a/../../escape', 'C:\\escape', '\\\\host\\share', 'bad\0name']) {
+		for (const name of [
+			'/etc/passwd',
+			'../escape',
+			'a/../../escape',
+			'C:\\escape',
+			'\\\\host\\share',
+			'bad\0name',
+		]) {
 			expect(validate(name).ok, name).toBe(false);
 		}
 		expect(validate('safe/file.txt').ok).toBe(true);

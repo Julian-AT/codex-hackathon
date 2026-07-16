@@ -66,7 +66,12 @@ export function resolveContainedPath({
 	}
 	const segments = relativePath.split(/[\\/]+/);
 	if (segments.some((segment) => segment === '..')) {
-		return failure('TRAVERSAL', field, relativePath, `${field} contains a parent traversal segment`);
+		return failure(
+			'TRAVERSAL',
+			field,
+			relativePath,
+			`${field} contains a parent traversal segment`,
+		);
 	}
 	const normalizedSegments = segments.filter((segment) => segment !== '' && segment !== '.');
 	const lexicalCandidate = path.join(root, ...normalizedSegments);
@@ -97,7 +102,12 @@ export function resolveContainedPath({
 		try {
 			const stat = fs.lstat(current);
 			if (stat.isSymbolicLink()) {
-				return failure('SYMLINK', field, relativePath, `${field} crosses symbolic link "${current}"`);
+				return failure(
+					'SYMLINK',
+					field,
+					relativePath,
+					`${field} crosses symbolic link "${current}"`,
+				);
 			}
 			const canonicalCurrent = fs.realpath(current);
 			if (!isInside(canonicalRoot, canonicalCurrent)) {
