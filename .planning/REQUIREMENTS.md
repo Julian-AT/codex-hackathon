@@ -13,8 +13,8 @@
 - [x] **IDEN-04**: Operator can run `mlx doctor` to detect an unrelated existing `mlx` executable without MLX overwriting or shadowing it automatically
 - [x] **IDEN-05**: Operator can access the complete documented command surface for initialization, auth, repositories, mirrors, metrics, evidence, preferences, datasets, benchmarks, training, models, agents, Studio, pipeline execution, and garbage collection
 - [x] **IDEN-06**: Operator and automation can request deterministic `--json` output from practical CLI commands while human-readable output remains available
-- [ ] **IDEN-07**: Maintainer can inspect a migration inventory that classifies every legacy command, artifact path, generated dataset, script, product string, dynamic-tool path, and iOS component before destructive cleanup
-- [ ] **IDEN-08**: A legacy component can be removed only after its replacement owner and acceptance coverage are recorded
+- [x] **IDEN-07**: Maintainer can inspect a migration inventory that classifies every legacy command, artifact path, generated dataset, script, product string, dynamic-tool path, and iOS component before destructive cleanup
+- [x] **IDEN-08**: A legacy component can be removed only after its replacement owner and acceptance coverage are recorded
 - [ ] **IDEN-09**: Automation can run stable `check`, `typecheck`, unit, integration, Studio build, dataset validation, benchmark smoke, and local capability-check commands through the repository scripts
 - [ ] **IDEN-10**: Validation reports distinguish passed, failed, and capability-gated skipped checks without describing a skip, replay, fixture, or mock as a pass or live result
 
@@ -189,8 +189,8 @@ Every v1 requirement maps to exactly one roadmap phase.
 | IDEN-04 | Phase 1 | Complete |
 | IDEN-05 | Phase 1 | Complete |
 | IDEN-06 | Phase 1 | Complete |
-| IDEN-07 | Phase 1 | Pending |
-| IDEN-08 | Phase 1 | Pending |
+| IDEN-07 | Phase 1 | Complete |
+| IDEN-08 | Phase 1 | Complete |
 | IDEN-09 | Phase 1 | Pending |
 | IDEN-10 | Phase 1 | Pending |
 | FNDN-01 | Phase 2 | Pending |
