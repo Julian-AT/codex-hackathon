@@ -5,9 +5,9 @@ import {
 	parseCommand,
 	projectHelp,
 } from './command-tree';
+import { type InitDependencies, type InitResult, runInit } from './init';
 import { renderHuman } from './render-human';
 import { renderJson } from './render-json';
-import { runInit, type InitDependencies, type InitResult } from './init';
 
 export const EXIT_CODES = Object.freeze({
 	SUCCESS: 0,
@@ -83,10 +83,9 @@ export interface CliDependencies {
 	readonly init?: InitDependencies;
 }
 
-function initErrorCode(result: Extract<InitResult, { readonly ok: false }>):
-	| 'INVALID_MLX_HOME'
-	| 'UNOWNED_STATE_ROOT'
-	| 'UNSAFE_STATE_ROOT' {
+function initErrorCode(
+	result: Extract<InitResult, { readonly ok: false }>,
+): 'INVALID_MLX_HOME' | 'UNOWNED_STATE_ROOT' | 'UNSAFE_STATE_ROOT' {
 	if (result.status === 'invalid-root') return 'INVALID_MLX_HOME';
 	if (result.status === 'unowned') return 'UNOWNED_STATE_ROOT';
 	return 'UNSAFE_STATE_ROOT';

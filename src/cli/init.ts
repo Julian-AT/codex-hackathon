@@ -1,9 +1,9 @@
 import { homedir } from 'node:os';
-import { resolveMlxHome, type ResolveMlxHomeInput } from '../core/mlx-home';
+import { type ResolveMlxHomeInput, resolveMlxHome } from '../core/mlx-home';
 import {
-	initializeStateRoot,
 	type StateInitializationResult,
 	type StateOwnershipFs,
+	initializeStateRoot,
 } from '../core/state-ownership';
 
 export type InitResult =
@@ -43,5 +43,9 @@ export async function runInit(
 			action: resolved.action,
 		};
 	}
-	return await initializeStateRoot({ root: resolved.root, adopt: input.adopt, fs: dependencies.fs });
+	return await initializeStateRoot({
+		root: resolved.root,
+		adopt: input.adopt,
+		fs: dependencies.fs,
+	});
 }

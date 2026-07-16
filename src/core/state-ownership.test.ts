@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -26,7 +26,9 @@ async function sandbox(): Promise<string> {
 
 async function loadOwnership(): Promise<OwnershipModule | null> {
 	try {
-		return (await import(/* @vite-ignore */ new URL('./state-ownership.ts', import.meta.url).href)) as OwnershipModule;
+		return (await import(
+			/* @vite-ignore */ new URL('./state-ownership.ts', import.meta.url).href
+		)) as OwnershipModule;
 	} catch {
 		return null;
 	}
@@ -47,7 +49,9 @@ describe('state-root ownership', () => {
 		const markerBefore = await readFile(path.join(root, module.STATE_OWNERSHIP_FILENAME), 'utf8');
 		const second = await module.initializeStateRoot({ root, adopt: false });
 		expect(second).toMatchObject({ ok: true, status: 'owned', changed: false, root });
-		expect(await readFile(path.join(root, module.STATE_OWNERSHIP_FILENAME), 'utf8')).toBe(markerBefore);
+		expect(await readFile(path.join(root, module.STATE_OWNERSHIP_FILENAME), 'utf8')).toBe(
+			markerBefore,
+		);
 	});
 
 	it('requires explicit adoption and preserves every unrelated byte', async () => {
@@ -124,8 +128,10 @@ describe('state-root ownership', () => {
 		const parent = await sandbox();
 		const root = path.join(parent, 'missing');
 		expect(await module.inspectStateRoot({ root })).toMatchObject({ status: 'missing', root });
-		await expect(import('node:fs/promises').then(({ lstat }) => lstat(root))).rejects.toMatchObject({
-			code: 'ENOENT',
-		});
+		await expect(import('node:fs/promises').then(({ lstat }) => lstat(root))).rejects.toMatchObject(
+			{
+				code: 'ENOENT',
+			},
+		);
 	});
 });

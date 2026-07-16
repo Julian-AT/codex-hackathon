@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -20,7 +20,10 @@ afterEach(async () => {
 	await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
-async function invoke(args: readonly string[], mlxHome: string | undefined): Promise<{
+async function invoke(
+	args: readonly string[],
+	mlxHome: string | undefined,
+): Promise<{
 	readonly code: number | null;
 	readonly stdout: string;
 	readonly stderr: string;
@@ -45,27 +48,39 @@ async function invoke(args: readonly string[], mlxHome: string | undefined): Pro
 		TERM: 'dumb',
 	};
 	if (mlxHome !== undefined) env.MLX_HOME = mlxHome;
-	const child = spawn(runtime, [CLI_ENTRY, ...args], { cwd, env, shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
+	const child = spawn(runtime, [CLI_ENTRY, ...args], {
+		cwd,
+		env,
+		shell: false,
+		stdio: ['ignore', 'pipe', 'pipe'],
+	});
 	child.stdout.setEncoding('utf8');
 	child.stderr.setEncoding('utf8');
-	child.stdout.on('data', (chunk: string) => (stdout += chunk));
-	child.stderr.on('data', (chunk: string) => (stderr += chunk));
+	child.stdout.on('data', (chunk: string) => {
+		stdout += chunk;
+	});
+	child.stderr.on('data', (chunk: string) => {
+		stderr += chunk;
+	});
 	const code = await new Promise<number | null>((resolve) => child.on('close', resolve));
 	return { code, stdout, stderr, home };
 }
 
 describe('public state CLI', () => {
-	it.each([undefined, '', '  '])('initializes the default home only for init (%j)', async (override) => {
-		const result = await invoke(['init', '--json'], override);
-		expect(result.code).toBe(0);
-		const envelope = parseEnvelope(result.stdout);
-		expect(envelope, 'init emits one JSON envelope').not.toBeNull();
-		if (!envelope) return;
-		expect(envelope).toMatchObject({ ok: true, command: 'init', status: 'success' });
-		const data = envelope.data as Record<string, unknown>;
-		expect(data).toMatchObject({ root: path.join(result.home, '.mlx'), changed: true });
-		expect(await readdir(path.join(result.home, '.mlx'))).toHaveLength(1);
-	});
+	it.each([undefined, '', '  '])(
+		'initializes the default home only for init (%j)',
+		async (override) => {
+			const result = await invoke(['init', '--json'], override);
+			expect(result.code).toBe(0);
+			const envelope = parseEnvelope(result.stdout);
+			expect(envelope, 'init emits one JSON envelope').not.toBeNull();
+			if (!envelope) return;
+			expect(envelope).toMatchObject({ ok: true, command: 'init', status: 'success' });
+			const data = envelope.data as Record<string, unknown>;
+			expect(data).toMatchObject({ root: path.join(result.home, '.mlx'), changed: true });
+			expect(await readdir(path.join(result.home, '.mlx'))).toHaveLength(1);
+		},
+	);
 
 	it('normalizes absolute spaces/Unicode, remains idempotent, and leaves unrelated state byte-identical', async () => {
 		const parent = await mkdtemp(path.join(tmpdir(), 'mlx-state-existing-'));
@@ -90,7 +105,9 @@ describe('public state CLI', () => {
 		expect(await readFile(sentinel)).toEqual(bytes);
 		const repeated = await invoke(['init', '--json'], root);
 		expect(repeated.code).toBe(0);
-		expect(parseEnvelope(repeated.stdout)).toMatchObject({ data: { status: 'owned', changed: false } });
+		expect(parseEnvelope(repeated.stdout)).toMatchObject({
+			data: { status: 'owned', changed: false },
+		});
 		expect(await readFile(sentinel)).toEqual(bytes);
 	});
 
@@ -103,7 +120,9 @@ describe('public state CLI', () => {
 			const result = await invoke(args, 'relative/root');
 			expect(result.code).not.toBe(0);
 			expect(result.stdout).toMatch(/"ok":false/u);
-			await expect(readdir(path.join(result.home, '.mlx'))).rejects.toMatchObject({ code: 'ENOENT' });
+			await expect(readdir(path.join(result.home, '.mlx'))).rejects.toMatchObject({
+				code: 'ENOENT',
+			});
 		}
 	});
 

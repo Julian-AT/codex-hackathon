@@ -220,7 +220,8 @@ export async function initializeStateRoot({
 				root,
 				changed: false,
 				reason: 'The state root exists without an MLX ownership marker.',
-				action: 'Review the root, then run mlx init --adopt to record ownership without moving its contents.',
+				action:
+					'Review the root, then run mlx init --adopt to record ownership without moving its contents.',
 			};
 		}
 		return await writeMarker(root, fs, 'adopted');
