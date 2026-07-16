@@ -188,6 +188,42 @@ function renderParseError(envelope: CliEnvelope): string {
 	return lines.join('\n');
 }
 
+function renderInit(envelope: CliEnvelope): string {
+	if (envelope.error) {
+		if (
+			envelope.error.code !== 'INVALID_MLX_HOME' &&
+			envelope.error.code !== 'UNOWNED_STATE_ROOT' &&
+			envelope.error.code !== 'UNSAFE_STATE_ROOT'
+		) {
+			throw new Error('INTERNAL_INVARIANT: init state-error has an unrelated error.');
+		}
+		return [
+			`${sanitizeTerminalText(envelope.error.code)}  mlx init`,
+			'',
+			envelope.error.root === null
+				? 'Root: unresolved'
+				: `Root: "${sanitizeTerminalText(envelope.error.root)}"`,
+			`Reason: ${sanitizeTerminalText(envelope.error.message)}`,
+			'Changed: no',
+			`Safe action: ${sanitizeTerminalText(envelope.error.action)}`,
+			'',
+		].join('\n');
+	}
+	const result = envelope.data as {
+		readonly root: string;
+		readonly status: string;
+		readonly changed: boolean;
+	};
+	return [
+		'MLX state root ready',
+		'',
+		`Root: "${sanitizeTerminalText(result.root)}"`,
+		`Ownership: ${sanitizeTerminalText(result.status)}`,
+		`Changed: ${result.changed ? 'yes' : 'no'}`,
+		'',
+	].join('\n');
+}
+
 export function renderHuman(envelope: CliEnvelope, columns = 80): string {
 	const safeColumns = Number.isFinite(columns) ? Math.max(1, Math.floor(columns)) : 80;
 	if (envelope.status === 'help') {
@@ -195,6 +231,7 @@ export function renderHuman(envelope: CliEnvelope, columns = 80): string {
 	}
 	if (envelope.status === 'unavailable') return renderUnavailable(envelope);
 	if (envelope.status === 'parse-error') return renderParseError(envelope);
+	if (envelope.command === 'init') return renderInit(envelope);
 	if (envelope.error) {
 		return `${sanitizeTerminalText(envelope.error.code)}  ${sanitizeTerminalText(envelope.error.message)}\n`;
 	}

@@ -7,15 +7,23 @@ import {
 } from './command-tree';
 import { renderHuman } from './render-human';
 import { renderJson } from './render-json';
+import { runInit, type InitDependencies, type InitResult } from './init';
 
 export const EXIT_CODES = Object.freeze({
 	SUCCESS: 0,
 	PARSE_ERROR: 2,
 	UNAVAILABLE: 3,
 	INTERNAL_ERROR: 70,
+	INVALID_STATE: 4,
 });
 
-export type CliStatus = 'help' | 'success' | 'unavailable' | 'parse-error' | 'internal-error';
+export type CliStatus =
+	| 'help'
+	| 'success'
+	| 'unavailable'
+	| 'parse-error'
+	| 'state-error'
+	| 'internal-error';
 
 export type CliError =
 	| {
@@ -32,6 +40,13 @@ export type CliError =
 	| {
 			readonly code: 'INTERNAL_INVARIANT';
 			readonly message: string;
+	  }
+	| {
+			readonly code: 'INVALID_MLX_HOME' | 'UNOWNED_STATE_ROOT' | 'UNSAFE_STATE_ROOT';
+			readonly message: string;
+			readonly root: string | null;
+			readonly changed: false;
+			readonly action: string;
 	  };
 
 export interface CliEnvelope {
@@ -65,6 +80,42 @@ export interface CliDependencies {
 	readonly handlers?: Readonly<Record<string, CommandHandler>>;
 	readonly renderHuman?: (envelope: CliEnvelope, columns: number) => string;
 	readonly renderJson?: (envelope: CliEnvelope) => string;
+	readonly init?: InitDependencies;
+}
+
+function initErrorCode(result: Extract<InitResult, { readonly ok: false }>):
+	| 'INVALID_MLX_HOME'
+	| 'UNOWNED_STATE_ROOT'
+	| 'UNSAFE_STATE_ROOT' {
+	if (result.status === 'invalid-root') return 'INVALID_MLX_HOME';
+	if (result.status === 'unowned') return 'UNOWNED_STATE_ROOT';
+	return 'UNSAFE_STATE_ROOT';
+}
+
+async function initialize(
+	invocation: CommandInvocation,
+	dependencies: CliDependencies,
+): Promise<CommandExecution> {
+	const result = await runInit(
+		{ adopt: invocation.options['--adopt'] === true },
+		dependencies.init,
+	);
+	if (result.ok) {
+		return {
+			envelope: envelope(true, 'init', 'success', result, null),
+			exitCode: EXIT_CODES.SUCCESS,
+		};
+	}
+	return {
+		envelope: envelope(false, 'init', 'state-error', result, {
+			code: initErrorCode(result),
+			message: result.reason,
+			root: result.root,
+			changed: false,
+			action: result.action,
+		}),
+		exitCode: EXIT_CODES.INVALID_STATE,
+	};
 }
 
 export interface CliRunResult extends CommandExecution {
@@ -156,7 +207,11 @@ export async function runCli(
 		execution = unavailable(parsed.leaf);
 	} else {
 		const command = parsed.leaf.path.join(' ');
-		const handler = dependencies.handlers?.[command];
+		const handler =
+			dependencies.handlers?.[command] ??
+			(command === 'init'
+				? async (invocation: CommandInvocation) => await initialize(invocation, dependencies)
+				: undefined);
 		if (!handler) {
 			throw new Error(`INTERNAL_INVARIANT: implemented command has no handler: ${command}.`);
 		}

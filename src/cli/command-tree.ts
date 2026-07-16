@@ -86,7 +86,9 @@ export const PHASE_NAMES: Readonly<Record<OwnerPhase, string>> = Object.freeze({
 
 const COMMAND_DEFINITIONS = [
 	command(['doctor'], 'Check executable ownership and local environment', 1),
-	command(['init'], 'Initialize explicitly owned local state', 1),
+	command(['init'], 'Initialize explicitly owned local state', 1, {
+		options: [{ name: '--adopt', kind: 'flag' }],
+	}),
 	command(['auth', 'status'], 'Show authentication status', 3),
 	command(['repos', 'scan'], 'Scan explicitly authorized repositories', 3),
 	command(['repos', 'review'], 'Review repository inclusion decisions', 3),
@@ -492,6 +494,16 @@ export function parseCommand(
 	}
 
 	if (tokens.length === 0) return { kind: 'help', json, path: [] };
+	const leadingOption = tokens[0];
+	if (leadingOption?.startsWith('--')) {
+		return errorResult(
+			json,
+			'INVALID_ARGUMENT',
+			[],
+			leadingOption,
+			`Unknown or misplaced global option: ${leadingOption}.`,
+		);
+	}
 
 	const match = tree
 		.flatMap((leaf) => commandPaths(leaf).map((matchedPath) => ({ leaf, matchedPath })))
