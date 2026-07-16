@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
 	chmod,
+	cp,
 	lstat,
 	mkdir,
 	mkdtemp,
@@ -51,12 +52,30 @@ async function fingerprint(paths: readonly string[]): Promise<Record<string, str
 	return result;
 }
 
-async function invoke(pathValue: string, json: boolean) {
+async function installedCli(sandbox: string): Promise<string> {
+	const packageRoot = path.join(sandbox, 'installed-package');
+	await mkdir(path.join(packageRoot, 'src'), { recursive: true });
+	await Promise.all([
+		cp(path.join(repositoryRoot, 'src/cli'), path.join(packageRoot, 'src/cli'), {
+			recursive: true,
+		}),
+		cp(path.join(repositoryRoot, 'src/core'), path.join(packageRoot, 'src/core'), {
+			recursive: true,
+		}),
+		cp(path.join(repositoryRoot, 'src/cli.tsx'), path.join(packageRoot, 'src/cli.tsx')),
+		cp(path.join(repositoryRoot, 'mlx.package.json'), path.join(packageRoot, 'mlx.package.json')),
+	]);
+	const entry = path.join(packageRoot, 'src/cli.tsx');
+	await chmod(entry, 0o755);
+	return entry;
+}
+
+async function invoke(pathValue: string, json: boolean, entry = cliEntry) {
 	const runtime = process.env.MLX_TEST_BUN_PATH ?? process.env.npm_execpath;
 	if (!runtime || !path.isAbsolute(runtime)) throw new Error('Explicit Bun path is required.');
 	let stdout = '';
 	let stderr = '';
-	const child = spawn(runtime, [cliEntry, 'doctor', ...(json ? ['--json'] : [])], {
+	const child = spawn(runtime, [entry, 'doctor', ...(json ? ['--json'] : [])], {
 		cwd: repositoryRoot,
 		env: {
 			CI: '1',
@@ -93,6 +112,7 @@ function parseEnvelope(output: string): Record<string, unknown> | null {
 describe('public mlx doctor', () => {
 	it('agrees in human and JSON modes for owned, collision with shadowed ownership, and not-found', async () => {
 		const sandbox = await root();
+		const packageEntry = await installedCli(sandbox);
 		const foreignDir = path.join(sandbox, 'foreign');
 		const ownedDir = path.join(sandbox, 'owned');
 		await executable(
@@ -100,14 +120,14 @@ describe('public mlx doctor', () => {
 			'#!/bin/sh\necho launched > execution-sentinel\n',
 		);
 		await mkdir(ownedDir, { recursive: true });
-		await symlink(cliEntry, path.join(ownedDir, 'mlx'));
+		await symlink(packageEntry, path.join(ownedDir, 'mlx'));
 
-		const ownedHuman = await invoke(ownedDir, false);
-		const ownedJson = await invoke(ownedDir, true);
+		const ownedHuman = await invoke(ownedDir, false, packageEntry);
+		const ownedJson = await invoke(ownedDir, true, packageEntry);
 		const collisionPath = [foreignDir, ownedDir].join(path.delimiter);
-		const collisionHuman = await invoke(collisionPath, false);
-		const collisionJson = await invoke(collisionPath, true);
-		const none = await invoke(path.join(sandbox, 'none'), true);
+		const collisionHuman = await invoke(collisionPath, false, packageEntry);
+		const collisionJson = await invoke(collisionPath, true, packageEntry);
+		const none = await invoke(path.join(sandbox, 'none'), true, packageEntry);
 
 		expect(ownedHuman).toMatchObject({ code: 0, stderr: '' });
 		expect(ownedHuman.stdout).toContain('Executable: OWNED');
