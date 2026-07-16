@@ -33,9 +33,9 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - Key files: `docs/MLX_PROJECT_SPEC.md`, `docs/MLX_DATASET_CONTRACT.md`, `docs/MLX_BENCHMARK_SPEC.md`, `docs/MLX_RESEARCH_RATIONALE.md`.
 
 **`src/`:**
-- Purpose: Side-effect-free public MLX CLI plus brownfield Ink UI, command modules, and local config/conversation helpers retained for migration inventory.
-- Contains: `src/cli.tsx`, `src/cli/`, `src/core/`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
-- Key files: `src/cli.tsx`, `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/core/mlx-home.ts`, `src/repl.tsx`, `src/commands/index.ts`.
+- Purpose: Side-effect-free public MLX CLI and validation contracts plus brownfield Ink UI, command modules, and local config/conversation helpers retained for migration inventory.
+- Contains: `src/cli.tsx`, `src/cli/`, `src/core/`, `src/validation/`, `src/repl.tsx`, `src/app-oneshot.tsx`, `src/commands/`, `src/components/`, `src/lib/`.
+- Key files: `src/cli.tsx`, `src/cli/command-tree.ts`, `src/cli/main.ts`, `src/core/mlx-home.ts`, `src/validation/result.ts`, `src/validation/check-catalog.ts`, `src/repl.tsx`, `src/commands/index.ts`.
 
 **`src/cli/`:**
 - Purpose: Public command identity, parsing, help projection, orchestration, and isolated human/JSON rendering.
@@ -46,6 +46,11 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - Purpose: Focused local product boundaries that are independent of legacy pipeline and presentation modules.
 - Contains: Pure `MLX_HOME` resolution plus versioned state-root ownership inspection and initialization.
 - Key files: `src/core/mlx-home.ts`, `src/core/state-ownership.ts`.
+
+**`src/validation/`:**
+- Purpose: Pure validation status/source semantics, named capability evidence, and the ordered allowlisted check contract consumed by later runner and host layers.
+- Contains: Strict Zod normalization, failure-dominant aggregation, immutable eight-check descriptors, and colocated contract tests; no host process or package-script wiring.
+- Key files: `src/validation/result.ts`, `src/validation/capabilities.ts`, `src/validation/check-catalog.ts`.
 
 **`src/commands/`:**
 - Purpose: Slash commands and one-shot command implementations.
@@ -181,6 +186,9 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - `src/cli/main.ts`: CLI envelopes, injected IO/dependencies, handlers, exit codes, and orchestration result types.
 - `src/core/mlx-home.ts`: Pure default/absolute-override root resolver with no filesystem access.
 - `src/core/state-ownership.ts`: Non-following final-path inspection and exclusive state ownership marker creation.
+- `src/validation/result.ts`: Discriminated PASS/FAIL/SKIP rows, independent source labels, fail-closed normalization, and ordered aggregation.
+- `src/validation/capabilities.ts`: Named probed capability evidence and unavailable-only SKIP eligibility.
+- `src/validation/check-catalog.ts`: Frozen ordered check IDs with fixed argv or typed product/capability/external execution policies.
 - `lib/discovery/types.ts`: Corpus, chunk, dynamic tool, and validation result types.
 - `lib/data/types.ts`: Tool call, chat message, training example, judge score, eval item, and data-gen metadata types.
 - `src/commands/index.ts`: Command and command-context types.
@@ -190,6 +198,7 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 **Testing:**
 - `vitest.config.ts`: Includes `lib/**/*.test.ts`, `lib/**/*.spec.ts`, and `src/**/*.test.ts`.
 - `src/cli/*.test.ts`: Public catalog, parser, orchestration, deterministic renderer, and terminal edge contracts.
+- `src/validation/*.test.ts`: Result/source matrices, capability-only SKIP rules, aggregate precedence, and immutable check-catalog invariants.
 - `test/integration/cli-contract.test.ts`: Isolated explicit-Bun public process contract with filesystem/network/process sentinels.
 - `lib/discovery/validate/*.test.ts`: Tool validation gate tests.
 - `lib/data/*.test.ts`: Data split, dedupe, schema, emit, judge, and worker tests.

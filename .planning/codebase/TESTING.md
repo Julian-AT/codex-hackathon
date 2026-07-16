@@ -34,6 +34,7 @@ Coverage is not configured in `package.json` or `vitest.config.ts`. There is no 
 - Tests are co-located beside the code under test.
 - Library tests live under `lib/**`: `lib/data/dedupe.test.ts`, `lib/discovery/validate/sandbox.test.ts`, `lib/training/supervisor.test.ts`.
 - CLI and REPL support tests live under `src/**`: `src/commands/commands.test.ts`, `src/commands/index.test.ts`, `src/lib/config.test.ts`.
+- Pure validation contract tests live under `src/validation/**`, colocated with result normalization, capability evidence, and the ordered check catalog.
 - iOS Swift test files exist under `ios/SpecialistApp/GemmaToolParserTests.swift`, but TypeScript Vitest excludes `ios` through `tsconfig.json` and Biome ignores `ios` through `biome.json`.
 
 **Naming:**
@@ -86,6 +87,7 @@ describe('runInSandbox', () => {
 **Patterns:**
 - Group tests by public function or domain concept: `describe('MinHash')` and `describe('Cosine')` in `lib/data/dedupe.test.ts`; `describe('loadConfig')` and `describe('formatConfig')` in `src/lib/config.test.ts`.
 - Use behavior-focused `it(...)` descriptions that state the invariant: `it('returns pass: false for overlapping sets')` in `lib/data/emit-jsonl.test.ts`, `it('rolls back on two consecutive NaN losses')` in `lib/training/supervisor.test.ts`.
+- For a missing implementation in a registered RED gate, use a late dynamic import and fail through a named Vitest assertion so the suite collects successfully; setup/import/collection errors are not valid RED evidence.
 - Use local fixture helpers at the top of the file: `makeTrainingExample` in `lib/data/emit-jsonl.test.ts`, `makeExample` in `lib/data/stratify.test.ts`, `makeCheckpointDir` in `lib/training/supervisor.test.ts`.
 - Use `beforeEach` to reset environment variables and mocks: `src/lib/config.test.ts`, `lib/data/qa-worker.test.ts`, `lib/data/judge.test.ts`.
 - Use `afterEach` to clean temporary files and restore process state: `lib/data/emit-jsonl.test.ts`, `src/lib/config.test.ts`, `lib/training/rollback.test.ts`, `lib/training/supervisor.test.ts`.
@@ -119,6 +121,7 @@ vi.mock('@/lib/model', () => ({
 
 **What NOT to Mock:**
 - Do not mock pure deterministic logic. Test real implementations for deduplication, split hashes, parsers, schema validation, tool-argument normalization, and training supervision: `lib/data/dedupe.test.ts`, `lib/data/split.test.ts`, `lib/streams/trainParser.test.ts`, `lib/discovery/validate/schema.test.ts`, `lib/training/supervisor.test.ts`.
+- Test `src/validation/result.ts`, `capabilities.ts`, and `check-catalog.ts` directly. These modules are pure contracts; host process adapters and recursive package-script execution do not belong in their unit suites.
 - Do not call live external model APIs in unit tests. Use `vi.mock('ai', ...)` and `vi.mock('@/lib/model', ...)`.
 - Do not rely on committed generated outputs as proof of live behavior. Fixture and replay data must remain labeled as such per `AGENTS.md` and `docs/MLX_PROJECT_SPEC.md`.
 
