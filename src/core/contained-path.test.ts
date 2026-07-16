@@ -48,6 +48,9 @@ describe('resolveContainedPath', () => {
 		});
 		symlinkSync(outside, path.join(home, 'escape'));
 		expect(
+			resolveContainedPath({ root: home, relativePath: 'escape', field: 'paths.objects' }),
+		).toMatchObject({ ok: false, code: 'SYMLINK' });
+		expect(
 			resolveContainedPath({ root: home, relativePath: 'escape/value', field: 'paths.objects' }),
 		).toMatchObject({
 			ok: false,
