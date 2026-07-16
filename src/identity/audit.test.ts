@@ -1,6 +1,8 @@
+import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { promisify } from 'node:util';
 import { describe, expect, it, vi } from 'vitest';
 
 interface FixtureSource {
@@ -16,7 +18,7 @@ interface IdentityFixture {
 	sources: FixtureSource[];
 	rules: Array<{
 		id: string;
-		kind: string;
+		kind: 'canonical-first-mention' | 'forbidden-product-brand' | 'apple-distinction';
 		category: string;
 		paths: string[];
 	}>;
@@ -24,6 +26,7 @@ interface IdentityFixture {
 }
 
 type AuditModule = typeof import('./audit');
+const execFileAsync = promisify(execFile);
 
 async function loadAuditModule(): Promise<AuditModule> {
 	const modulePath = path.resolve(import.meta.dirname, 'audit.ts');
@@ -107,7 +110,8 @@ describe('auditIdentity', () => {
 			],
 		]);
 		options.readText.mockImplementation(async (sourcePath: string) => {
-			const source = broken.get(sourcePath) ?? fixture.sources.find(({ path }) => path === sourcePath)?.content;
+			const source =
+				broken.get(sourcePath) ?? fixture.sources.find(({ path }) => path === sourcePath)?.content;
 			if (source === undefined) throw new Error(`Unexpected read: ${sourcePath}`);
 			return source;
 		});
@@ -179,5 +183,71 @@ describe('auditIdentity', () => {
 		expect(report.ok).toBe(false);
 		expect(report.findings).toHaveLength(denied.length);
 		expect(report.findings.every(({ ruleId }) => ruleId === 'unsafe-source-path')).toBe(true);
+	});
+
+	it('finds no identity drift in scoped retained source and fresh package/help output', async () => {
+		const { auditIdentity } = await loadAuditModule();
+		const repositoryRoot = path.resolve(import.meta.dirname, '../..');
+		const packageJson = JSON.parse(
+			await readFile(path.join(repositoryRoot, 'package.json'), 'utf8'),
+		) as { description: string };
+		const { stdout: help } = await execFileAsync('bun', ['src/cli.tsx', '--help'], {
+			cwd: repositoryRoot,
+			env: { ...process.env, CI: '1', FORCE_COLOR: '0', NO_COLOR: '1' },
+		});
+		const content = new Map<string, string>([
+			['README.md', await readFile(path.join(repositoryRoot, 'README.md'), 'utf8')],
+			['generated/help.txt', help],
+			['generated/package-description.txt', packageJson.description],
+			['src/repl.tsx', await readFile(path.join(repositoryRoot, 'src/repl.tsx'), 'utf8')],
+			[
+				'src/app-oneshot.tsx',
+				await readFile(path.join(repositoryRoot, 'src/app-oneshot.tsx'), 'utf8'),
+			],
+			[
+				'src/lib/conversation.ts',
+				await readFile(path.join(repositoryRoot, 'src/lib/conversation.ts'), 'utf8'),
+			],
+		]);
+		const userFacingPaths = [...content.keys()];
+
+		const report = await auditIdentity({
+			root: repositoryRoot,
+			sources: userFacingPaths.map((sourcePath) => ({
+				path: sourcePath,
+				category: sourcePath.startsWith('generated/') ? 'generated' : 'source',
+			})),
+			rules: [
+				{
+					id: 'canonical-first-mention',
+					kind: 'canonical-first-mention',
+					category: 'first-mention',
+					paths: ['README.md', 'generated/help.txt', 'generated/package-description.txt'],
+				},
+				{
+					id: 'forbidden-product-brand',
+					kind: 'forbidden-product-brand',
+					category: 'forbidden-branding',
+					paths: userFacingPaths,
+				},
+				{
+					id: 'apple-distinction',
+					kind: 'apple-distinction',
+					category: 'apple-distinction',
+					paths: ['README.md', 'generated/package-description.txt'],
+				},
+			],
+			exclusions: [],
+			requiredCategories: ['source', 'generated', 'screenshots'],
+			readText: async (sourcePath) => {
+				const value = content.get(sourcePath);
+				if (value === undefined) throw new Error(`Unexpected read: ${sourcePath}`);
+				return value;
+			},
+		});
+
+		expect(report.ok).toBe(true);
+		expect(report.findings).toEqual([]);
+		expect(report.categoryCounts).toContainEqual({ category: 'screenshots', count: 0 });
 	});
 });
