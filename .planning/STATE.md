@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 2
 current_phase_name: "Foundation: configuration, SQLite, CAS, runs, and job queue"
-status: planning
-stopped_at: Completed 01-09-PLAN.md
-last_updated: "2026-07-16T10:02:09.647Z"
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-07-16T10:18:30.889Z"
 last_activity: 2026-07-16
-last_activity_desc: Phase 1 complete, transitioned to Phase 2
+last_activity_desc: Completed Phase 2 Plan 01 contained configuration foundation
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 18
+  completed_plans: 10
 ---
 
 # Project State
@@ -28,17 +28,17 @@ See: .planning/PROJECT.md (updated 2026-07-16)
 ## Current Position
 
 Phase: 2 — Foundation: configuration, SQLite, CAS, runs, and job queue
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-07-16 — Phase 1 complete, transitioned to Phase 2
+Plan: 1 of 9 complete
+Status: In progress
+Last activity: 2026-07-16 — Completed contained configuration, path, and archive guards
 
-Progress: [██████████] 100%
+Progress: [██████░░░░] 56%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: -
 - Total execution time: 0 hours
 
@@ -47,6 +47,7 @@ Progress: [██████████] 100%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 9 | - | - |
+| 2 | 1 | 7 min | 7 min |
 
 **Recent Trend:**
 
@@ -67,6 +68,7 @@ Progress: [██████████] 100%
 | Phase 01 P07 | 5 min | 3 tasks | 6 files |
 | Phase 01 P08 | 5 min | 3 tasks | 6 files |
 | Phase 01 P09 | 8 min | 3 tasks | 8 files |
+| Phase 02 P01 | 7 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -101,6 +103,7 @@ Recent decisions affecting current work:
 - [Phase 01]: Use a committed synthetic adapter-tools fixture through a test-only filesystem seam. — Makes schema validation deterministic without reading or rewriting mutable repository data.
 - [Phase 01]: Preserve immutable operator evidence and record overlapping Phase hunks explicitly in the final manifest. — Keeps the operator-owned src/app.tsx deletion and unrelated dirty bytes outside Phase ownership.
 - [Phase 01]: Disable formatting only for the exact operator-owned dirty test that blocked portable check. — Preserves operator bytes while retaining lint analysis and honest visible warnings.
+- [Phase 02]: Keep configured destinations relative and expose resolved absolute destinations only through an immutable runtime-path projection. — Portable serialized configuration cannot weaken the canonical MLX_HOME containment boundary.
 
 ### Pending Todos
 
@@ -121,6 +124,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T10:02:09.647Z
-Stopped at: Phase 1 complete, ready to plan Phase 2
+Last session: 2026-07-16T10:18:30.884Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None

@@ -20,8 +20,8 @@
 
 ### Foundation, Storage, Runs, and Jobs
 
-- [ ] **FNDN-01**: Operator configuration is validated through typed schemas at package boundaries and invalid production configuration fails with an actionable diagnostic
-- [ ] **FNDN-02**: Every mutable artifact path resolves beneath the configured `MLX_HOME` root and traversal, symlink escape, and unsafe archive paths fail closed
+- [x] **FNDN-01**: Operator configuration is validated through typed schemas at package boundaries and invalid production configuration fails with an actionable diagnostic
+- [x] **FNDN-02**: Every mutable artifact path resolves beneath the configured `MLX_HOME` root and traversal, symlink escape, and unsafe archive paths fail closed
 - [ ] **FNDN-03**: Operational state is stored in SQLite through persisted numbered migrations with WAL mode and foreign keys enabled
 - [ ] **FNDN-04**: Operator can initialize a fresh catalog and upgrade every supported prior schema without ad hoc mutation or data loss
 - [ ] **FNDN-05**: `mlx doctor` reports the embedded SQLite version and enforces a single catalog-owner gate until the runtime is proven free of the relevant WAL-reset race
@@ -193,8 +193,8 @@ Every v1 requirement maps to exactly one roadmap phase.
 | IDEN-08 | Phase 1 | Complete |
 | IDEN-09 | Phase 1 | Complete |
 | IDEN-10 | Phase 1 | Complete |
-| FNDN-01 | Phase 2 | Pending |
-| FNDN-02 | Phase 2 | Pending |
+| FNDN-01 | Phase 2 | Complete |
+| FNDN-02 | Phase 2 | Complete |
 | FNDN-03 | Phase 2 | Pending |
 | FNDN-04 | Phase 2 | Pending |
 | FNDN-05 | Phase 2 | Pending |

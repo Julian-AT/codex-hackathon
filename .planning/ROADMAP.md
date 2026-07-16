@@ -61,10 +61,11 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 4. Every run has an immutable, checksummed lineage manifest, and repeating a deterministic stage with identical valid inputs reuses its committed output.
 5. Operator can inspect, cancel, crash, recover, and resume durable leased work without duplicate outputs or orphan child processes, then apply retention or garbage collection without deleting referenced artifacts.
 
-**Plans:** 9 plans
+**Plans:** 1/9 plans executed
 
 Plans:
-- [ ] 02-01-PLAN.md — Validate contained configuration, filesystem paths, and archive members
+
+- [x] 02-01-PLAN.md — Validate contained configuration, filesystem paths, and archive members
 - [ ] 02-02-PLAN.md — Open and upgrade a persisted WAL SQLite catalog through numbered migrations
 - [ ] 02-03-PLAN.md — Report real SQLite capability and enforce the catalog-owner gate
 - [ ] 02-04-PLAN.md — Store verified immutable artifacts in SHA-256 CAS with durable references
@@ -203,7 +204,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Identity, cleanup, baseline, and migration map | 9/9 | Complete    | 2026-07-16 |
-| 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 0/TBD | Not started | - |
+| 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 1/9 | In Progress|  |
 | 3. GitHub inventory, mirrors, identities, and accurate metrics | 0/TBD | Not started | - |
 | 4. Evidence extraction, accepted-state quality, and preference profile | 0/TBD | Not started | - |
 | 5. Hugging Face dataset compiler, deduplication, and leakage-safe splits | 0/TBD | Not started | - |
