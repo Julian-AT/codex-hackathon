@@ -2,8 +2,29 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { CheckRunnerPort, ProcessRequest, ProcessResult } from './runner';
 
-async function loadSubject() {
-	return await import('./process-entry').catch(() => null);
+interface ProcessEntryDependencies {
+	readonly createRunner: () => CheckRunnerPort;
+	readonly createProbe: () => (capabilityId: string) => Promise<{
+		readonly id: string;
+		readonly available: boolean;
+		readonly reason: string;
+	}>;
+	readonly write: (value: string) => void;
+	readonly setExitCode: (value: number) => void;
+	readonly columns: number;
+	readonly isTTY: boolean;
+}
+
+interface ProcessEntrySubject {
+	runValidationProcessEntry(
+		argv: readonly string[],
+		dependencies: ProcessEntryDependencies,
+	): Promise<void>;
+}
+
+async function loadSubject(): Promise<ProcessEntrySubject | null> {
+	const modulePath = './process-entry';
+	return await import(modulePath).catch(() => null);
 }
 
 function successfulRunner(requests: ProcessRequest[]): CheckRunnerPort {
@@ -104,14 +125,18 @@ describe('runValidationProcessEntry', () => {
 		expect(writes).toHaveLength(1);
 	});
 
-	it.each([
+	const malformedModes: readonly (readonly string[])[] = [
 		[],
 		['baseline'],
 		['external', 'check'],
 		['external', 'test:integration', '--extra'],
 		['run', 'test:integration'],
 		['run', 'check', '--changed-by-caller'],
-	])('rejects malformed or recursive mode %j before creating a runner', async (argv) => {
+	];
+
+	it.each(malformedModes.map((argv) => [argv] as const))(
+		'rejects malformed or recursive mode %j before creating a runner',
+		async (argv) => {
 		const subject = await loadSubject();
 		expect(subject?.runValidationProcessEntry).toBeTypeOf('function');
 		if (!subject) return;
@@ -134,7 +159,8 @@ describe('runValidationProcessEntry', () => {
 		expect(writes).toHaveLength(1);
 		expect(writes[0]).toMatch(/invalid|expected|external/i);
 		expect(exits).toEqual([2]);
-	});
+		},
+	);
 
 	it('bounds internal exceptions into one deterministic nonzero write', async () => {
 		const subject = await loadSubject();
