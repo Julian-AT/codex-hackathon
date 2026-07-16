@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "1",
+  "productId": "mlx-personal-coding-pipeline",
+  "packageName": "mlx-personal-coding-pipeline",
+  "executable": "mlx",
+  "entry": "./src/cli.tsx"
+}

@@ -1,4 +1,6 @@
-# Offline Specialist-LLM Pipeline
+# MLX — the personal coding dataset and model pipeline
+
+This product is distinct from Apple's MLX project and is not affiliated with or endorsed by Apple.
 
 End-to-end CLI pipeline for producing a narrow product expert model, training it locally with MLX, and running it fully offline on an iPhone with agent-authored JavaScript tools.
 
