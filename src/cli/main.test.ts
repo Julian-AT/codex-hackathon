@@ -57,6 +57,7 @@ describe('runCli', () => {
 	it('passes typed values only to an implemented leaf handler', async () => {
 		let calls = 0;
 		const result = await runCli(['doctor'], IO, {
+			renderHuman: () => 'doctor\n',
 			handlers: {
 				doctor: async (invocation) => {
 					calls += 1;
@@ -92,9 +93,34 @@ describe('runCli', () => {
 		expect(first).toEqual(second);
 	});
 
-	it('throws only when an implemented leaf violates its handler invariant', async () => {
-		await expect(runCli(['doctor'], IO, {})).rejects.toThrow(
-			'INTERNAL_INVARIANT: implemented command has no handler',
-		);
+	it('uses the built-in read-only doctor handler when no override is supplied', async () => {
+		const absent = Object.assign(new Error('missing'), { code: 'ENOENT' });
+		const result = await runCli(['doctor', '--json'], IO, {
+			doctor: {
+				pathValue: '/missing',
+				delimiter: ':',
+				cwd: '/fixture',
+				declaredEntry: '/package/src/cli.tsx',
+				markerPath: '/package/mlx.package.json',
+				fs: {
+					lstat: async () => await Promise.reject(absent),
+					stat: async () => {
+						throw new Error('stat must not run for an absent candidate');
+					},
+					realpath: async () => {
+						throw new Error('realpath must not run for an absent candidate');
+					},
+					readTextFile: async () => {
+						throw new Error('marker must not be read for an absent candidate');
+					},
+				},
+			},
+		});
+		expect(result.exitCode).toBe(EXIT_CODES.DOCTOR_NOT_FOUND);
+		expect(result.envelope).toMatchObject({
+			ok: false,
+			command: 'doctor',
+			status: 'not-found',
+		});
 	});
 });

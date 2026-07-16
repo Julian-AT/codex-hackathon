@@ -5,6 +5,7 @@ import {
 	parseCommand,
 	projectHelp,
 } from './command-tree';
+import type { DoctorDependencies } from './doctor';
 import type { InitDependencies, InitResult } from './init';
 import { renderHuman } from './render-human';
 import { renderJson } from './render-json';
@@ -15,6 +16,8 @@ export const EXIT_CODES = Object.freeze({
 	UNAVAILABLE: 3,
 	INTERNAL_ERROR: 70,
 	INVALID_STATE: 4,
+	DOCTOR_COLLISION: 5,
+	DOCTOR_NOT_FOUND: 6,
 });
 
 export type CliStatus =
@@ -23,6 +26,9 @@ export type CliStatus =
 	| 'unavailable'
 	| 'parse-error'
 	| 'state-error'
+	| 'owned'
+	| 'collision'
+	| 'not-found'
 	| 'internal-error';
 
 export type CliError =
@@ -46,6 +52,11 @@ export type CliError =
 			readonly message: string;
 			readonly root: string | null;
 			readonly changed: false;
+			readonly action: string;
+	  }
+	| {
+			readonly code: 'EXECUTABLE_COLLISION' | 'EXECUTABLE_NOT_FOUND';
+			readonly message: string;
 			readonly action: string;
 	  };
 
@@ -81,6 +92,7 @@ export interface CliDependencies {
 	readonly renderHuman?: (envelope: CliEnvelope, columns: number) => string;
 	readonly renderJson?: (envelope: CliEnvelope) => string;
 	readonly init?: InitDependencies;
+	readonly doctor?: DoctorDependencies;
 }
 
 function initErrorCode(
@@ -211,7 +223,12 @@ export async function runCli(
 			dependencies.handlers?.[command] ??
 			(command === 'init'
 				? async (invocation: CommandInvocation) => await initialize(invocation, dependencies)
-				: undefined);
+				: command === 'doctor'
+					? async () => {
+							const { runDoctor } = await import('./doctor');
+							return await runDoctor(dependencies.doctor);
+						}
+					: undefined);
 		if (!handler) {
 			throw new Error(`INTERNAL_INVARIANT: implemented command has no handler: ${command}.`);
 		}

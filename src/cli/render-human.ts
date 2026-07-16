@@ -224,6 +224,45 @@ function renderInit(envelope: CliEnvelope): string {
 	].join('\n');
 }
 
+function renderDoctor(envelope: CliEnvelope): string {
+	const result = envelope.data as {
+		readonly classification: 'owned' | 'collision' | 'not-found';
+		readonly effective: {
+			readonly path: string;
+			readonly ownership: 'owned' | 'collision';
+			readonly errors: readonly string[];
+		} | null;
+		readonly shadowed: readonly {
+			readonly path: string;
+			readonly ownership: 'owned' | 'collision';
+			readonly errors: readonly string[];
+		}[];
+		readonly reason: string;
+		readonly action: string;
+	};
+	const classification =
+		result.classification === 'not-found' ? 'NOT FOUND' : result.classification.toUpperCase();
+	const lines = ['mlx doctor', '', `Executable: ${classification}`];
+	if (result.effective) {
+		lines.push('Effective path:', `  ${sanitizeTerminalText(result.effective.path)}`);
+		for (const error of result.effective.errors) {
+			lines.push(`  Inspection: ${sanitizeTerminalText(error)}`);
+		}
+		lines.push(`Reason: ${sanitizeTerminalText(result.reason)}`);
+		lines.push(`Shadowed candidates: ${result.shadowed.length}`);
+		for (const candidate of result.shadowed) {
+			lines.push(`  ${sanitizeTerminalText(candidate.path)}  ${candidate.ownership.toUpperCase()}`);
+			for (const error of candidate.errors) {
+				lines.push(`    Inspection: ${sanitizeTerminalText(error)}`);
+			}
+		}
+		lines.push('', sanitizeTerminalText(result.action), '');
+		return lines.join('\n');
+	}
+	lines.push('', sanitizeTerminalText(result.reason), sanitizeTerminalText(result.action), '');
+	return lines.join('\n');
+}
+
 export function renderHuman(envelope: CliEnvelope, columns = 80): string {
 	const safeColumns = Number.isFinite(columns) ? Math.max(1, Math.floor(columns)) : 80;
 	if (envelope.status === 'help') {
@@ -231,6 +270,7 @@ export function renderHuman(envelope: CliEnvelope, columns = 80): string {
 	}
 	if (envelope.status === 'unavailable') return renderUnavailable(envelope);
 	if (envelope.status === 'parse-error') return renderParseError(envelope);
+	if (envelope.command === 'doctor') return renderDoctor(envelope);
 	if (envelope.command === 'init') return renderInit(envelope);
 	if (envelope.error) {
 		return `${sanitizeTerminalText(envelope.error.code)}  ${sanitizeTerminalText(envelope.error.message)}\n`;
