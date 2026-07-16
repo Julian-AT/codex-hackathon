@@ -20,10 +20,15 @@
   "scripts": {
     "start": "bun src/cli.tsx",
     "pipeline": "bun src/cli.tsx pipeline",
-    "test": "vitest run",
+    "test": "bun src/validation/process-entry.ts run test",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "check": "biome check .",
+    "test:integration": "bun src/validation/process-entry.ts external test:integration",
+    "typecheck": "bun src/validation/process-entry.ts run typecheck",
+    "check": "bun src/validation/process-entry.ts run check",
+    "studio:build": "bun src/validation/process-entry.ts run studio:build",
+    "dataset:validate": "bun src/validation/process-entry.ts run dataset:validate",
+    "benchmark:smoke": "bun src/validation/process-entry.ts run benchmark:smoke",
+    "local:check": "bun src/validation/process-entry.ts run local:check",
     "format": "biome format --write ."
   },
   "dependencies": {

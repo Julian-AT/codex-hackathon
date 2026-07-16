@@ -44,3 +44,4 @@ build/ios/
 package-lock.json
 pnpm-lock.yaml
 .claude/
+.next/
