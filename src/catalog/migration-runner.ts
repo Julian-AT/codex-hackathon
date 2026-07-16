@@ -155,6 +155,17 @@ export function runCatalogMigrations(
 
 	for (const migration of manifest.slice(recorded.length)) {
 		const apply = database.transaction(() => {
+			// Re-read after BEGIN IMMEDIATE acquires the writer lock. Another opener may
+			// have completed this migration while this connection waited.
+			const lockedLedger = hasMigrationLedger(database) ? readLedger(database) : [];
+			verifyLedger(lockedLedger, manifest);
+			if (lockedLedger.length >= migration.number) return;
+			if (lockedLedger.length !== migration.number - 1) {
+				throw new MigrationError(
+					'MIGRATION_GAP',
+					`Catalog migration ${migration.number} cannot follow version ${lockedLedger.length}.`,
+				);
+			}
 			database.exec(migration.sql);
 			hooks.afterMigrationSql?.(migration.number);
 			database

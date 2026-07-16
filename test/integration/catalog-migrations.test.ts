@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { type ChildProcess, spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -22,6 +22,18 @@ function requireBunRuntime(): boolean {
 	if (isBunRuntime) return true;
 	expect(delegatedFailure).toBeNull();
 	return false;
+}
+
+async function waitForProcess(child: ChildProcess): Promise<void> {
+	const stderr: Buffer[] = [];
+	child.stderr?.on('data', (chunk: Buffer) => stderr.push(chunk));
+	await new Promise<void>((resolve, reject) => {
+		child.once('error', reject);
+		child.once('close', (code) => {
+			if (code === 0) resolve();
+			else reject(new Error(Buffer.concat(stderr).toString('utf8') || `child exited ${code}`));
+		});
+	});
 }
 
 function makeRoot(): string {
@@ -108,6 +120,21 @@ describe('catalog migrations', () => {
 		const verified = new Database(catalogPath, { readonly: true });
 		expect(verified.query('SELECT value FROM prior_rows').get()).toEqual({ value: 'survives' });
 		verified.close();
+	});
+
+	it('serializes concurrent first opens onto one migration ledger', async () => {
+		if (!requireBunRuntime()) return;
+		const root = makeRoot();
+		await initializeOwnedRoot(root);
+		const connectionUrl = new URL('../../src/catalog/connection.ts', import.meta.url).href;
+		const script = `import { openCatalog } from ${JSON.stringify(connectionUrl)}; const connection = await openCatalog({ env: { MLX_HOME: ${JSON.stringify(root)} } }); connection.close();`;
+		await Promise.all(
+			Array.from({ length: 4 }, () => waitForProcess(spawn('bun', ['-e', script]))),
+		);
+		const catalog = requireCatalog(await catalogModule());
+		const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
+		expect(connection.schemaVersion()).toBe(1);
+		connection.close();
 	});
 
 	it('rolls back an injected migration failure without ad hoc schema mutation', async () => {
