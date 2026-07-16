@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1",
+  "executableName": "mlx",
+  "expectedHuman": {
+    "owned": "OWNED",
+    "collision": "COLLISION",
+    "notFound": "NOT FOUND"
+  },
+  "scenarios": [
+    "owned-first",
+    "foreign-first-owned-shadowed",
+    "foreign-only",
+    "none",
+    "duplicate-directories",
+    "empty-and-relative-entries",
+    "non-executable",
+    "broken-symlink",
+    "cyclic-symlink",
+    "marker-mismatch",
+    "metadata-failure"
+  ],
+  "sentinels": [
+    "candidate-body",
+    "path.txt",
+    "aliases.txt",
+    "shell-config.txt",
+    "state-root.txt"
+  ]
+}
