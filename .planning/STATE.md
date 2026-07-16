@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 1
 current_phase_name: Identity, cleanup, baseline, and migration map
 status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-07-16T09:13:45.602Z"
+stopped_at: Completed 01-08-PLAN.md
+last_updated: "2026-07-16T09:26:29.223Z"
 last_activity: 2026-07-16
 last_activity_desc: Phase 1 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-15)
 ## Current Position
 
 Phase: 1 (Identity, cleanup, baseline, and migration map) — EXECUTING
-Plan: 8 of 9
+Plan: 9 of 9
 Status: Ready to execute
 Last activity: 2026-07-16 — Phase 1 execution started
 
-Progress: [████████░░] 78%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [████████░░] 78%
 | Phase 01 P05 | 8 min | 3 tasks | 10 files |
 | Phase 01 P06 | 8 min | 3 tasks | 6 files |
 | Phase 01 P07 | 5 min | 3 tasks | 6 files |
+| Phase 01 P08 | 5 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 01]: The eight validation identities live in one immutable declarative catalog. — Later runners can consume only fixed argv or typed product, capability, and external-only gates.
 - [Phase 01]: Accept only exact canonical catalog descriptors before process execution. — Prevents structurally compatible caller data from introducing arbitrary executable or argument values.
 - [Phase 01]: Late-load human validation reporting only outside JSON mode. — Keeps JSON output isolated to one deterministic document with no renderer initialization side effects.
+- [Phase 01]: Revalidate each production process request against the exact immutable catalog executable and argument vector before Bun spawn. — Keeps the host boundary deny-by-default without adding a generic command-string API.
+- [Phase 01]: Reserve direct integration Vitest execution for explicit external test:integration mode. — Ordinary run mode and in-suite baselines cannot recurse through a package script.
+- [Phase 01]: Derive named Apple Silicon evidence only from platform and architecture captured at probe construction. — Missing or unknown probe behavior fails instead of authorizing SKIP.
 
 ### Pending Todos
 
@@ -112,6 +116,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T09:13:39.760Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-07-16T09:26:29.218Z
+Stopped at: Completed 01-08-PLAN.md
 Resume file: None

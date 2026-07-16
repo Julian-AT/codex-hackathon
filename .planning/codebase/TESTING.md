@@ -34,7 +34,7 @@ Coverage is not configured in `package.json` or `vitest.config.ts`. There is no 
 - Tests are co-located beside the code under test.
 - Library tests live under `lib/**`: `lib/data/dedupe.test.ts`, `lib/discovery/validate/sandbox.test.ts`, `lib/training/supervisor.test.ts`.
 - CLI and REPL support tests live under `src/**`: `src/commands/commands.test.ts`, `src/commands/index.test.ts`, `src/lib/config.test.ts`.
-- Pure validation contract tests live under `src/validation/**`, colocated with result normalization, capability evidence, and the ordered check catalog.
+- Validation tests live under `src/validation/**`: pure contracts remain direct, runtime/baseline tests inject recording fakes, and production adapter/entry tests inject spawn, timer, interrupt, capability, IO, and exit seams without launching live tools.
 - iOS Swift test files exist under `ios/SpecialistApp/GemmaToolParserTests.swift`, but TypeScript Vitest excludes `ios` through `tsconfig.json` and Biome ignores `ios` through `biome.json`.
 
 **Naming:**
@@ -122,6 +122,7 @@ vi.mock('@/lib/model', () => ({
 **What NOT to Mock:**
 - Do not mock pure deterministic logic. Test real implementations for deduplication, split hashes, parsers, schema validation, tool-argument normalization, and training supervision: `lib/data/dedupe.test.ts`, `lib/data/split.test.ts`, `lib/streams/trainParser.test.ts`, `lib/discovery/validate/schema.test.ts`, `lib/training/supervisor.test.ts`.
 - Test `src/validation/result.ts`, `capabilities.ts`, and `check-catalog.ts` directly. These modules are pure contracts; host process adapters and recursive package-script execution do not belong in their unit suites.
+- Test `process-adapter.ts`, `host-capability.ts`, and `process-entry.ts` through injected host seams. The sole live external integration route starts fixed Vitest argv from an outer process, never a package script from inside its own suite.
 - Do not call live external model APIs in unit tests. Use `vi.mock('ai', ...)` and `vi.mock('@/lib/model', ...)`.
 - Do not rely on committed generated outputs as proof of live behavior. Fixture and replay data must remain labeled as such per `AGENTS.md` and `docs/MLX_PROJECT_SPEC.md`.
 

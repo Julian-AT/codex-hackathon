@@ -35,7 +35,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 3. A maintainer can trace every legacy command, path, dataset, script, product string, dynamic-tool path, and iOS component to a recorded disposition, replacement owner, and acceptance coverage before removal.
 4. Repository validation commands produce an inspectable baseline that distinguishes pass, failure, and capability-gated skip and never represents fixture, replay, mock, or skipped evidence as live success.
 
-**Plans:** 7/9 plans executed
+**Plans:** 8/9 plans executed
 
 - [x] 01-01-PLAN.md
 - [x] 01-02-PLAN.md
@@ -44,7 +44,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 - [x] 01-05-PLAN.md
 - [x] 01-06-PLAN.md
 - [x] 01-07-PLAN.md
-- [ ] 01-08-PLAN.md
+- [x] 01-08-PLAN.md
 - [ ] 01-09-PLAN.md
 
 ### Phase 2: Foundation: configuration, SQLite, CAS, runs, and job queue
@@ -191,7 +191,7 @@ MLX — the personal coding dataset and model pipeline progresses through eight 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Identity, cleanup, baseline, and migration map | 7/9 | In Progress|  |
+| 1. Identity, cleanup, baseline, and migration map | 8/9 | In Progress|  |
 | 2. Foundation: configuration, SQLite, CAS, runs, and job queue | 0/TBD | Not started | - |
 | 3. GitHub inventory, mirrors, identities, and accurate metrics | 0/TBD | Not started | - |
 | 4. Evidence extraction, accepted-state quality, and preference profile | 0/TBD | Not started | - |

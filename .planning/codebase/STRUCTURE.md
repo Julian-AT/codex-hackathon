@@ -48,9 +48,9 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - Key files: `src/core/mlx-home.ts`, `src/core/state-ownership.ts`.
 
 **`src/validation/`:**
-- Purpose: Pure validation status/source semantics, named capability evidence, and the ordered allowlisted check contract consumed by later runner and host layers.
-- Contains: Strict Zod normalization, failure-dominant aggregation, immutable eight-check descriptors, and colocated contract tests; no host process or package-script wiring.
-- Key files: `src/validation/result.ts`, `src/validation/capabilities.ts`, `src/validation/check-catalog.ts`.
+- Purpose: Validation status/source semantics, immutable check authority, isolated runtime/reporting, and the production shell-free host boundary.
+- Contains: Strict Zod normalization, failure-dominant aggregation, immutable eight-check descriptors, fake-tested runner/CLI contracts, a catalog-only Bun process adapter, a named Apple Silicon probe, and an executable internal process entry; package-script wiring remains external.
+- Key files: `src/validation/result.ts`, `src/validation/check-catalog.ts`, `src/validation/runner.ts`, `src/validation/cli.ts`, `src/validation/process-adapter.ts`, `src/validation/host-capability.ts`, `src/validation/process-entry.ts`.
 
 **`src/commands/`:**
 - Purpose: Slash commands and one-shot command implementations.
@@ -189,6 +189,10 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 - `src/validation/result.ts`: Discriminated PASS/FAIL/SKIP rows, independent source labels, fail-closed normalization, and ordered aggregation.
 - `src/validation/capabilities.ts`: Named probed capability evidence and unavailable-only SKIP eligibility.
 - `src/validation/check-catalog.ts`: Frozen ordered check IDs with fixed argv or typed product/capability/external execution policies.
+- `src/validation/runner.ts`: Canonical-descriptor execution through injected process, capability, and external-only ports.
+- `src/validation/process-adapter.ts`: Exact-catalog Bun token execution with bounded streams and timeout/interruption cleanup.
+- `src/validation/host-capability.ts`: Named Apple Silicon evidence derived from platform and architecture.
+- `src/validation/process-entry.ts`: Executable run/external boundary with one final write and process exit assignment.
 - `lib/discovery/types.ts`: Corpus, chunk, dynamic tool, and validation result types.
 - `lib/data/types.ts`: Tool call, chat message, training example, judge score, eval item, and data-gen metadata types.
 - `src/commands/index.ts`: Command and command-context types.
@@ -198,7 +202,7 @@ The target architecture in `docs/MLX_PROJECT_SPEC.md` calls for `apps/`, `packag
 **Testing:**
 - `vitest.config.ts`: Includes `lib/**/*.test.ts`, `lib/**/*.spec.ts`, and `src/**/*.test.ts`.
 - `src/cli/*.test.ts`: Public catalog, parser, orchestration, deterministic renderer, and terminal edge contracts.
-- `src/validation/*.test.ts`: Result/source matrices, capability-only SKIP rules, aggregate precedence, and immutable check-catalog invariants.
+- `src/validation/*.test.ts`: Result/source matrices, immutable catalog and fake runtime contracts, host process/capability lifecycle, direct external integration, and output isolation.
 - `test/integration/cli-contract.test.ts`: Isolated explicit-Bun public process contract with filesystem/network/process sentinels.
 - `lib/discovery/validate/*.test.ts`: Tool validation gate tests.
 - `lib/data/*.test.ts`: Data split, dedupe, schema, emit, judge, and worker tests.
