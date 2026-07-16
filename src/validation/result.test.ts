@@ -125,20 +125,23 @@ describe('normalizeValidationResult', () => {
 		['unnamed capability', { id: '', available: false, reason: 'Unavailable.' }],
 		['unprobed capability', { id: 'apple-silicon', reason: 'Unavailable.' }],
 		['available capability', { id: 'apple-silicon', available: true, reason: 'Available.' }],
-	] as const)('turns SKIP with %s into FAIL without changing its source', async (_case, capability) => {
-		const { normalizeValidationResult } = await requireResultApi();
-		const result = normalizeValidationResult({
-			checkId: 'local.check',
-			status: 'SKIP',
-			source: 'REPLAY',
-			reason: 'Requested skip.',
-			capability,
-		});
+	] as const)(
+		'turns SKIP with %s into FAIL without changing its source',
+		async (_case, capability) => {
+			const { normalizeValidationResult } = await requireResultApi();
+			const result = normalizeValidationResult({
+				checkId: 'local.check',
+				status: 'SKIP',
+				source: 'REPLAY',
+				reason: 'Requested skip.',
+				capability,
+			});
 
-		expect(result.status).toBe('FAIL');
-		expect(result.source).toBe('REPLAY');
-		expect(result.reason).toMatch(/skip/i);
-	});
+			expect(result.status).toBe('FAIL');
+			expect(result.source).toBe('REPLAY');
+			expect(result.reason).toMatch(/skip/i);
+		},
+	);
 });
 
 describe('aggregateValidationResults', () => {

@@ -68,9 +68,7 @@ function freezeResult(result: ValidationResult): ValidationResult {
 
 function invalidResult(input: unknown, reason: string): ValidationResult {
 	const partial = PARTIAL_RESULT_SCHEMA.safeParse(input);
-	const capability = partial.success
-		? normalizeCapabilityEvidence(partial.data.capability)
-		: null;
+	const capability = partial.success ? normalizeCapabilityEvidence(partial.data.capability) : null;
 	return freezeResult({
 		checkId: partial.success ? (partial.data.checkId ?? INVALID_CHECK_ID) : INVALID_CHECK_ID,
 		status: 'FAIL',

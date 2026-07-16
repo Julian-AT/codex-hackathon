@@ -71,7 +71,10 @@ describe('canSkipForCapability', () => {
 	});
 
 	it.each([
-		['available capability', { id: 'apple-silicon', available: true, reason: 'arm64 host detected.' }],
+		[
+			'available capability',
+			{ id: 'apple-silicon', available: true, reason: 'arm64 host detected.' },
+		],
 		['missing implementation', undefined],
 		['fixture label instead of probe', { source: 'FIXTURE', available: false }],
 		['unprobed capability', { id: 'apple-silicon', reason: 'Not checked.' }],
