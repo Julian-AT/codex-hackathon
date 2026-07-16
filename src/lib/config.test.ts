@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -21,9 +21,13 @@ describe('loadConfig', () => {
 			savedEnv[key] = process.env[key];
 			delete process.env[key];
 		}
+		process.env.MLX_HOME = mkdtempSync(path.join(tmpdir(), 'mlx-config-defaults-'));
 	});
 
 	afterEach(() => {
+		if (process.env.MLX_HOME?.includes('mlx-config-defaults-')) {
+			rmSync(process.env.MLX_HOME, { recursive: true, force: true });
+		}
 		for (const [key, val] of Object.entries(savedEnv)) {
 			if (val === undefined) delete process.env[key];
 			else process.env[key] = val;
@@ -53,9 +57,11 @@ describe('loadConfig', () => {
 	});
 
 	it('applies ADAPTER_DIR env override', () => {
-		process.env.ADAPTER_DIR = '/tmp/adapters';
+		process.env.ADAPTER_DIR = 'models/custom-adapters';
 		const config = loadConfig();
-		expect(config.training.adapterDir).toBe('/tmp/adapters');
+		expect(config.training.adapterDir).toBe(
+			path.join(realpathSync(process.env.MLX_HOME as string), 'models', 'custom-adapters'),
+		);
 	});
 
 	it('applies IPHONE_UDID env override', () => {
@@ -66,7 +72,11 @@ describe('loadConfig', () => {
 });
 
 describe('getConfigValue', () => {
-	const config = loadConfig() as ResolvedConfig;
+	const config = {
+		model: 'test/model',
+		training: { iters: 400 },
+		data: { trajCounts: { singleTurn: 200 } },
+	} as unknown as ResolvedConfig;
 
 	it('accesses top-level key', () => {
 		expect(getConfigValue(config, 'model')).toBe(config.model);
@@ -87,8 +97,10 @@ describe('getConfigValue', () => {
 
 describe('formatConfig', () => {
 	it('produces readable flat output', () => {
-		const config = loadConfig();
+		const root = mkdtempSync(path.join(tmpdir(), 'mlx-format-'));
+		const config = loadConfig({ env: { MLX_HOME: root } });
 		const output = formatConfig(config);
+		rmSync(root, { recursive: true, force: true });
 		expect(output).toContain('model =');
 		expect(output).toContain('serverPort =');
 		expect(output).toContain('training.iters =');

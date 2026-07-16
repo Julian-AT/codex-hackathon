@@ -2,6 +2,7 @@ import {
 	mkdtempSync,
 	mkdirSync,
 	readFileSync,
+	realpathSync,
 	rmSync,
 	symlinkSync,
 	writeFileSync,
@@ -39,6 +40,7 @@ describe('foundation configuration containment', () => {
 	it('projects every mutable runtime path beneath one canonical root', async () => {
 		const root = makeRoot();
 		const modules = await foundationModules();
+		const canonicalRoot = realpathSync(root);
 		expect(modules.config).toHaveProperty('loadRuntimeConfig');
 		const loadRuntimeConfig = modules.config.loadRuntimeConfig as (input: unknown) => {
 			readonly paths: Readonly<Record<string, string>>;
@@ -46,21 +48,21 @@ describe('foundation configuration containment', () => {
 		const runtime = loadRuntimeConfig({ env: { MLX_HOME: root } });
 
 		expect(runtime.paths).toEqual({
-			root,
-			config: path.join(root, 'config', 'config.json'),
-			catalog: path.join(root, 'catalog', 'mlx.sqlite3'),
-			objects: path.join(root, 'objects'),
-			runs: path.join(root, 'runs'),
-			logs: path.join(root, 'logs'),
-			mirrors: path.join(root, 'mirrors'),
-			worktrees: path.join(root, 'worktrees'),
-			datasets: path.join(root, 'datasets'),
-			models: path.join(root, 'models'),
-			cache: path.join(root, 'cache'),
-			parquet: path.join(root, 'parquet'),
+			root: canonicalRoot,
+			config: path.join(canonicalRoot, 'config', 'config.json'),
+			catalog: path.join(canonicalRoot, 'catalog', 'mlx.sqlite3'),
+			objects: path.join(canonicalRoot, 'objects'),
+			runs: path.join(canonicalRoot, 'runs'),
+			logs: path.join(canonicalRoot, 'logs'),
+			mirrors: path.join(canonicalRoot, 'mirrors'),
+			worktrees: path.join(canonicalRoot, 'worktrees'),
+			datasets: path.join(canonicalRoot, 'datasets'),
+			models: path.join(canonicalRoot, 'models'),
+			cache: path.join(canonicalRoot, 'cache'),
+			parquet: path.join(canonicalRoot, 'parquet'),
 		});
 		for (const value of Object.values(runtime.paths)) {
-			expect(value === root || value.startsWith(`${root}${path.sep}`)).toBe(true);
+			expect(value === canonicalRoot || value.startsWith(`${canonicalRoot}${path.sep}`)).toBe(true);
 		}
 	});
 
