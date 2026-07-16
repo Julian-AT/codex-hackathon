@@ -158,6 +158,7 @@ describe('packed mlx executable ownership', () => {
 		expect(packageJson.private).not.toBe(false);
 		expect(packageJson.bin).toEqual({ mlx: './src/cli.tsx' });
 		expect(packageJson.files).toContain('mlx.package.json');
+		expect(packageJson.files).toContain('src/core/**/*.ts');
 		expect(packageJson.scripts).not.toHaveProperty('preinstall');
 		expect(packageJson.scripts).not.toHaveProperty('install');
 		expect(packageJson.scripts).not.toHaveProperty('postinstall');
