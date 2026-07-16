@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 1
 current_phase_name: Identity, cleanup, baseline, and migration map
 status: executing
-stopped_at: Completed 01-06-PLAN.md
-last_updated: "2026-07-16T09:04:06.419Z"
+stopped_at: Completed 01-07-PLAN.md
+last_updated: "2026-07-16T09:13:45.602Z"
 last_activity: 2026-07-16
 last_activity_desc: Phase 1 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-15)
 ## Current Position
 
 Phase: 1 (Identity, cleanup, baseline, and migration map) — EXECUTING
-Plan: 7 of 9
+Plan: 8 of 9
 Status: Ready to execute
 Last activity: 2026-07-16 — Phase 1 execution started
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 78%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [███████░░░] 67%
 | Phase 01 P04 | 12 min | 3 tasks | 8 files |
 | Phase 01 P05 | 8 min | 3 tasks | 10 files |
 | Phase 01 P06 | 8 min | 3 tasks | 6 files |
+| Phase 01 P07 | 5 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Removal authority is recomputed from exact current reviewed evidence and never trusted from the declared status. — Stale, disallowed, incomplete, or pending evidence must fail closed.
 - [Phase 01]: Validation SKIP requires a named unavailable capability probe. — Fixture, replay, mock, missing product, and unprobed evidence cannot authorize SKIP.
 - [Phase 01]: The eight validation identities live in one immutable declarative catalog. — Later runners can consume only fixed argv or typed product, capability, and external-only gates.
+- [Phase 01]: Accept only exact canonical catalog descriptors before process execution. — Prevents structurally compatible caller data from introducing arbitrary executable or argument values.
+- [Phase 01]: Late-load human validation reporting only outside JSON mode. — Keeps JSON output isolated to one deterministic document with no renderer initialization side effects.
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T09:04:06.415Z
-Stopped at: Completed 01-06-PLAN.md
+Last session: 2026-07-16T09:13:39.760Z
+Stopped at: Completed 01-07-PLAN.md
 Resume file: None

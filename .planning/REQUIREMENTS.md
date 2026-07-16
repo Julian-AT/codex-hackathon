@@ -15,8 +15,8 @@
 - [x] **IDEN-06**: Operator and automation can request deterministic `--json` output from practical CLI commands while human-readable output remains available
 - [x] **IDEN-07**: Maintainer can inspect a migration inventory that classifies every legacy command, artifact path, generated dataset, script, product string, dynamic-tool path, and iOS component before destructive cleanup
 - [x] **IDEN-08**: A legacy component can be removed only after its replacement owner and acceptance coverage are recorded
-- [ ] **IDEN-09**: Automation can run stable `check`, `typecheck`, unit, integration, Studio build, dataset validation, benchmark smoke, and local capability-check commands through the repository scripts
-- [ ] **IDEN-10**: Validation reports distinguish passed, failed, and capability-gated skipped checks without describing a skip, replay, fixture, or mock as a pass or live result
+- [x] **IDEN-09**: Automation can run stable `check`, `typecheck`, unit, integration, Studio build, dataset validation, benchmark smoke, and local capability-check commands through the repository scripts
+- [x] **IDEN-10**: Validation reports distinguish passed, failed, and capability-gated skipped checks without describing a skip, replay, fixture, or mock as a pass or live result
 
 ### Foundation, Storage, Runs, and Jobs
 
@@ -191,8 +191,8 @@ Every v1 requirement maps to exactly one roadmap phase.
 | IDEN-06 | Phase 1 | Complete |
 | IDEN-07 | Phase 1 | Complete |
 | IDEN-08 | Phase 1 | Complete |
-| IDEN-09 | Phase 1 | Pending |
-| IDEN-10 | Phase 1 | Pending |
+| IDEN-09 | Phase 1 | Complete |
+| IDEN-10 | Phase 1 | Complete |
 | FNDN-01 | Phase 2 | Pending |
 | FNDN-02 | Phase 2 | Pending |
 | FNDN-03 | Phase 2 | Pending |
