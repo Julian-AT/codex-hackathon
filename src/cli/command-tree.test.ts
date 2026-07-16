@@ -102,6 +102,7 @@ describe('authoritative command catalog', () => {
 			]),
 		);
 		expect(shapes).toEqual({
+			init: [{ name: '--adopt', values: null }],
 			'repos set': [
 				{
 					name: '--mode',
@@ -117,6 +118,29 @@ describe('authoritative command catalog', () => {
 			'dataset push': [{ name: '--private', values: null }],
 			'train preflight': [{ name: '--model', values: ['e2b', 'e4b'] }],
 		});
+	});
+
+	it('parses init adoption only as a declared value-less, non-repeatable leaf option', () => {
+		const parsed = parseCommand(['init', '--adopt']);
+		expect(parsed.kind).toBe('command');
+		if (parsed.kind === 'command') {
+			expect(parsed.leaf.path).toEqual(['init']);
+			expect(parsed.values.options).toEqual({ '--adopt': true });
+		}
+
+		for (const args of [
+			['init', '--adopt=true'],
+			['init', '--adopt', '--adopt'],
+			['--adopt', 'init'],
+		] as const) {
+			expect(parseCommand(args)).toMatchObject({ kind: 'error', code: 'INVALID_ARGUMENT' });
+		}
+	});
+
+	it('projects the init adoption option from the sole catalog into leaf help', () => {
+		const help = projectHelp(['init']);
+		expect(help.usage).toBe('mlx init [--adopt]');
+		expect(help.options).toEqual([{ name: '--adopt', kind: 'flag' }]);
 	});
 
 	it.each([
