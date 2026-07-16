@@ -1,0 +1,102 @@
+{
+	"schemaVersion": "1",
+	"canonicalPhrase": "MLX — the personal coding dataset and model pipeline",
+	"appleDistinction": "This product is distinct from Apple's MLX project and is not affiliated with or endorsed by Apple.",
+	"requiredCategories": ["documentation", "help", "package", "screenshots"],
+	"sources": [
+		{
+			"path": "README.md",
+			"category": "documentation",
+			"content": "MLX — the personal coding dataset and model pipeline\n\nThis product is distinct from Apple's MLX project and is not affiliated with or endorsed by Apple.\n"
+		},
+		{
+			"path": "generated/help.txt",
+			"category": "help",
+			"content": "MLX — the personal coding dataset and model pipeline\n\nUsage: mlx <command> [options]\n"
+		},
+		{
+			"path": "generated/package-description.txt",
+			"category": "package",
+			"content": "MLX — the personal coding dataset and model pipeline. This product is distinct from Apple's MLX project and is not affiliated with or endorsed by Apple.\n"
+		},
+		{
+			"path": "docs/internal/legacy-history.md",
+			"category": "documentation",
+			"content": "Historical codex implementation notes.\n"
+		},
+		{
+			"path": "metadata/git-remote.txt",
+			"category": "package",
+			"content": "git@github.com:example/codex-hackathon.git\n"
+		}
+	],
+	"rules": [
+		{
+			"id": "canonical-first-mention",
+			"kind": "canonical-first-mention",
+			"category": "first-mention",
+			"paths": ["README.md", "generated/help.txt", "generated/package-description.txt"]
+		},
+		{
+			"id": "forbidden-product-brand",
+			"kind": "forbidden-product-brand",
+			"category": "forbidden-branding",
+			"paths": [
+				"README.md",
+				"generated/help.txt",
+				"generated/package-description.txt",
+				"docs/internal/legacy-history.md",
+				"metadata/git-remote.txt"
+			]
+		},
+		{
+			"id": "apple-distinction",
+			"kind": "apple-distinction",
+			"category": "apple-distinction",
+			"paths": ["README.md", "generated/package-description.txt"]
+		}
+	],
+	"exclusions": [
+		{
+			"path": "docs/internal/legacy-history.md",
+			"ruleId": "forbidden-product-brand",
+			"rationale": "Authoritative historical implementation evidence; this exact path is not user-facing product copy."
+		},
+		{
+			"path": "metadata/git-remote.txt",
+			"ruleId": "forbidden-product-brand",
+			"rationale": "The development Git remote may retain the repository name and is not a user-facing product identity."
+		}
+	],
+	"packageFixture": {
+		"repeatedChecks": 2,
+		"concurrentChecks": 4,
+		"sentinels": [
+			{
+				"path": "unrelated-bin/mlx",
+				"kind": "file",
+				"content": "#!/bin/sh\necho unrelated-mlx\n"
+			},
+			{
+				"path": "unrelated-bin/mlx-link",
+				"kind": "symlink",
+				"target": "mlx"
+			},
+			{
+				"path": "shell/aliases.json",
+				"kind": "file",
+				"content": "{\"mlx\":\"/operator/unrelated/mlx\"}\n"
+			},
+			{
+				"path": "shell/path.txt",
+				"kind": "file",
+				"content": "/operator/unrelated/bin:/usr/bin\n"
+			},
+			{
+				"path": "shell/profile.sh",
+				"kind": "file",
+				"content": "export PATH=/operator/unrelated/bin:$PATH\n"
+			}
+		]
+	}
+}
