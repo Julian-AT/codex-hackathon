@@ -1,33 +1,15 @@
-import { createHash } from 'node:crypto';
-import { closeSync, mkdirSync, openSync, readFileSync } from 'node:fs';
+import { closeSync, mkdirSync, openSync } from 'node:fs';
 import path from 'node:path';
 import { resolveContainedPath } from '../core/contained-path';
 import { inspectStateRoot } from '../core/state-ownership';
 import { type ConfigDependencies, loadRuntimeConfig } from '../lib/config';
+import {
+	type CatalogDatabase,
+	type MigrationHooks,
+	runCatalogMigrations,
+} from './migration-runner';
 
 const BUSY_TIMEOUT_MS = 5_000;
-const BASE_MIGRATION_NAME = '0001-catalog.sql';
-const BASE_MIGRATION_URL = new URL('../../migrations/0001-catalog.sql', import.meta.url);
-
-interface Statement<Row, Parameters extends readonly unknown[]> {
-	get(...parameters: Parameters): Row | null;
-	run(...parameters: Parameters): unknown;
-	all(...parameters: Parameters): Row[];
-}
-
-interface ImmediateTransaction<T> {
-	immediate(): T;
-}
-
-export interface CatalogDatabase {
-	close(): void;
-	exec(sql: string): void;
-	query<Row = unknown, Parameters extends readonly unknown[] = readonly unknown[]>(
-		sql: string,
-	): Statement<Row, Parameters>;
-	transaction<T>(operation: () => T): ImmediateTransaction<T>;
-}
-
 interface DatabaseConstructor {
 	new (
 		filename: string,
@@ -58,16 +40,12 @@ export interface OpenCatalogInput extends ConfigDependencies {}
 
 export interface OpenCatalogDependencies {
 	/** Test-only failure seam. Production callers must omit this dependency. */
-	readonly afterMigrationSql?: () => void;
+	readonly afterMigrationSql?: MigrationHooks['afterMigrationSql'];
 }
 
 export class CatalogError extends Error {
 	constructor(
-		readonly code:
-			| 'UNOWNED_ROOT'
-			| 'UNSAFE_CATALOG_PATH'
-			| 'CATALOG_PRAGMA_FAILED'
-			| 'MIGRATION_DRIFT',
+		readonly code: 'UNOWNED_ROOT' | 'UNSAFE_CATALOG_PATH' | 'CATALOG_PRAGMA_FAILED',
 		message: string,
 	) {
 		super(message);
@@ -78,7 +56,8 @@ export class CatalogError extends Error {
 function scalarNumber(database: CatalogDatabase, sql: string): number {
 	const row = database.query<Record<string, number>, []>(sql).get();
 	const value = row && Object.values(row)[0];
-	if (typeof value !== 'number') throw new Error(`SQLite did not return a numeric value for ${sql}`);
+	if (typeof value !== 'number')
+		throw new Error(`SQLite did not return a numeric value for ${sql}`);
 	return value;
 }
 
@@ -100,45 +79,6 @@ function inspectPragmas(database: CatalogDatabase): CatalogPragmas {
 		);
 	}
 	return { busyTimeout, foreignKeys: true, journalMode: 'wal' };
-}
-
-function applyBaseMigration(
-	database: CatalogDatabase,
-	dependencies: OpenCatalogDependencies,
-): void {
-	const sql = readFileSync(BASE_MIGRATION_URL, 'utf8');
-	const checksum = createHash('sha256').update(sql).digest('hex');
-	const hasLedger = database
-		.query<{ readonly count: number }, []>(
-			"SELECT count(*) AS count FROM sqlite_schema WHERE type = 'table' AND name = 'schema_migrations'",
-		)
-		.get()?.count;
-	if (hasLedger === 1) {
-		const recorded = database
-			.query<
-				{ readonly name: string; readonly checksum: string },
-				[number]
-			>('SELECT name, checksum FROM schema_migrations WHERE migration_number = ?')
-			.get(1);
-		if (!recorded || recorded.name !== BASE_MIGRATION_NAME || recorded.checksum !== checksum) {
-			throw new CatalogError(
-				'MIGRATION_DRIFT',
-				`Catalog migration checksum or name drift detected for ${BASE_MIGRATION_NAME}.`,
-			);
-		}
-		return;
-	}
-
-	const migrate = database.transaction(() => {
-		database.exec(sql);
-		dependencies.afterMigrationSql?.();
-		database
-			.query(
-				'INSERT INTO schema_migrations (migration_number, name, checksum) VALUES (?, ?, ?)',
-			)
-			.run(1, BASE_MIGRATION_NAME, checksum);
-	});
-	migrate.immediate();
 }
 
 class BunCatalogConnection implements CatalogConnection {
@@ -200,7 +140,9 @@ export async function openCatalog(
 		const descriptor = openSync(runtime.paths.catalog, 'wx', 0o600);
 		closeSync(descriptor);
 	} catch (error) {
-		if (!(typeof error === 'object' && error !== null && 'code' in error && error.code === 'EEXIST'))
+		if (
+			!(typeof error === 'object' && error !== null && 'code' in error && error.code === 'EEXIST')
+		)
 			throw error;
 	}
 	const finalPath = resolveContainedPath({
@@ -219,7 +161,7 @@ export async function openCatalog(
 		database.exec('PRAGMA foreign_keys = ON');
 		database.exec('PRAGMA journal_mode = WAL');
 		inspectPragmas(database);
-		applyBaseMigration(database, dependencies);
+		runCatalogMigrations(database, dependencies);
 		inspectPragmas(database);
 		return new BunCatalogConnection(database);
 	} catch (error) {

@@ -7,8 +7,10 @@
   "files": [
     "README.md",
     "mlx.package.json",
+    "migrations/*.sql",
     "src/cli.tsx",
     "src/cli/**/*.ts",
+    "src/catalog/**/*.ts",
     "src/core/**/*.ts"
   ],
   "bin": {

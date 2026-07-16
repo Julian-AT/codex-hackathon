@@ -25,6 +25,24 @@ async function catalogModule() {
 	return await import('../../src/catalog/connection').catch(() => null);
 }
 
+async function sqliteModule() {
+	const specifier = 'bun:sqlite';
+	return (await import(specifier)) as typeof import('../../src/catalog/connection') & {
+		readonly Database: new (
+			filename: string,
+			options?: { readonly create?: boolean; readonly readonly?: boolean },
+		) => {
+			close(): void;
+			query(sql: string): {
+				get(...parameters: unknown[]): unknown;
+				run(...parameters: unknown[]): unknown;
+				all(): unknown[];
+			};
+			exec(sql: string): void;
+		};
+	};
+}
+
 function requireCatalog<T>(catalog: T | null): T {
 	if (!catalog) throw new Error('public catalog open seam is missing');
 	return catalog;
@@ -39,12 +57,12 @@ describe('catalog migrations', () => {
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
-		const first = catalog.openCatalog({ env: { MLX_HOME: root } });
+		const first = await catalog.openCatalog({ env: { MLX_HOME: root } });
 		expect(first?.pragmas()).toEqual({ busyTimeout: 5_000, foreignKeys: true, journalMode: 'wal' });
 		expect(first?.schemaVersion()).toBe(1);
 		first?.close();
 
-		const second = catalog.openCatalog({ env: { MLX_HOME: root } });
+		const second = await catalog.openCatalog({ env: { MLX_HOME: root } });
 		expect(second?.schemaVersion()).toBe(1);
 		second?.close();
 	});
@@ -53,7 +71,7 @@ describe('catalog migrations', () => {
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
-		const { Database } = await import('bun:sqlite');
+		const { Database } = await sqliteModule();
 		const catalogDir = path.join(root, 'catalog');
 		mkdirSync(catalogDir);
 		const catalogPath = path.join(catalogDir, 'mlx.sqlite3');
@@ -63,7 +81,7 @@ describe('catalog migrations', () => {
 		prior.close();
 
 		for (let reopen = 0; reopen < 2; reopen += 1) {
-			const connection = catalog.openCatalog({ env: { MLX_HOME: root } });
+			const connection = await catalog.openCatalog({ env: { MLX_HOME: root } });
 			expect(connection?.schemaVersion()).toBe(1);
 			connection?.close();
 		}
@@ -76,13 +94,18 @@ describe('catalog migrations', () => {
 		const root = makeRoot();
 		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
-		const { Database } = await import('bun:sqlite');
-		expect(() =>
+		const { Database } = await sqliteModule();
+		await expect(
 			catalog.openCatalog(
 				{ env: { MLX_HOME: root } },
-				{ afterMigrationSql: () => void (() => { throw new Error('injected migration failure'); })() },
+				{
+					afterMigrationSql: () =>
+						void (() => {
+							throw new Error('injected migration failure');
+						})(),
+				},
 			),
-		).toThrow('injected migration failure');
+		).rejects.toThrow('injected migration failure');
 
 		const database = new Database(path.join(root, 'catalog', 'mlx.sqlite3'));
 		const tables = database
@@ -93,34 +116,36 @@ describe('catalog migrations', () => {
 	});
 
 	it('refuses checksum drift, ledger gaps, and future versions before mutation', async () => {
-		const root = makeRoot();
-		await initializeOwnedRoot(root);
 		const catalog = requireCatalog(await catalogModule());
-		const { Database } = await import('bun:sqlite');
-		const first = catalog.openCatalog({ env: { MLX_HOME: root } });
-		first?.close();
-		const catalogPath = path.join(root, 'catalog', 'mlx.sqlite3');
-
-		for (const [number, checksum, expected] of [
-			[1, '0'.repeat(64), 'checksum'],
-			[2, '1'.repeat(64), 'future'],
-		] as const) {
+		const { Database } = await sqliteModule();
+		for (const scenario of ['drift', 'gap', 'future'] as const) {
+			const root = makeRoot();
+			await initializeOwnedRoot(root);
+			const first = await catalog.openCatalog({ env: { MLX_HOME: root } });
+			first.close();
+			const catalogPath = path.join(root, 'catalog', 'mlx.sqlite3');
 			const database = new Database(catalogPath);
-			database
-				.query('UPDATE schema_migrations SET checksum = ? WHERE migration_number = 1')
-				.run(checksum);
-			if (number === 2) {
+			if (scenario === 'drift') {
+				database
+					.query('UPDATE schema_migrations SET checksum = ? WHERE migration_number = 1')
+					.run('0'.repeat(64));
+			} else if (scenario === 'gap') {
+				database
+					.query('UPDATE schema_migrations SET migration_number = 2 WHERE migration_number = 1')
+					.run();
+			} else {
 				database
 					.query(
 						'INSERT INTO schema_migrations (migration_number, name, checksum) VALUES (?, ?, ?)',
 					)
-					.run(number, '0002-future.sql', checksum);
+					.run(2, '0002-future.sql', '1'.repeat(64));
 			}
 			database.close();
-			expect(() => catalog.openCatalog({ env: { MLX_HOME: root } })).toThrow(expected);
+			await expect(catalog.openCatalog({ env: { MLX_HOME: root } })).rejects.toThrow(
+				scenario === 'drift' ? 'drift' : scenario === 'gap' ? 'gap' : 'newer',
+			);
+			const ledger = readFileSync(catalogPath);
+			expect(ledger.byteLength).toBeGreaterThan(0);
 		}
-
-		const ledger = readFileSync(path.join(root, 'catalog', 'mlx.sqlite3'));
-		expect(ledger.byteLength).toBeGreaterThan(0);
 	});
 });
