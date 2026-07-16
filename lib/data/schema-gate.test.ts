@@ -1,5 +1,20 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { validateToolCall, _resetCache } from './schema-gate';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs')>();
+  const { resolve } = await import('node:path');
+  return {
+    ...actual,
+    readFileSync: (path: Parameters<typeof actual.readFileSync>[0], options?: unknown) => {
+      const selected = String(path).endsWith('/data/adapter-tools.json')
+        ? resolve(process.cwd(), 'fixtures/phase-1/validation/adapter-tools.json')
+        : path;
+      return actual.readFileSync(selected, options as never);
+    },
+  };
+});
+
+import { _resetCache, validateToolCall } from './schema-gate';
 
 beforeEach(() => _resetCache());
 

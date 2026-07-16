@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
 	CHECK_CATALOG,
-	VALIDATION_SCRIPT_NAMES,
 	type CheckDescriptor,
+	VALIDATION_SCRIPT_NAMES,
 } from '../../src/validation/check-catalog';
 import { runValidationProcessEntry } from '../../src/validation/process-entry';
 import { runValidationBaseline } from '../../src/validation/runner';

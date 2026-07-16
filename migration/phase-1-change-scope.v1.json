@@ -3458,5 +3458,4333 @@
         }
       ]
     }
-  ]
+  ],
+  "phase1FinalOwnership": {
+    "schemaVersion": "1",
+    "capturedAt": "2026-07-16T09:34:20.016Z",
+    "baselineSha256": "012397cb2e5651535cf7eea7e24250bcbe38ced0f9debe60ebe692a1ebf06677",
+    "baselineCommit": "55c59ff3248d3d0099cedea54d0bc5c04faf6e7b",
+    "sourceHead": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+    "operatorBaseline": {
+      "repository": {
+        "head": "ea1c822c5c8c3b29030081c7f5aff36ad2057970",
+        "branch": "main",
+        "statusFormat": "porcelain-v1-z"
+      },
+      "dirtyPathCount": 80,
+      "aggregatePatches": {
+        "staged": {
+          "present": false,
+          "byteLength": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "present": true,
+          "byteLength": 80450,
+          "sha256": "8fef30ecab2e6e0d8f11607517eb103c14d165a4eb52c4d72ba17b4533631460"
+        }
+      },
+      "operatorOwnedDeletion": {
+        "path": "src/app.tsx",
+        "status": {
+          "porcelain": " D",
+          "index": " ",
+          "worktree": "D"
+        },
+        "head": {
+          "mode": "100644",
+          "objectType": "blob",
+          "blob": "22d515baa7c6cd83ddacd7ac24bb6bed2e1bac49"
+        },
+        "index": {
+          "mode": "100644",
+          "blob": "22d515baa7c6cd83ddacd7ac24bb6bed2e1bac49",
+          "stage": 0
+        },
+        "worktree": null,
+        "stagedPatch": {
+          "present": false,
+          "byteLength": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstagedPatch": {
+          "present": true,
+          "byteLength": 8093,
+          "sha256": "53dd957976721e22f7ade5042f65f1a6d39bfe76b68f786b8dc52f54d0a4984d"
+        },
+        "stagedHunks": [],
+        "unstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "3513c1af66df91ae152d6242b00a63fc99b6dc843843631d27a7896eb43b3d9b"
+          }
+        ]
+      }
+    },
+    "plans": [
+      {
+        "plan": "01-01",
+        "commits": [
+          {
+            "commit": "55c59ff3248d3d0099cedea54d0bc5c04faf6e7b",
+            "subject": "test(01-01): pin failing public CLI contract",
+            "changes": [
+              {
+                "path": "migration/phase-1-change-scope.v1.json",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "dcdbad0c23a7db42c38441c97c9986101eb13194f8ffaeda24e419abd69b196c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "95ddc58f8c6b0c64f88841146a93d4c4904c0c3570f382fd191141e30abdd21d"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/cli-contract.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "ef6dfd2ec25af601dbf2d131eb81e476fa8f7a1f6c41e0f9886077e863f8daf5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3427ba14701c879f157bb48aa24ffe79abd5a4b279c2574b8c052797f01cc389"
+                  }
+                ]
+              },
+              {
+                "path": "test/support/phase-1-gate.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "01121badba2ab4f48b27a50db2378427b8152bfabd769a3645fbfeb68ef968c5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3144183caead8da95c9dcbc55c1cdf853b80b2ab8de7ea73deb0c6ea53d9c436"
+                  }
+                ]
+              },
+              {
+                "path": "vitest.integration.config.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "dd4d786dcde91e351663fc50f6932fb2e9fb9051c47ef58a27fd6b5afdcc9df0",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "13e9343d6d0c07dc548a39eddfe3c4b8b6f5de17a78a24e1488af77b93c0a642"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "4813b935b51c47200dc147780ea36c728c1eb57d",
+            "subject": "feat(01-01): replace legacy CLI dispatch",
+            "changes": [
+              {
+                "path": "src/cli.tsx",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "b1f7e8eb422f4f180dbea2654759926c36ccb0470f1525085380f274be30921c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "35ac43f81afbc96f6a630dd45d839f92c32742125b3c77fed745148e958b5253"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/command-tree.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d2ce71eab173f35da63ba147d02e73bb78056f1f8321e36fe50a1c39631e84fc",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c01d082a9623845c0195e2810b107968a4f6bc0e5c2815c746c304057dd828cb"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "2a5d4aee2eba8a6ddd1ef78226937ceb005bec97250bd1eebd01e6e12ef95237",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "d0dd0ed53099d6425eacda99102cbb75edb1443f85edd4563879d4226fd08733"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/render-human.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "c59c5f3aa5f069fd2f9d2cb82c838a87ee8167608dea260435f2b053f1b2ee3a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "e5d7f58b88cc9cee3cfec891667801f095c5f3ac4590d44a13c1db2bb7b53d61"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/render-json.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "20af1619719c4a96bbff5ad59dbcc070f7f6c46e0e8fce38991b0540f4b67990",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "993d36a7a6e936f11bf88bdc932ab79b43815417ed55f3363041e35587b61666"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "f92a6a7e4a4c6095be0fb6b37076764c91dacfb5",
+            "subject": "refactor(01-01): harden CLI edge contracts",
+            "changes": [
+              {
+                "path": "src/cli/command-tree.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "077b2a1483bded14f8d52c2a51bcf42607b3ee0e6b48cf875471f152a476954d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "5e6f19766d5bb9bf057bc062379629b8861b5261646106da683e0a84b01b9fef"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/command-tree.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "180f54db21af5518ff747778594a263f59dc25ea1a6e94fc3b510b513c4e592b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "39cb2ffe53e7e346feafd89b765da47d2b52b88653df47be503de95f1540082e"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "9babe8cbdf54b29be061c3927644945c9618e507aecb7ad04d85bcc642596c40"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "c179a0dfc0cab931494a39652c561c8a19888c7dd27dbd76c756f63c62cf5251"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "8cce900fd957b3bc91feb41ed7640362dabb27200260ba6767d2367c1a2760ca"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "057ed80a1b325e396f4fce9c47f24b72079a483e6894060bcd4f91def77ea818"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "2d590e3744671a33fa275af9a87f15dd9b134db9014b143ecf71ba55ba1f78ce"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "643f7b030b64d79dc8084edf68f44413aefc9e023f013dc44fd392d726615efe"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "f1a86710374b524e66421c96deffac23c273b737bbfe4d9d9ceaffe27c43cf8e"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "e087a7348a74a900c015897f3fd5298a4f9801d16e29c89758b68430edab56a1"
+                  },
+                  {
+                    "index": 9,
+                    "sha256": "56ed6eeb8763b0c9757b7e8d1f34e9ca219b7764b346faeaa16f1e636d9f3c09"
+                  },
+                  {
+                    "index": 10,
+                    "sha256": "a70a8f09ac1d49f54124926124a2d18907f7355688c7830bbeb80c7e0eb1043b"
+                  },
+                  {
+                    "index": 11,
+                    "sha256": "d4708d284d385add5f6cfc6f7c73934afe9309f2a8608b3e1c0f4431a5453fe7"
+                  },
+                  {
+                    "index": 12,
+                    "sha256": "8abbac2597240ba063ba1ca620e05cbf9989497f83aa9f5cca2c63722fbbdf2f"
+                  },
+                  {
+                    "index": 13,
+                    "sha256": "b53648382966bbb19022fb7bac4aea8f54020fe56b114f61219eb93719c81f74"
+                  },
+                  {
+                    "index": 14,
+                    "sha256": "7101f87afe69c5d93dfa9fe976ee0ae695744ac902c24cadf36e81f32f4478cd"
+                  },
+                  {
+                    "index": 15,
+                    "sha256": "19956080d9fe67224abdcd2dabf6a0c491e81d27a9fbe5a4b19b04928c3245c0"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "5ebb68f8888bccd170c75b56429f60cc534f8d0bbdeeed335bba7ec45bad4060",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "d72381db3f419aa64713ac61991f3a63095132afffccf95092391591941925da"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/render-human.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "60785787b9e0eee06f789bbd76d0ac3650044b0450db059a15829d68650187ce",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "eff021da32ce2aa17ecbcb976b63cf3a0efece1de7fefddc77946a0fa25f5143"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/renderers.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "6466d30328cbd6f46e8ca0b2316a0aeee1786675c1ef01822f776f9380a5190d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7f4916a9ee5339fae570a975bb16cf427ad7d351c61ccdc29b01791542fb3938"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "84aa4952f59332f7959fa7268d5a28a9daa16312",
+            "subject": "docs(01-01): complete CLI walking skeleton plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "638cd68a824dbfd65d02367e351e5c7bef5287980367b6a17784ecb9ba01bd88",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "d058a3fe4599d9a8f09dd625317754f5313bcc011eb6877d9119e680deb74c2b"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "9522219e8fb7ffbfb2f2013105c4eceb814a38ca14c7f7561e64ad4a926bc5ee"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "5e59226846b342e2d1ed47797d21ee072e540ea08ad8a51e42aaada6a61f2645"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "e08ce73400d7f2927ed080a04cd44a9e1af1e5026d3bb0402670b4b3d4a6128a"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "2aaa72ef39c73c52f64f7a4acb7e4959d5fef84c4cd8666797ab11c32add5acf"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "2053c29042fc43143d4c27e662184dc8cd68eb0083a9a9f5784182916cd33c9f",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c7b03bfcb1bc0b81ac03b76e37c081040a58ec813449bdfa5b5fc44f826195d7"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "fcdd70ffa4814b99c4515697761abc3d374fbd28f87ba4375db19a9da4b36215"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "fb4e17df5707c8919de0e5332cec885eddfbef1de827784f8af86e990e03bcea"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "dae6e1e5c7b3723d4e512e9883bdd6d942a88e389335d1ff27e4450460e0b59a"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "72cef2c5ea82c17b56160ef9a31663dfd90623d4f6ffe8a7d0f98f4f30fe3c11"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "20a4387f8f4971dff5c1ae726c65cad73c2a30fe75b9d3753beea129471b528b"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "82eec43a42fed0118fb8e828f8ba17b8511a6b5e186141e0c869dbb097b810e7"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "86c1b3d1251837fbbe88d51d741f829d944b6baa1e5e2d87e3292646e120aa80"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "58e28fc9afa77f09e14311253e5a550de71c54a1323edb82654817e59e3e8f0f"
+                  },
+                  {
+                    "index": 9,
+                    "sha256": "dbfadf2557348c02266a08ddb8f54da02742cd651b273d8e4c83fd6c82acfcf7"
+                  },
+                  {
+                    "index": 10,
+                    "sha256": "46d919ffe3474cd7e7506f00e311fb921280fb9af82b5d1026161fc9cf0b42da"
+                  },
+                  {
+                    "index": 11,
+                    "sha256": "d355d22870a75f13abade0089b68f4653e8445f7c2323eea65d485af214f77e7"
+                  },
+                  {
+                    "index": 12,
+                    "sha256": "98a477406f5b09edfeb7b4f71a514eb47b984ee29afaf624f7cdcfec86d8dde0"
+                  },
+                  {
+                    "index": 13,
+                    "sha256": "07e3f24685e4bd9f4e6d1f897ca8d0ecf86876d646e466d29a37755aefff0836"
+                  },
+                  {
+                    "index": 14,
+                    "sha256": "8feeb6e5dd2ddee59545d5b136bed298342222b2b230b9feda08f4620e57b6fb"
+                  },
+                  {
+                    "index": 15,
+                    "sha256": "20b06dd0fe90f92bdb3e0857b6af5761af5ac9831d9cc50333740aa31c351068"
+                  },
+                  {
+                    "index": 16,
+                    "sha256": "04d05aa860a9630a4a9f2f79d002e0071f850eaa141850cb550b74776c30f81c"
+                  },
+                  {
+                    "index": 17,
+                    "sha256": "461d3d4eab5315e0dd1a5601475ab21115f045782d794de00ee7d62f67d6ecf9"
+                  },
+                  {
+                    "index": 18,
+                    "sha256": "a6f65f226a232d00fb95085fd2778bd767f920b557802ee0c53004e88363c3e5"
+                  },
+                  {
+                    "index": 19,
+                    "sha256": "6d93e1d43043cf2be493a209d958b07c97a21caefb76c4f245dfee06aaadf820"
+                  },
+                  {
+                    "index": 20,
+                    "sha256": "7341523b49cb4dcf28363e26333a7948cf8c35727e285aa5f98f899232928378"
+                  },
+                  {
+                    "index": 21,
+                    "sha256": "3f7d2ce9b27765288ed2efd9e901bedf41c462e2881183a74b162c35c387ec3f"
+                  },
+                  {
+                    "index": 22,
+                    "sha256": "74961954511c506474e93ea44aaf0ec0e00b788d35a29b320ac3a0da02a16845"
+                  },
+                  {
+                    "index": 23,
+                    "sha256": "38b1adba3aaafc74ab330aa855e76ebfba47ddfa5366f0863ad962c0760d2dcf"
+                  },
+                  {
+                    "index": 24,
+                    "sha256": "c23b565da95b041854efcd8034e6785040cae74e2928a9815eaea0c91a1ceaa0"
+                  },
+                  {
+                    "index": 25,
+                    "sha256": "c7bd7a0b258e85dbb16338f3f8c7cb86b4e3ec991f8a556ff2d9d6681f994753"
+                  },
+                  {
+                    "index": 26,
+                    "sha256": "0fb5dee9d21b97900df0d42b210e7b5268b536f9883faf9cc3c5bbacb385123c"
+                  },
+                  {
+                    "index": 27,
+                    "sha256": "1edd78d57cd2b32fd00b05fc0a48bb5869cffcda8f5fdd51b1b01cdd0978ed91"
+                  },
+                  {
+                    "index": 28,
+                    "sha256": "aec1771401b63e7804749c9c0eddcd4800f9c86a7129f9ec7e151876cb568bc5"
+                  },
+                  {
+                    "index": 29,
+                    "sha256": "5c9c9cc112923c1c8af50ebb0ca761dfc32de5ee6d644b7492357e1d81e06a30"
+                  },
+                  {
+                    "index": 30,
+                    "sha256": "c7ab542ce6126f05f7ecd039e09116ae4c02d5e2a0bda0e0e7bd9843a19fa980"
+                  },
+                  {
+                    "index": 31,
+                    "sha256": "71fd0612587c72ad89355c2bec20540edf48e889d754d567b48ce4e65fbeac0e"
+                  },
+                  {
+                    "index": 32,
+                    "sha256": "a52a178dca224555bfe70ee84a4cc0e8a5a7eabccae28edd52d500e5919f3a7b"
+                  },
+                  {
+                    "index": 33,
+                    "sha256": "8e116ca8180dcbd74f306eb356813832d2b25ab87a3b6b132017d44a530ef184"
+                  },
+                  {
+                    "index": 34,
+                    "sha256": "087179e047e2c76a53f75203fb4ba62f9d3091204472544b3512a8f1f691f076"
+                  },
+                  {
+                    "index": 35,
+                    "sha256": "8772748a7e8fb151ff0a991625c255ecb293b8d1c140a73fc98becfc500a0128"
+                  },
+                  {
+                    "index": 36,
+                    "sha256": "82694e7501c596cbfe3855d1f629ca644d74c167499284b1837abc30868208ec"
+                  },
+                  {
+                    "index": 37,
+                    "sha256": "39e8c2f30590d2d6787d34002cec7d9b18a9ebcab56f72e65bba464a162c98cb"
+                  },
+                  {
+                    "index": 38,
+                    "sha256": "a9f8223a393ab02fc8977993ac66eca90f2130929139467a34aac0a44f2ed1d4"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "3c744e5e7d5007fbe18dc54415a86992a716314e00fc0c0bcb0f88d5342fa69b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1e19704b79da10be96cf0f8587e3a32889b5c2cd244d27b418312e520ade41c3"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "b02a913bce9e05f8dc90d58fc0649786d99700b792cb1ac8957850352400f791"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "711d748044512385f5963f4c48410f6e6b9800fa00893e073de02299582eb199"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "dc6e4e1bff71516f6e8179f051132b58a6457cc879f043a8095e0e338361da0a"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "0f26699a3295d71a6b822427f83a24028dc0fe6e240ddae2d3f52cff3b2f2de8"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "93ddaf05b2969364e8695c25cd519829409008c79bb4bf98f7fd64f3a8ffca80"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "ec7e33d7b73f706bd8286ec01a5657011f7a376a8c3b78ca4c6c7544d4cb2b96"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "895e39a741160c37b72ace0eb77365d1773282c403612469a5b45f7813d6fc93"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "7e659801faeb33de3e6ed32b1b5b305df5922fc059ba85cb29984b764e165e29"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/STRUCTURE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "2c0f6b92cff90f3a83d14929b6ded1d9a0641a7defac993ea26ed70438b5cde7",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "434c48a39415ee9bc403a21e38f624a7de762ef6f77186171b5f9cc255d5576e"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "310a0dcbc7e39ff830961a2261df7494b9fc7fc5ec8219ecefe94064260b4b54"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "1b41888bff74ffce068c3f928145ceee1599b85f00cb5d4d6a9ac034cb3f695b"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "cd2d0fa6c20643505412d937787df6d55f3961aae10a297f377b51f837df7015"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "449dc6046c4bfbbfe30eb23475958e598ddfd86e9de3b4fe90fb4214921ffa5e"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "93a6ea3c977e1bc46a2f4890461cb356506fdb60408d8e7c4a6cab814c37216d"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "ea80c207e6eb1c385370d103cd574795a207a6120921bfeeee407b55978d2a83"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-01-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "4f8e5b486c601beb7c6080820e3ed16f5a186c29331c8084e9bde6686a9a2c46",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "adfd3fddc38cd50f500bd0072b20374e80513f19f93bfc8838e99bdf452e8e29"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/codebase/STRUCTURE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-01-SUMMARY.md",
+          "migration/phase-1-change-scope.v1.json",
+          "src/cli.tsx",
+          "src/cli/command-tree.test.ts",
+          "src/cli/command-tree.ts",
+          "src/cli/main.test.ts",
+          "src/cli/main.ts",
+          "src/cli/render-human.ts",
+          "src/cli/render-json.ts",
+          "src/cli/renderers.test.ts",
+          "test/integration/cli-contract.test.ts",
+          "test/support/phase-1-gate.ts",
+          "vitest.integration.config.ts"
+        ]
+      },
+      {
+        "plan": "01-02",
+        "commits": [
+          {
+            "commit": "133327271f5eafe7ddc706a806e4c47a6ebfc11e",
+            "subject": "test(01-02): specify mlx package identity contract",
+            "changes": [
+              {
+                "path": "fixtures/phase-1/identity/scoped-tree.json",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "667687c478e7b4e428ab3066bbf52d41ce0f03d1ebcfd4966ad2186e7aa9d795",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "649b31a014f0e8918d6e88d14276bb047e3df6fd3f3df2c0de7ad9cc7e9d55f6"
+                  }
+                ]
+              },
+              {
+                "path": "src/identity/audit.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "8e2a246c68236d5cb42368b50c8fff19052e9465f1bd5bd08b6e3a4319814f18",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3c02283e661c730aad327269d0a1fb4739c74407970848ed8648ee1efe4ea845"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/package-bin.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "50a7380dc22c2a63a88d5e4db458109f3bcfee8bb995aeebba14976696fb759c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c9812259d6a6673ad4b50eb19678224ba07bd04676ad4630d8f8d25ded215ba4"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "6e3deeadb7ce366ce78437499bde17d619c858c7",
+            "subject": "feat(01-02): publish sole marked mlx package",
+            "changes": [
+              {
+                "path": "README.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "9dc7fca3a75a160f1b2d6effd9cce95fdcf2872204428933b9b9477c13a7f73d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3a61821b0bd4afaea11583443be4bbd22131b7da658bba71abc81a86c0cce583"
+                  }
+                ]
+              },
+              {
+                "path": "mlx.package.json",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d3af5167295174278c10f280655f0866affc4116152a0f11d01be402e7f4e424",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1ab14423aac813d1c864006341164b5624c02b2b5c6f144df678feb6236d7625"
+                  }
+                ]
+              },
+              {
+                "path": "package.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "b4fc3127f743c3f8d5ef2a34ab372f27c63a936dc4f084fbd90da0a0a819ffd6",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4af517a5df997bd7e7ff16f61109ddc957877d5ca1902eab0da6859e2caa1fc5"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7ac390b6102d827162d7fad5304470a9f691e14a6b5cbe1264874508e46d6ce2"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "ae3e4e950c2af65ec76f649eb7c2314664f00421daea22226746f8e518a5f9f8"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "b8ed8a4d661c3b64a35464c3b0106a1d92ff0cff",
+            "subject": "refactor(01-02): enforce deterministic identity audit",
+            "changes": [
+              {
+                "path": "src/app-oneshot.tsx",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "2da707acf334e8d2f0658d97a0f3593e6e483c0946afedea1f9a50f59c59c7de",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "72daee5b62b8ca7545a95dbfe94ba5a82878d479a5c39e35cee0b578f3e98226"
+                  }
+                ]
+              },
+              {
+                "path": "src/identity/audit.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "7eb078f391a01c87f3d37f4e0281c5c42e84e41350ed6e8ce3777f1006d446cc",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f9905363b9752ecf23bfcfbf7c216bfd4c628528d0d8b3c548fff382016e54a5"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7fdec6ab73f3e307b455f5f1794c2227d685cbf8752ea3e7b052d725fb609632"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "4cfeb531f3a0bbf01c559accdff4824c54b0df7e99b56b5ded26185c0296dfd3"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "0a05d448d8138f697f833483a40dfbea69af8308d9b85e863d332d4e04f671a1"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "0ed7c80a519b6a421604f1b7c27af7e05f0d23b8d41f8edcc7b2652380b42aa5"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "cfffbf856b66eadf896d40be4756ca47681b4090b1d7d4e8a3bc58f1fce6efc8"
+                  }
+                ]
+              },
+              {
+                "path": "src/identity/audit.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "a934b13211dddaebb284f05a8507f77f8d204dc9b71214caa92b1ef6dbb0eab9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "59aff67dbb4ab4cc2ce5aab8b5f2e946f5550f8ed276b570b6894ad809d68b01"
+                  }
+                ]
+              },
+              {
+                "path": "src/lib/conversation.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d58c53066e36dcd13477e92f5fe82be77fc98191dc6ff3940f0713a6004f5af0",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3befdff7aa9363a52ff209ae2166226fce0791c150f5bacc19c98c89e85fa2d3"
+                  }
+                ]
+              },
+              {
+                "path": "src/repl.tsx",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "11419723ddfb61181f742c4193abe747a86c725c0e7556ff3f80a56779cf82f2",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "bdcf3ca811340bf63a1e72103c62e22c651f3aedacb37a1ff8314e9c6188cac6"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "b30bc53b31440f6b58d2976f4adccd6c886f0625",
+            "subject": "fix(01-02): forbid identity audit exclusion abuse",
+            "changes": [
+              {
+                "path": "fixtures/phase-1/identity/scoped-tree.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "22d3a1c2fd35c50186354d73ff66a8bf2555c138e3e892a9ce4961eedf6107da",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "acc74d29a37d009c2262d46a36675241b768948ae3442f71d7588196d278ebb8"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "ecc0583de59e3647b96d73953716fb29a37fe34417930cee1f8ea8fe53439178"
+                  }
+                ]
+              },
+              {
+                "path": "src/identity/audit.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "9372d8d9a5d04280511acd27849b718394ea4780ae95ed615901296cc3dfd34a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ca3d0be5d5c78ed135a568c8b72cb16567f2583f7f79b071658b5c39fe0bd2cd"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "61071f2336e4e030821641e949b271185055b8b37671858b00412a9644d9311c"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "529b6bd04e7e3c5792684dab0b86acaf84e54f8f6734ee5e476e3ab928d1714b"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "ca6f844647ac024f0f0b0f1ae9f2f66ed2e8acfcbfacab39ae2f0e009f77bcb9"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "3d704bfc6805c6d58be4dc515994b158d8c397766f534f6c12f6fdcd0b452271"
+                  }
+                ]
+              },
+              {
+                "path": "src/identity/audit.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "c512590a768aa72addd3da8660ad21d108e5e7d98a5691924ba004136f29a19c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b5e0ce60b6ef19aa19a03efd72aed0f9c408b141811d60ecfb67b4d3a8edbccc"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "d2e2f9c8985c5facb4e61b8c2e573d3eb2788663246db2b8fa768b3ef57a5488"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "c09095a6ad2cf511894d101a084885b70a4423cfd816e1edff6d9657deca7435"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "e73680f3fa9cbd330bcc2f16f149ffa03f8eaee00d07bde8a790d257a6f1b21b"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "054e67b5ee11a99c2aa9c7c05615bcf9bddec763161a64f0f38b18fdccb5c88a"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "3093f5cfdb08ad9d88d92c2b0145eda9bc45af7a7e186f698b4810ca623c5a5e"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "4bccd0669e2e6246f8c352726d741b96284747b6",
+            "subject": "style(01-02): normalize package fixture formatting",
+            "changes": [
+              {
+                "path": "test/integration/package-bin.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "7479ce8c07392db28dee06e4c3b3369b9e49d2c9820774dcc5aa7cf276833550",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "eea756b77038e0606a0ac5cdd9831c6219ab7fea2fcacf15c4f243dbfc2d376e"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "ccdb970c18098b7517ac4061fc9e96335a48f21ed80f1192906da812701dea53"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "f2d6b3935b852a4cb96e8a31f511ee1bfda85667f909eda843ad6277917f76a4"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "563a6edc4a3e724e848bd979cc18e55bbe35f7ea22df2ae534f29f57e30206d0"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "20620cb0e26d7eed1dee9715e7a41ceb6890de24aaaef77b3a15f5797244ed87"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "25502abfd88657ad9470953067019597c40bf16909a94d6816220d929c2b3e21"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "6bf53e3b74edac8351491e83ae062fcf8e63be087b74ff4f28eeb593ede077c9"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "30231817475021a8648fc1a621ceaa7108d7771e31f9de4f2c782db1706cec8a"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "abe2ed2c572f7f88ff5b987e79badb1459dccbf2aa04fa224c43a7a693c819a4"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "f2cf885dd89594224fe16ce5cc6fb5eabcf67984",
+            "subject": "docs(01-02): complete package identity plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "ba39cac8091fb783841d912be95ff4c2cca4bb9d848618fbc34898e0eda9b935",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c4f43ff0d3252de98db28c9624d43703b57a70bbc3d0325f09bc541b69f4e8ec"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "8f2902ff168aa33d71225efabb1c7d2c77afaee3e4001e85874df62c49a75e6d"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "0eef1a9aee5916662769911438211c7757d6acef290abaed7a33f9f40258423a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "acaff9f66de7e49ef6c648d8e36c82b5893483b7b03f2a0b75d63bf68fc39817"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "2b7d5a131033dbfd6bd5bb5325969e6de379f59582cef7dc1404403b38c819b3"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "0c4223f331bc74448b4ae5a2c7bf435be9eebf8ec9befaec94b6eebdac08631c"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d93c8450178471511abd0b1bda71b476e081e33f414fd12768617489c16c55fd",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a5fd93ecf8765f252989f9c8024f145dc25d4100c12da8d5c6af50ecc1267639"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "509ec4e10a5b3eb7595795771670fe0ac81ad53330ed76cb1363c8f771291fca"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "bd82e4771fb8d3192f1d6110fa3c7e2faec882654069ffad2c56f5280e3d0ff5"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "4dd90e2166a9fcfdd2a35532526ea17e313c60d6e6e15ff48a4f51ff04ed03e9"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "1382995ae701626370ba6b50ba599cfd0573b9551454792e4d641aac4ef36c34"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "9a3669b39b4d6a2044730707be836cbe90ce9b9b30fe552c7079aae06a435660"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "766bd1e1c65ccfc1127c7e1f6f5028e8217ee8fc6fe012cca9a14137a52185d3"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-02-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "717d14eb5d4049a1d52f6e0e9d2a3010a480b5fdf9ba90deac1f0470c4fb5597",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "0ab9e8fdb67159666123e62a1f54a2c5fab5bb2292e5b3d80335d0af01a1e8cb"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-02-SUMMARY.md",
+          "README.md",
+          "fixtures/phase-1/identity/scoped-tree.json",
+          "mlx.package.json",
+          "package.json",
+          "src/app-oneshot.tsx",
+          "src/identity/audit.test.ts",
+          "src/identity/audit.ts",
+          "src/lib/conversation.ts",
+          "src/repl.tsx",
+          "test/integration/package-bin.test.ts"
+        ]
+      },
+      {
+        "plan": "01-03",
+        "commits": [
+          {
+            "commit": "af8b074a7fab33ac7278aa36fa26ca7f2f8b07f9",
+            "subject": "test(01-03): define state initialization contract (RED)",
+            "changes": [
+              {
+                "path": "src/cli/command-tree.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "8ecda8f74bd4e9cf47c045c918c6102857038ddad6ad0bc09cb8b9abd9ce3c2b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "687aeca8aab59b71001b48127895446a6957752648f7dc7a82582eeb044783e2"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7698c7d8f2c2e077cf3ff187a6d994cef86c60d65619dc9b32d73a3532d09b97"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/mlx-home.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "2ebebcbddfae1a54d540d0822817e5b35ecf1e033c218273958f3827cfba42f9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b259bc2be45712f84b18ae45e6a07332df9270c6c209cf647cef3ff50f203f75"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/state-ownership.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "6ca6fc82ae8485c781c2dd19c890322418b06bab6a217c881fb9206a4f683318",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7e84a777d9474848b39e3925b4686e02c61c1b1bb451bab7643c8d27e4337729"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/state-cli.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "5b9df127ad18cc5636e6dfa80505354a847a77ef76eff9ab2d27ae9b61ad61d4",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "eecc59cca94b7933115b455e1eba5822d3b6dc89367b39c14ce2dea0db54cf3e"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "48c0ae3917463cae27172ec6559350cbe712fd84",
+            "subject": "feat(01-03): implement owned MLX state initialization",
+            "changes": [
+              {
+                "path": "src/cli/command-tree.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "df7e7ffaefa16df58818b397eb706d5863c9d4a85c574ebaac4da8b6c7a68670",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "21c788eee829ee5eb6184bcae858b1a1d5bc019ac86ebe33ec145eaf8551bba3"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7df471a9086f72dee8eeae241472d25c02374e0c215e57efe2f87e5aebbce040"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/init.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "7aaa28e651e5662ae6f6eb7cef1029ea8ab4640254665e50fd3dc820d2dbaee5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f585acf79678db450daa600b7348557307b7e5eed2202d72c3fb9fd497fc104f"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "94989b1b386cddaf5cca94a9232d623fd61d21116067b719d56326d6deeb49b5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "43d70cb0627e0a150c395797bfd53c75925e12d9be0d1bd972e0141c43d4dc5d"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "2d75729be9683e659ec08803498a795a75979d5434d6a003383d81d540e94e12"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "d5075be5215f1b984056bad0bf815a1f9f76be8cc10c46b19cccf5ebf211742a"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "29d498deecd0c03c6854dde0bac931c6500efd37e98da0a06bbc39c78fd66234"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "72177358f50ff94d5fd71f842b5281aa7f0aeef1c439d1c8e3374d133bf22c92"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "489c6e442b3eb931f745bdedce839d2b3e27c4ece57ad706f3165f123d3caa62"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/render-human.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "2c1ea3f06856cb3a2b3755d987401d5bfac52f547658c4f8125f3278cd7c698b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a7ccaece502f8a88540a3b0ab6df8b58f66b75760e80eae076f9f380793d3283"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "aee10fe43a79edb50faa8c47e42b1a44b67ba6452c802e29da92ce9c251907ed"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/mlx-home.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d8c7ecdd694a3740ccf433465669d822e54612fbe89e0f07e049fc78b6c7781d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "07369dafc6bcdca9db0253152da1141e695868ae2556ef9bfff5e17a0ac2074f"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/state-ownership.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "12c15975ebd445fa91237e8f1422c1f0f19fcc3246bea095e6534c012455e714",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "fc501214f4c55012db4e29aec295629d60a9accb2fa32405c13e33e3697e4ccc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "63d6dbdc23dfd4661c984d8f0794e5637dd746e2",
+            "subject": "refactor(01-03): move operator config beneath MLX_HOME",
+            "changes": [
+              {
+                "path": "src/lib/config.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "1ae8fbf09fb2568acbb2d339d85fe41548e0eae3962c06959e6529507ccee02d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "156f2d78efb66f3acc93692f0b53ef1732391daf855c7331beae97ee573194be"
+                  }
+                ]
+              },
+              {
+                "path": "src/lib/config.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "095952782ace7f4d241a83b64ed86f5ce7ce5d850b5fafbcd9f3f45023ae3082",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8d18e197bbc036831d5a611897940bf8e355ee866831c64eac59f6a14f4b6e6b"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "686761ab6d6418985022c108d9206a6224d97222",
+            "subject": "style(01-03): normalize state boundary formatting",
+            "changes": [
+              {
+                "path": "src/cli/init.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "067dcb7d9c28b7650fef1802b61336060a18c3fd95ee024a8517bbfcb9704773",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a04dd780895992597cb6c9c5331d6046250c755001e687262fdfb549cb5e5dec"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "1d2f7240fc83cf0510c8460c5e5d0b64f893645e14af7b9b2d99e0c4c2ea44b4"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "6305a2d840ba01173cdda0902d7fa920a0bfda765689ab9dad4f226952120706"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "eb1674590a581da3015901c068e3e122502afc89c2298305319cbb3d9a0c70b1"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "f6b1d7e31d6fa8041d73d151083df5329c27e42ac8c1e05adc439623371f3517",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "9a64175eccc1f2c3a05e9d46a56f8ce0d4a1b3f79a640a3e44ad41e8b47629e1"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "0c729e5972e59c006d0234dc70a98b65f11d3695b7101a7cd24f8fa44069e0de"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "4d66d25dcc8dc9770105c82aea198606467e57ad52c3c673535e075dcb08ea87"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/mlx-home.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "66d810aa50bd5b25dc0175099e16ba047e639ba91f7bab7d2d95a09b741e4ace",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "262c460f079d408b64349d51f20b6217a60c44d8d850c8bb323f0f398bd3ff57"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "055b7bc67c8442a68355255488dfab0995162f7f8eda617c0c6abd95e4e3217a"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "fa2219527a54e6966b01ca0a31f37a30e8f1dbe5e510768dcfe84fc0a252b985"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "0dd1fe30eff1c9a57b9533d2d6ba50a28097b100b9ae969c5c0121030a84a1c9"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "c5b08d2f80288d1e78ad2c930db6f87e17d026fc9d5b510c2cdf41ab5ddbfc64"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/state-ownership.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "3f85badd8883da8ddb89304e671771f168e6ed078c318b7e1fe6b71422da30ac",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "fcb333cf914d2f01fb99fb2e47e545d41e7729adf48155420e02721e9b1614c3"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "947c9fdebfb6cf6c37316f23c793509404332fcf7871440240bbaedf775a6622"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "01e7b58f13c1fb6c218684fdb5eabe8e456918eb02fcd82bef4be97d34612531"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "53322153629092e0d51aa0d876a4d24f63489ff7d7111117021eacdd83ab9926"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/state-ownership.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "06f78b3143b468548ce7ac94f22dc93a2ee0518a13613a05210fbfb829934538",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "741c194b58ba4d4ee17fea4a52af20e6e892e308e93242fa52ae42b3ad375800"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/state-cli.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "335b0ad5d83f1cbf521874561a0fffdcc0eb57569142e12acf5a590100b32671",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "5692491d4e704079bb98ce66337f9090617de2abf809f50062630b568bce65fb"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4675af490c346883083947bdcb35ee5ea5917bddce11b49030a1b778a205c1e9"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "9c0abeeb43cd284b251288390ec4de896bcd161d81144c195d1340b1460da4e3"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "4473a0cc7adf41b27c348a6eeb73312dc03ae011f1387f9654faf3aad573f88b"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "5cb5604c6fea7f79d9bfb48b62d8a74b2e9a22604ab5671763ef9e26262ef915"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "643618b476bf4578b43c8ba56183d5a23e65e3666cd2d8c7d079fc106db189f6"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "22947087e4030eb8bde3ca1962e881905cc25969f1f21616045bcc0f358c436a"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "0d673f105dbc891006daacaff50a6f47783c1a24",
+            "subject": "docs(01-03): complete canonical state root plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "e69031a0893e0fbaca5a2a48c7d2293f326ab0391186450079bc1c2bc5deed71",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "475cc9b97f1cadbbeddcd3505be9f91f60821351ed0de3ee5ae8e3281c2c05a5"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7fd4f7307a79cad25021e6de6a702ab760a26a708d45e33ec9b68535176bc9c0"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "8421bb3858207f629f34c725382b61727e4223ec2d88949a40fb3d3e9cf95a30",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "09367ab789b87717316df0d0cb914000deee5aafdd9fe9423d9b3e531c0931e9"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "01ae9481b1418f4a5b91aeafa1d78d76a38893e8fd6f58ade3c066b456717a63"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "673703e7bf5661fb32d8a298127ec20d808024e1eef998e85b15917c0aa400e6"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "c77ae04938de0bac69cd399d2ab441c6c2966baa313faabcc28ccc50c19f0fe9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7666b11a708f7eded91badb53b01e243e88bd38e187396cea7fc093100af5076"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "d0e97d1750a1be82dec4c888153ddc6e0554ad45f00bd05227a6b3404e81a753"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "01fe39ad49cb27bed5f0b38033d3f564a3666de4baa2e22c03596fa0f731db41"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "fa8a220f6901832dcd9804b375a60be1182361e9fec370e130e8b627b47c5197"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "2a71a51dd117915216a1ee9f257c13f9418c1c4f1eae1593f617130cea2be288"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "b2b24ca024fc98d99bbc29453f60ffc22856cf84cc94c8a6f7ad667326f0ec53"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "1b120e73f8ef1078cad5bab2fa0829a3a79ef081279c361c5d207bdb78f0bee5"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/STRUCTURE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "dbc88cc1ea77eeb0c219739c5ce0b1e2536a409fd81e0c12214d65b7fb33f55a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "95f8ccc9bf3fe863a2cb011fa8f074a67c78e088ead1adba8de545b85e2bf1fd"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "1c45ea7b2b9291479f1c23d6e1381d51f2d7ebec1cba70ff65f2d45a12698623"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "92ee2380b3a340b37477f9e7222ba5d096189eae9127924503d8283987e2fc46"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "b8baeb73dd02ca9c2e28850e7d6fb1d320f8f5f0b3aa3fb4835d38623bb10bf7"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-03-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "c1625c2bc585fdd772b325030f25233c453b1557a02a79a5f9e3ee2354095c9e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "df6ae9497792b04a360ac2b21e76bac6b6fea836bb0ede6fda01933975053493"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "099b76e41618b4443bf8ed183b1d97899cf9f0fb",
+            "subject": "test(01-03): expose missing packed state modules (RED)",
+            "changes": [
+              {
+                "path": "test/integration/package-bin.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "8ec201fff99cbb43afcbeca33b3204ab0923d9530ce26d8f1cde7c0be300f2f8",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "457ffea648ac4a3e89caabb1b49646cc7e8eeccabbfb46c62ac1559680fe19ba"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "e7e1d2a953f5a4e4b8b6a3916606b5b02dee1aa0",
+            "subject": "fix(01-03): package state modules for runnable mlx",
+            "changes": [
+              {
+                "path": "package.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "f7ac0091f80f7c3c16c972c7e8cfe5f157c5cda48f7ee1be64ccc482673fd17d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "bd85d0b747feed03130722bc2816199c8b995a12486491a1e187cc5105d5874c"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "8a4a31a74db800e962c9b5b65cb82e197457739be07b8cde889e45e5e848eea7",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "718f1ec8f24eb0e8b997b5189f82797abde9ad2ea6fd203514d43b11cd8c8fb4"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "d21bff77e9a2c50c4d7230a5665b30d417142ef4020b643ec9278bf582e30410"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "7019ea5a3fc28efb79bac07f0cddadb5e173a36e",
+            "subject": "docs(01-03): record packed state repair",
+            "changes": [
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-03-SUMMARY.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "aaed38b047857a49802ae870f7167271f3555868a7e432d63d0f23ef936b2483",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b06b2ca83c29395b69af1264fb41ec1a29eb36343546daef877fe0052e3b8f14"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4b572ed8d44e17a814f82e638e4eeb082b005373c58b78e368f4ae86be087692"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "5bc6ba12d3a9fa60cacc466e3cf543064418470f3f865ac7ccf308016adff23d"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "8b08f80752f9e2f70b33f4785dd854f2049f2f5e493f2a5c94a1d671f3f9b783"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "83435e2abb6636cb9112b72f6b16e9ba41842230cbeffee2d8b65d71bc18b204"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "256f993823566ccf5071da7b2728f2ff0f5387add48f71634f0a942493783a8f"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "bfafe73b3e9c4b12d8e2f29593ba55b954bfde5f57dfe25fc0738a27202c6e85"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "61c2d0f9b796b399f69ed33bb2e41486045d6ab2f06c4442df645898baff5859"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "9404a6882cd837832d501f064c2b80630bd5693cd837bebd0035766b9cbd6b73"
+                  },
+                  {
+                    "index": 9,
+                    "sha256": "067dbb619edc6b0bae994f4daa98e6ac587aed1ed4c592e9a0cdec00981a4263"
+                  },
+                  {
+                    "index": 10,
+                    "sha256": "251152ef38c0b394b593eaeacc8b61559183b1d7eb47a5f57d60ea1e2f7a5dba"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/codebase/STRUCTURE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-03-SUMMARY.md",
+          "package.json",
+          "src/cli/command-tree.test.ts",
+          "src/cli/command-tree.ts",
+          "src/cli/init.ts",
+          "src/cli/main.ts",
+          "src/cli/render-human.ts",
+          "src/core/mlx-home.test.ts",
+          "src/core/mlx-home.ts",
+          "src/core/state-ownership.test.ts",
+          "src/core/state-ownership.ts",
+          "src/lib/config.test.ts",
+          "src/lib/config.ts",
+          "test/integration/package-bin.test.ts",
+          "test/integration/state-cli.test.ts"
+        ]
+      },
+      {
+        "plan": "01-04",
+        "commits": [
+          {
+            "commit": "bdf2f61c97507d6c78917ea376d4b340851e835c",
+            "subject": "test(01-04): define read-only doctor attack matrix (RED)",
+            "changes": [
+              {
+                "path": "fixtures/phase-1/doctor/candidates.json",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "899980c6037786705a7fba506458e40ac541f11bd2f65036453df1c1e04f317e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "46f87ef471701ca124009461d514a19280fc441c7e11fc1f36c4cbe6fd428a0c"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/doctor.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "4325e14b5f7d38aab251231634053300985e1e1e5a5cd0b42288808708d12e31",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8b5e9434ca4439c5d2772a06caf45437dcba0bd8c6f33d83b6ef7657c68c0ccd"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/doctor-cli.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "edfe44a7839dceb4b717931b1e1ef47cc1389daf4d3fa591512d9ae9e3a4f7b1",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "9d430657e452e605f97cffcce863c21ac93b7601f20488f2f2e77f44179e5cc4"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "c2588dbbe9d3ad565a22b92beb525ffdea1d2ecb",
+            "subject": "test(01-04): model installed executable ownership",
+            "changes": [
+              {
+                "path": "test/integration/doctor-cli.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "5f5ad0e07bac260c95a924a1d14d498b4611e3a4faefee38e42e6036069400c9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "853db203d200d9d175e00c846ee199cc100a85705f22994e8b685d5bfe76d32a"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "6499ea9523a583423f871102533de73eb97ea8c0ec4d166baf92637e9fbb0067"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "5a25cefef614ce75108c25ae1eff3ac1a6d9a12defb791f787d7bbbb79e9b64c"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "b525b4c8af38f52f1f89a1fe76214a77c15018b6789449d51d95ae1c7fdfe255"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "f70af279f4d12f0e48ad646bdf5ab16f60a9f6ae931190c93673cf406f8e3e7a"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "b78c387d8dd1bfa1038c60bd24049373b031d75ef0c17ad60bf37b31356c205b"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "be42bebfac1bce2f317d9a114b005d46bc16c77ed2e06465244c8791c91c014d"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "14efd0a27894443927b548ef60ceeedccc6e4fb4",
+            "subject": "feat(01-04): implement read-only mlx doctor",
+            "changes": [
+              {
+                "path": "src/cli/doctor.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "4dfb93e339d657084be7d13fc845d93857dce515930a4fd13aaa78098635b20b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "56f56560650127eae95bbc36586941099ef12e8ce9c747a779fe6e27130fa2a6"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "f7676506111cdac2a657b358f60555bbddff688ad996c247f81c84b13de48dc7",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "2e8ec1f6f1cd66af512155ece705203e2e85d8ba78d12f9662fbf27b82b014d2"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "211a7f98444d88664b1769b4605b55106842b72e53de0a797ca007badc1b0e6e"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/main.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "b681f91d8ffb4d861aa8222d2fa755a6c526e4ebb31a71fb16712a8dc0cdc001",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7fb9c060ae6129b49bf24fd0cfbf41f2a5bf719656523d88c9efb6c31775f483"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "593393c395b3663631abdf12aa918d0c6afd5a4093735c201fb5f4a03acb228c"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "327eb881d807318504e0978418d97ef56f8c91294d2a22c58fd46b8b3692577f"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "06cca84aab1673bf000eb45fc294986a019ec78fc29cd528de7387381ee948e5"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "56d60ee09b2d382ce791424e9d6e87f7d7d741564ec1087d34b8d18457e46e51"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "228f742bbde5d4866aa4dac8fecdc799096c62b5eaad0dabff7a2956909bd544"
+                  }
+                ]
+              },
+              {
+                "path": "src/cli/render-human.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d02db67a5e87e2fdf3865c2ffb68eb1229c16d40b40aae2a554d164f7ef8052e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "6efe982f824ea9297bcbb339762e2d3f2ae50e308db7d54581bc98079f404380"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "674602d684dafa42434573c95de29f98e1cb37c8c558ee6427a4dd95b70c5ae1"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/doctor.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "c3371b4f7cd9a5a243b83d329a57e392880b129f2946c9f98f81aa307f935f46",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "5c34046bfade344d48fc38cf4a13e42011cd0650faea3e0a65ea7878004d65c1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "51d1de6d3cc26539160a8d99dc533af526b75243",
+            "subject": "test(01-04): close doctor terminal evidence gaps",
+            "changes": [
+              {
+                "path": "fixtures/phase-1/doctor/candidates.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "7c732b25206f369fa0dab48f20b773fa30d10d39a886f7cda2814f41b140dcc5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1954a91e3339a55290f14f330da346a24fc918e5d7b19645162b12b084cf4fee"
+                  }
+                ]
+              },
+              {
+                "path": "src/core/doctor.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d705b5d7f1709d6bfc48d4da37936889b36c8c207761ca87544a68759ee97301",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "073b24aceaed554d91296cdb2440a63d4bd9cf00caf400985fdb1d965417013c"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4a7bb773a119a5ef7207b475d4004071229ab3d40dc9d448f12f4a451d15dbc6"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "77f2b35d9fc41292fc6e47deac0ba50cadc283670fda2d23174f4df38e07b80e"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "be12442cf4366d38e5be2c0e34a9ddcc6a90861e04871670a51822b8023c6d2a"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "fab4d457b8e9c2d6a3eb04412141c832e4433a6ade9ebbf589eb82191372c710"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "63a0d260ad63900b0a8295e11e7e9c7dae07fb6b1c990f1323f54b4bdab2ff35"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/doctor-cli.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "130a89244e9faa707fbad95172eb5a53f3f893a5110d3428f1b483ec855d970b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8a077a6505985f0dd247ffdff15077f6500230c63e758f4b40bc4a9747f6fb06"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "a90a77c9b86127680d0b59aed40e0113cab9ab9e5129229f0d511158d4fba718"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "58d4086efa6f96d8c9d35a707a30f1feb052b176372f06d074b20c41faa50025"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "0ef40d31250ce4f70e625bc951d263dbaf8b60ce4e2d8ec31558e77ee2a5db57"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "ec5e03f15f688242008964d56fa1ce3b7f0678cada8281f2fbf2aca204a5d7bf"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "939dd7e47af48fedf71ff89c93d334d776b7e078d4a6fbc8ea5c667f8079f8f2"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "df5795fe57fcc604393db8cf20cd075f7f3f62274025262e5ec72ac01e5b63d0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "2bd0e8f12f52704f96d5cf6e63cae4a91ef81338",
+            "subject": "docs(01-04): complete read-only executable doctor plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "c3d214755b45b36f1c06c7ec6a97a4d9b349310f82f572b164df2adc32d359f3",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "df36e7534613e556ab37d0ed00a4adf14d1bf1f0fd508552cb649a0216fe8bd4"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "59b3b1705b1e0697757c50755b091db99144001023b12d0ff4fcce40917ae9fa"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "5054ced71a89ff3a2b2b5bddab7cb80b9a4cd23f0fb73517286761ff45e5f37d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "276af8a03b64cb454f827a5f8827c00967a354b1a840813db36d615ae8cd59f3"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "8615153e10011ef8597376958b18572906903b529b18dc9846d0aae504045c15"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "9cc260f5a2a8bcafabd0c4793c781bfa164c7e98ab863c10b593778855bd8e60"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "7109488db8a919cf8e9dcdb01b6db06e6a8dfbf74c0c6e36904291600b059910",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "bdea3f01b235eb6e6b38ccec3921f08c2445ef9ec4bb0dad73f49e9e159164a5"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "395cca56081d425df7c8a5f12fe036aa997aca77b8bc99aa69f491e42916739c"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "efd6e02f6e471b72ee934b21ef64567b3a7fe4d9882853a09ed1f26487354d86"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "b55b1b25e30ae2acd22b1610b427e564ff56ea11227dd2b47db1bf4ed9b8b204"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "5afc01ac9922460f0625d4a1e0bf1421638c6cde36beeeee009ce44e3f9215c1"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "e54460add0dfee303db6a43c2a7824075a6d64b0b774b7ceb9a8146b318b9b4d"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "86a1467164daaf77baed6a4422cda53dc1bfd1681eb4a16e22c840641330efca"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-04-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d68469543472ff984ccadd7f9e796de2788844311509967e62ed5c6cc8ccf69b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8b8e56fcf040b735d4fa2f9b77f2c0fbf3c5736aa22d8b883571ec13f732ee62"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-04-SUMMARY.md",
+          "fixtures/phase-1/doctor/candidates.json",
+          "src/cli/doctor.ts",
+          "src/cli/main.test.ts",
+          "src/cli/main.ts",
+          "src/cli/render-human.ts",
+          "src/core/doctor.test.ts",
+          "src/core/doctor.ts",
+          "test/integration/doctor-cli.test.ts"
+        ]
+      },
+      {
+        "plan": "01-05",
+        "commits": [
+          {
+            "commit": "c331d47b8d6ce2756ba8d39d1f12e28922e32763",
+            "subject": "test(01-05): define migration inventory contract",
+            "changes": [
+              {
+                "path": "src/migration/inventory-schema.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "80723c3330ad4ced77fa54a8fc78dd35b5760cb93e39ebfe9b69b21b17f11fab",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "86b3c67b291fd5f9d400772871c26d7602234298ada6e428c72049a53940eb99"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/removal-gate.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "1ee159a1562f330aa21c3dfa910901f5b49374785a1f893b162f50769b18d541",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "e6be596619d42ef76c93130ba202694919b886cee05407743c3819797e3dbc61"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/repository-scanner.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "ef7fd77b22a89548e68ffbcd58acb95f6130bc859da08533314a4e146eb599aa",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "0fa2d0bd0ff4d12bae5a5a9a17dc486ef127602d88423500532cad10bcd2a58c"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "d4115fe05fb1252bc223c9abda52a94339b5b7d0",
+            "subject": "feat(01-05): reconcile canonical migration inventory",
+            "changes": [
+              {
+                "path": "migration/legacy-assets.v1.json",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "fb9cdc886a63ca8bd5330a8aa19af9849275e03b1d6a7cc963032a4d6a864b6b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "e88c38eca386dee87692ad140ffd096cf14ec2fd47b5d69a13b342383095aaea"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/inventory-schema.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "388e85563efbea54d743cf5b01daf4606e96fbe9fffca01b1258cb2ef78da190",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c6169a00f1f4e460713b849f158ae7c7d0dcff73f7d0bb0a8c7d14242415d89b"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "cbccb523e524fc09c68e2d73f524dd965c05c117162ccfd97c08842136e34b52"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "ff13d81e586215bcd443307e1e032db1f9972092bbafdc2ce0a94ace595397d3"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "36db768c1fcfd1cdab1322cea2d83b67d42f8e11f81ec2a62d2544032b8ac9ac"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/inventory-schema.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "58262717bc152c712bc98484ad99e76783721ab59796443a085e6d0b1300563c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c242174311a18d3fd77ff39d078eceb18c486b98996ab08ac58bebbe01da62d0"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/removal-gate.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "7db988af80b598355b722ee618aa50557ec42a38a1b2df124ef50d69818ac374",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "266c55cbacbf597afa2e136040366b89cf01566c3e3cd54368e03f0f008252c2"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "dbdaaf52083b8d2df616903f4506995acc012c3a257cd38c852d86101dcc67b3"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "e2f750ec8ce21fe0aff9ab5c93309524c33e45900be79687cddb5b1f26ad8111"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/removal-gate.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "e4b7c6ba8eceac54b3f9cae5677c07d8d8e89de5d4f15113070cb41edc2f68e3",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "32c98aa186ff48e626358b69bb3de7696573f936f93d45a344177c8d92a25c2b"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/repository-scanner.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "1586d49d9534873190f646c777d66ed15c112d9388583b5c00fc26a5b816d598",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f6cd920bfe3e45e828c0e8e946ffcda8280514efcd5b8ccd20c0dce1d82fc747"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "a880ef5706502b7200b3bfa0147a36e7a69b2d05966f22f9aa6df5e429492bbc"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "157e110fe448c48f09be673b1232f57e0e9452c3b5c00185bc35c1ed9b48160e"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "07b42fcec247a030d49f26b8a23343bdcbab0d6b3470a4607fe58c08cc18729e"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "97fdd9981b2ee1a17de1c52b11d1381169087cfe7e0a07a554cec2053dcf41f2"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "0a2e1da04238968ca834ad6b83bcbfe6ded1b5f6cd83511b994c193e7448453e"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "a36bcd9104dc0cecbf5ea5b722467e6589c403eb8fbb0202c018f8aab766f031"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "5a5cb22a60cf256d24023841cb5cd725f6aa53befa0b443c5daa66b8c515c90f"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "1d992e620c17d9d056fde35c55da00ffed2e75b6ca6dad88170b7d22be43903a"
+                  },
+                  {
+                    "index": 9,
+                    "sha256": "31b27878cfb3c33830f463a382dd95d29b1f354b9c1bc23bffd2e5c23fa78541"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/repository-scanner.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "ec942f264fcd4fc48306f5aa03f8ed58ac50d004fdbb29c3157189b6cef90c48",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "86db40e12bab9dc11a41ba2aa7c166581f045496e5316c3deb99abf4b805dd35"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "b5ff657b293afe219432dd9a3bf669f403d42f6b",
+            "subject": "refactor(01-05): generate deterministic migration review",
+            "changes": [
+              {
+                "path": "migration/legacy-assets.v1.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "18fe43b7f05fc4baf4aa7a926b7f1b1e23c5be5f54eb3413d65d28fde8c1ff4e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "fac5fc2662e0fd5bc2e2522b91ca3004a13aec16f45214f673a9663d63260c0a"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/render-review.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "219b641bea71c2c8bf1810ab0680e29164c5e9f0ac2d31020b91c2ed8c481c2a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7cda9465ae5fa82f9c6ea32878f6a27bc5b3280e936f238efd856439a300c875"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/render-review.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "50c9a38a4346cc6b03ee7efda9e6d0d046d449e3985e3e38dd4fede4a445b57f",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4fd80d1a2ba2e36cd01f63f2f4b3a73c75850d77b83689e2d8bcf4cfcb9659a0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "5aaf09acf1996f5eee57fa37da00c497f24f00ca",
+            "subject": "docs(01-05): complete migration inventory plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "6a8d56f3fb3880289a950416fe591df792afbc0f41204000d6ca158e6388bebc",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7d6da358d0701721de447174e84673e6d1f88dc9a2f8b2a7bd6850ca2f721e89"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4156476361c0e59282da15db332edc37900e7175d34427fd3ee1dea27e6dd928"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "37705e95a348fcee45363090eead2017564396d7001116e439037579a12cfd59",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "646eff5425d8edf7ceda01838a75e2e93985424543b9b60ce41800e1cc91b018"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "dc13a2d24dba877d7723ed1a1056c8ec447475c6c63a24b741331ff47318255a"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "487b69de770ad90e31a9130777dc049f7a0f2a89674c810564cbbb204bdd34ab"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "2271371f3dcab4db891ce029c80f7525bbee553879ae1a4e7c5bc5c574da9762",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ff01e21a7e3a130403223ab9cda1bedd0b33a543b878176f9240910d9c1e197b"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "339643e80505a3e1719febec725d55bf5084f532b611be05f4693198bad60a17"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "becff9b016d4fd9b15cbbbec4565e946a3071ca369b9d78e53c088d8cbb2790f"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "58c89d3a514da917beb8c63716024066ea797b6d9ebc2edb5e2f86e29b79dba0"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "4b3bd2058686ca970ccc27f97a5cb7220b3f77402ead61e023e2b45ca236e7c9"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "5c1e09ed3186c2e6f98d729887ab53b469981766de9c5c65df28ffd10a00ed20"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "452851e902f03ca0fd9c9a6588c9532927eb02ea547fcc66a0b00df1efa4a003"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-05-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "9e2aa76a91b4b500954173168920f748a6f9db3066daef61fd7f0b5f346acd77",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "89d563771543100662306da36008b1eef4a3a7b33a7626e10ea62699ade32e52"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "377576fcf8a4ae9b20a711890444d3f4f1531bd7",
+            "subject": "test(01-05): require exact removal target evidence",
+            "changes": [
+              {
+                "path": "src/migration/removal-gate.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "f72bcecb48aaca79c4cd16f7bee6c73867259cb476ce7ab8177598b9e78a736d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a981435feebaa80a08c3f11ab7555abbea7129be5c3637d0b710bef45faba4f4"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7bf586dd3ea6ef54b701fc4cf21bb38f50daf004dfc3bfafd62e2b581f5adedc"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "cd6fb0ebebe2efb42df47108035abb8327bf06d6478eb59d48c7a517f336eba6"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "99b93cfeae48c4e5502ac7ccaa8ae67b9e51163c",
+            "subject": "fix(01-05): gate prohibited root prompt removal",
+            "changes": [
+              {
+                "path": "migration/legacy-assets.v1.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "e3c7e55bae5b3868c0cadae08d6bc8c128c4b03644c6434385968807be826792",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "390ae827c96b062fa24cffca3c382b6cebb58ba6533ccc79de5826d13188bfd7"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "179f5b7457f39834e0d0cfb9eb835fa0f906d942cd0c645da6b54803d0f0859d"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "00ae5709adcdbb35eb738a90192b505acfd153fab26a3ec6648e35c7809cd508"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "31747bf51a996d6a78255f19a13fc783acb9851c3d8577364c9505d3c03299ae"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "1d3bd201275d1b987c9dd0688a06484109d13efd59e2db48b6cb6dd95f9fc6df"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "043f358095c5fcc4b46cb2068a7afcf5a3f01022bae1ce481fff2c7b76d75685"
+                  }
+                ]
+              },
+              {
+                "path": "migration/legacy-assets.v1.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "3b0f86a20a58ea92e7f566e4baa4ff024479cbd298d342792d98147c13588861",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "7bfb924b2c0c7c5f2d612b11935fc57e21d49d3900b08dedec02e05cead33d2e"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "57cf5e51b65e4a0047901856e06330bd217a7d02f484456f5539f2a24a51c9d3"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "1c6adb3422480a5d835d8b30a73a20caadd3905e76caa92663634757877a036c"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/inventory-schema.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "446ddf4d4b442069049e7c76fcaa7c682ca1ff0e7b605d29489848e727dc4e03",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1986eea83f3deca8fd60a436efda20062a474a2c50a76de802bdfdecbc3d1bbf"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4a066c4e9199df97a29b365f134b0025a253e5904fde047137a80c75b3c83918"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/removal-gate.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "9c83260aad7e936a0e911ca5f940724425a1b3d7aa8fb927e5320f734d98fd9c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ca6b62e5c7ed433afd8b354cc7c543cde21b19e4db6f5d3d01b7f161249f5134"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "ad55502264813aa69031ef3b3828ec8108bde2388d925f350188d6bad61facc1"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "69556934e3594bf6c9a0d9116685370e124cef876b5e10ca35eac9cd644186cf"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/removal-gate.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "a6ce2e8a66b74d45f9755fa992f5212f7e099f73b0032b07ae2477aa5133d96a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "9792d87cc8c2870434ded744c2d4705ef9b7984f55e46327811b12d674424645"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "29bbae52c6774bdd4bc37417355ac54f6a69858d694ce975babd6cfd1eb7cac7"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "2ad49447de67522b274004f9bd239f2bed8b5f3f6d103a25629cf5b5765e522b"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/render-review.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "085ddd669cfcaf939226618378020bc0eaadf3f6f5c983123d33da79abd7af05",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b8f043f1200de3fce8330fbc979aeaf0a0803e7a6c3eaf01ed24c46a53b53178"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "59cfc506cdf4c55293b2781b9b963113a84b7761a8f012b27a90306b86b4062f"
+                  }
+                ]
+              },
+              {
+                "path": "src/migration/render-review.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "5dcb24bc41bd845a2e253f50dbd00d719cdcda2ad8545bdeaf1d3c86d66cecd3",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4f0ee35e160c70260fcd1377c47f3fce6771b914686c82a4e7456d4add24cf85"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "08389938540ad6f5d97ccbee3b35e3b30db15fb4",
+            "subject": "fix(01-05): remove prohibited root prompt artifact",
+            "changes": [
+              {
+                "path": "forgeprint-codex-cloud-master-prompt.md",
+                "oldPath": null,
+                "status": "D",
+                "patchSha256": "29f26b09915b30207f6098ef3b3058ce77a89282af3213372ef96be67f44993d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3836f795484c9a75159538386124bedc46d350a3f2f22022098943ba4533705b"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "52dd691aa275264a36f5013ac62b9889b536c30f",
+            "subject": "docs(01-05): record prohibited prompt remediation",
+            "changes": [
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-05-SUMMARY.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "08df20f9ccad04281ca360b6ed7811eb381303d64a2a2fcce83c3d4023173d88",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4efdcb92d41119fae9b0e33e4333a59412d153e74d9ad8c2144409d799d44a75"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "c77259ed2bd360fb8b6ca1a8763a116b292c1570150ef721a19e0dd3850a9b43"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "8cfeb44ab295d089aa09901f0289a144e27b4710d4e1c44ad458d0807ae3ca98"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "67a4a41b51a1bd349e532f80528d10a5645e6394d175df9a6f3993b3b8b5367e"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "f2fed64fe4e2cfa87af0439a131cce77d761448f8d36d8402b529dead440c34e"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "19fed98aaf0bd9872d16767b7a24fc73d5bfb320f7d7817372a12b0d565f5451"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "e697263bf5714103faa71af3b1fd3357667bc45cbf1049f72a920642a39ed8a4"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "fc3cede3728f0794dd8ce379e541b3c167dae2b10496bc436f92b0314969d5de"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "751159573d68a3b6b277ae80c8a862031f7c39747eddce63b19dffd8d5d69428"
+                  },
+                  {
+                    "index": 9,
+                    "sha256": "675e3fb81b64d5bf43d84d9b5e302d402683e6600e025104b5eb902fe7f5a8b4"
+                  },
+                  {
+                    "index": 10,
+                    "sha256": "2c5ac5b6461bd2423d64f9f11592dfb64ada87545fa3d5575a083af7a488e796"
+                  },
+                  {
+                    "index": 11,
+                    "sha256": "9b645908fc5887ea5b1450debfab8e6ece01bfd7f9f0f611b404bb36ae0ae0fa"
+                  },
+                  {
+                    "index": 12,
+                    "sha256": "e89a36f7f362633108132212a94a200b890abe022481365b3e481d2ba99900f2"
+                  },
+                  {
+                    "index": 13,
+                    "sha256": "431bb3ccfc18e468271571145b9529cdfdd6342dfea8092cc93e4bfc624a99ae"
+                  },
+                  {
+                    "index": 14,
+                    "sha256": "6e16fda73d597cfc52005d8fb229610f0f3362cf46ca9fcf9a8d0bd10f710a5f"
+                  },
+                  {
+                    "index": 15,
+                    "sha256": "ecc7abd564537e5871a003b188655e74ae389ae04839e5de3c5c2ef789980c99"
+                  },
+                  {
+                    "index": 16,
+                    "sha256": "8c8996f53c21d4bb49b2dec0d6d09fcb5d7266e21a932cfa9f62acad5ee77b15"
+                  },
+                  {
+                    "index": 17,
+                    "sha256": "710340ba1d5e7c6f1d5863a8aa076face59643d7bb1eba8756f75f1a4d9416d3"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-05-SUMMARY.md",
+          "forgeprint-codex-cloud-master-prompt.md",
+          "migration/legacy-assets.v1.json",
+          "migration/legacy-assets.v1.md",
+          "src/migration/inventory-schema.test.ts",
+          "src/migration/inventory-schema.ts",
+          "src/migration/removal-gate.test.ts",
+          "src/migration/removal-gate.ts",
+          "src/migration/render-review.test.ts",
+          "src/migration/render-review.ts",
+          "src/migration/repository-scanner.test.ts",
+          "src/migration/repository-scanner.ts"
+        ]
+      },
+      {
+        "plan": "01-06",
+        "commits": [
+          {
+            "commit": "635b2f60be7206f32296f27f6ef9a3ebeff8e504",
+            "subject": "test(01-06): define fail-closed validation matrices",
+            "changes": [
+              {
+                "path": "src/validation/capabilities.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "e88c07a7a6ab4708817c80e2a4294816a89244924f933d581a0388cac8f52adf",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f3c6c563583712aa51d34995c1c3704404fe93651e168946da22ac5daff602bc"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/result.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "98a224e679c4c0dd0fd1f3f1f9c74edbebb11f4fa349e6a06b4c6e0fa842091e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "368b4429b719bed3efe5458c91e0e2b5bf501568b7035852721179a09e27dbda"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "86e2cf5c936201361ed4a559bec93b018352de97",
+            "subject": "feat(01-06): implement truthful validation normalization",
+            "changes": [
+              {
+                "path": "src/validation/capabilities.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "8d11a1313153e4b4dddaad41f564fb2e3726b06fa571915e636bba2ce7b7a127",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "aa385f9536ff5e873c29f49b7fa9f43967706723f93846740c423a85e4ae3151"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/result.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "ae4ecbda01e6e1be76abca167107cbbdbcb04b73a0046d72b30f7f7a77c11ce5",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "51ca95e3afb96308ac16d47a2af9c2fd7e595cf9b976ace2d1b50cd2f229b1b4"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "05ba623518534743426654be5b80e4b79f3c22bb",
+            "subject": "refactor(01-06): pin immutable validation check catalog",
+            "changes": [
+              {
+                "path": "src/validation/capabilities.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "ad2d56b1deadc69da0724beb08272745f572a3ea47ccab036eeb7a0fc8625a5c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "cd85f675a1aa807f802fe7207760527934b227fd5a9c1dd809860ec8eb3ca218"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/check-catalog.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "90af9ee74e167e3f0a295351e1282dbd1916e179b17d5695cae858e7d4c57ae1",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "30347b4324a785ad765acbadc900c55837bed6e766abcce51cead4e7b5d5c49f"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/check-catalog.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "68c5ddd71799c24b4582d74fb522413069b5956c2b8153ade89ca9ef639d1317",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b15d6c4a1cbcac96825e772704569bf984ace6c89bcdcd6c1af7e2236d71c599"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/result.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d78b90189aa647b0f57ea73d0844477ca336e0d4709ceebf7808410d739a826c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "e96a677814725da9713d39b556e13a57f4f9996f260fc72c875e87994d0a338d"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/result.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "a99df8e7c68dd4bbbadc941be5f7d66b239f87271a51d0ba6eedfed2fcf5a8af",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1fc12b05bb21ff0e0d2c4366f76b4ee71bbac99b1633df300e0f5613b9227d86"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "eb50d1c13ffb0be95e4869b2c64befabb2f22605",
+            "subject": "docs(01-06): complete pure validation contract plan",
+            "changes": [
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d18595178f82c1aa7a9312248619bf532976b8b1642169444e73f940e0d01c17",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f5193ed324fab67ed5916d9264182d39877c0b31697441e13eb7e8ecd0116cf9"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "f7fd72c9e7f8ca0efaf4af8b364b4155500670cf4ab627b25ab69bf7fcbb31ed"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "444f2f4654f6b01f47d1789607cfd3097792832a4ef523729ff2df0b3ef6f053"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "346a207a412047f1e179a0eb0e164ac936130691752d387a55709b7b006f7d9d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "36595fc65a9cf9205f0095b10871f1194dc7b1c1dd9b57b76267eb9350eea915"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "07f7036892c77f6f12c8daf7cb7b713858b1cbc348e6c058a72da1fab5a0d3d7"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "a78ddcc6baae40885e1132c32ab60129003072e1cceb133f9134efc3e71ffb95"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "482677257e2e83f5d200886efc253360db13c6214249ceadbc3862646461caa0"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "051dc1139357aed22390254abe7930ac9870b0c0de2062b088e7267e0b5e20c4"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "d501359cbf9ec93640be58181333831be702ef12f4d514847b55871ed6a21289"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "523888faa015d1cae5bf9a8d8765c6a599052f65c7d798d80efeee5d8f4f6808"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/STRUCTURE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "791ecae16a10b58f1b9ca14d7eba0ae4ac5623c0d1d15a00d373d21422785dab",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ff582927385e3cda00f0028caf1fb2302d01a6ef4c0212adb0b95d6c8e18f7f5"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7e5dd6ca9c03a986411b61c351a57ae5bca641355f83d6b7235c6a6da6017def"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "6d665a8b6c515e69d53407405e22cbce53dcb2d6d5b381500d9675ce29b27bcb"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "c85481cb32c4d72496ffe6bd9858d9a20a063101c585d5f529827feecc6ad903"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/TESTING.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "49006f138ed41fab58b54849b7702bf3fa46abffdfec7c36ff34e7173b64b429",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a1614f17f1da7db133406dd5d8e8cebc956e013a32bc08674e54081ba61c4b3a"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "bc21630c562c34776e7d439fbc50b6771b91d1c4187b76c83ac47330c766c9fa"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "08c434204fad665c5deaee705a7d1b78c4d9bff1f89f43730e1b3ed32d9530f2"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-06-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "e0f3bf0655af18493ee5a8d173088b1cce2ac812a0a60386466c4e7c612254a1",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "acff6c7a89bdfb46943f2b4b77f17e803c8918b1aa11c1a461013d2fd45456d1"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/codebase/STRUCTURE.md",
+          ".planning/codebase/TESTING.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-06-SUMMARY.md",
+          "src/validation/capabilities.test.ts",
+          "src/validation/capabilities.ts",
+          "src/validation/check-catalog.test.ts",
+          "src/validation/check-catalog.ts",
+          "src/validation/result.test.ts",
+          "src/validation/result.ts"
+        ]
+      },
+      {
+        "plan": "01-07",
+        "commits": [
+          {
+            "commit": "a849ee2f81e6b957c09360991b1542371d7eb0ad",
+            "subject": "test(01-07): define validation runtime boundaries",
+            "changes": [
+              {
+                "path": "src/validation/cli.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "d8afdd52cd445b7f94a5d0e5de8674e988370af6f405cec388a63b8b846bab03",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "410bec62e33d63bd1f7765951abe8daf9c6985f9162365a87fe2a9301a6a78df"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/report.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "8017e3c4463e8a0549058d6740d9deccc252a1e10fa19d3addbbebe114b433c0",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "faf64ba130cb094140375aeafe7c544370a92f2900f214782ebd43f4ab3ce698"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/runner.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "a8650b24d6f2261314c9deebdbc1d2e75f990978e4492522bda3244e5ff02497",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3a402ae32700ed6c20617042a3c56b225634da950fed5dcacf92313c696f629e"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "4f2510efcc72ed4c2e44958e2f0399449aae665f",
+            "subject": "feat(01-07): implement validation runtime boundaries",
+            "changes": [
+              {
+                "path": "src/validation/cli.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "eaf8210f00d24035d22294974dda651a30128795aeaeb04f03e4ecb79e317c9e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8abbf2db362c8b1a856a41708763324abf94fa4d4f711ec947c0c716b3a465d9"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/report.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "6760a7fbf6bb117d844dce19d9d315dd4710769adfe73b8191e6f2601de46c99",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3b9117ae9dc0306a5662da56bfb12a05032569e655b75129b404d9f997695aae"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/runner.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "58ad9b4ba51a3d84f24003205dbdf22632b4b1b0b17b6eacb37a076a909c1423",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ee6e128b57ee3751e9dfe806d2455ed4471303ced9ff49db2bd4fc2c8dc96a24"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "9d59b8351ffc4defd7a20553b50c4ddca878e8e4",
+            "subject": "refactor(01-07): harden validation output edges",
+            "changes": [
+              {
+                "path": "src/validation/cli.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "6491d1aaf2f186f9cfa582c5f4b4422fe208efa6247c34dac77431260b770010",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "c8e37f570e8c8083dab9b4f30ea47447d7067c2ab9e1605e21e20f9c419330d9"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "0d101233d533eeadda5548ccde852d3d964d72a6f2db238bb531096c0ec5b610"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "adcfdea21b1a2b08706d3c11e00d9f566b73a369b50e844dbbb285bbf5d322d1"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "733b087847713880b7d0d26acef1836138f7e1020eab04e607b6a3f4a75942d0"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "4e5300b8018106cb430d06ee801ff334650212e59145701bd6321ba213722002"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/report.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "70cae68263fc5f880896940ef684b8c84118be809d52d9f6bfd0920f19d3ee0c",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "6be344efb1a4e8c480bcb1f2d9155dce9c4a04730c9f19c6fe2a5ddad498179e"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "b5128a58efe19a97150b0310475b66ec07e275bdc498d4370c23426cbd93c044"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "688328564ca92cc0df51285b40186c17051b64bc5e5a99ffd3e9fc8f318736e3"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "81b586a9fcd9c1d006447db9930515aafbf063c51c00503554042ad6e20a4565"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "1226656637c88807771ff55a1dd9d294490d01eaf825492187653f60545f4435"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "3156b8b48f4e1307b8da8554240cbb19fa004d0ed747a3677b33330fa4f55005"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/report.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "b24296cdde04cff4e9239b3090fcbe341ebec3e57a7cb48daac26db5df283324",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1e1a81e9bd0161056642104646fadaae3c1677b76ff0b76b881e5937331077e2"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "36860c97806a87e6dbb9faeb28c1dac81a5c22241f49c366b25b29d40022bc60"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "1b904176cb9e43b69fb5c09324ac5a7b49f452a599fd362574f02e5af0bb977f"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "1c39415e3de7195ef2c963f6f2711c88c57f051bc9688f05237c28df96a71a83"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "e2eb94824e37fb2eaa38a9136b1334f975ab5abff80ed2fe3ad4390b48195561"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "9ce8a539d4a69bfb7f11499fc5989c689c82279af0fc73e9cf86824c6aeca2bb"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "74921b7c07eefbdf8d2e12ec9c7b3d450bf7894820cf964f78f52500a70540c2"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "a4be44b0375224da3ed346dede7b5b4732f785404e7e73bf2b720f6d79056e7e"
+                  },
+                  {
+                    "index": 8,
+                    "sha256": "1809977748f5a2bd4da168bdb3173a0fb3d536260a0a4f8df0f3a6eae30018ed"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/runner.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "44441b937049c578f53fc65824250056161ba4dfa2333a38b91d22938a152d8d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3ee798b470d5b2e486a273ac095f8f38eb535f03d301b2bef5269c3e2b8826d1"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "68ddaf3f1b8d317fe4a95bdb94200bbce095c2e9c90cb90f9ca821fde9300053"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "c4e9e25029f74df6b16475ef2f5bb73ae3a17e7bc8ada39c26c9247e13cfc48c"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "687f1dc69daf8ad659bcdb716755be507de308864056334b995d8d2eaf65c51a"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "ce6a4aabffed2440ad59127303fe71512a1b1891568954316a8bebc0df448334"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "c1539283bfcd584411604229d89ff30b91290607826155beef8e73e1c61ece5d"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "7082c2d83a651e4e6f7925d2510a792384299c7d714c5f93491cf87ed4cabcbd"
+                  },
+                  {
+                    "index": 7,
+                    "sha256": "0a86ea7b4cc002bfaf1440872554a1c4af12b3e9107b0a2a1c77f903d6560c6f"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "2a92b961b6b26387bd8a4af1bc07c64031dd7375",
+            "subject": "docs(01-07): complete validation runtime plan",
+            "changes": [
+              {
+                "path": ".planning/REQUIREMENTS.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "2060b7ed06d18c7ab0801c13fd277289c8b49e17207361a4b06c7ada64f0378f",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "2fd951b9348f4bdaac7c130c261599eee1ad1db81bf37e67f0c2a91f397f5f8b"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "7fbc48c1558487037a17f7943cac57484a797376501a0c1611a960fb9c439c57"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d755970be054f7406c4c21df91beec9f17452d6b3e344a841f08f0dc9fd7d482",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "8d43f9db231238fb44b88ff3a56e5e6a8dc4eb3ae845d616545cbdb741c26336"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "e44397ead44067acd97f8ffef36ef198db1185b73eaa5f0e13974159c90793c7"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "90bf4a1af13ad8c921b6f6ab27913105cbffc4231e274b18bf949e3276ee851e"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "fc426a6af5857ee58fac7b0b254d48b04105b2c42ff0cd90c1437bf4851ad381",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1dbe97209ef315f1c96381fdc5c6bbe0d98038b414a39f3675c1c63a89c830c4"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "42ca1077c6e335afa0a017c67003523c674853e455ade395620b2a589a636a6a"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "c9b9db348ee2bfc371afba6cefb7bede57cf209280cfab6282d50188d25a8af3"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "aa363a0a1c791caf347a943ac244380ace3865e2490e98a7d093c37def83533f"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "5608b5684875211f10f696db4b5874c6df5433bd68e0360856e7eb700d500c67"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "b35eed911ee56c31e5734b908ad90af04eb0a4dd70be8c6008bf3fee21fb1479"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "76356c4f93c3f743bcfcfdeb9035d1be9cdfead6933a6a44e2a743d1eb3187fd"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-07-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "578c27a627dc6015b375309cf2de0048dea530712cd4f3ce7046c2392ed73f3f",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "6118b52b48d75de516c1845c27354f3926bd9a66fb066945aa9c561e0b67fd45"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/REQUIREMENTS.md",
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-07-SUMMARY.md",
+          "src/validation/cli.test.ts",
+          "src/validation/cli.ts",
+          "src/validation/report.test.ts",
+          "src/validation/report.ts",
+          "src/validation/runner.test.ts",
+          "src/validation/runner.ts"
+        ]
+      },
+      {
+        "plan": "01-08",
+        "commits": [
+          {
+            "commit": "43dc3920948691b602da9ec8ef624980ecf13b0e",
+            "subject": "test(01-08): define validation host boundaries",
+            "changes": [
+              {
+                "path": "src/validation/host-capability.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "15488c4b5102d4b14eb3d60e32dc137e3c5da416a866e90452db8dc15b6e5697",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "a78a54ac85ea9a1e598b6812993d102747e7f8891388cd4bfd3bb5263c414a95"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/process-adapter.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "cb17c6b012930a4160b12ef7c2ea8705572d9a2c5b7b75f1ffa87f84834614d9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4e22d3dbad5c6384e4099aa96e24feed99bd4f4fc15e92c73754d9e0f2cf2ee7"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/process-entry.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "4b5927c9ec3f99bbbb61b86bc218ca8679aac075e083309c8b92dc658ad5a42e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "19caf71aa3b52a0524c34ef86db593e4c7fe3bf32ee126c93de613bc0b66dae8"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "2c96392710385327199660ca1009ceabefc02ee0",
+            "subject": "feat(01-08): implement allowlisted host adapters",
+            "changes": [
+              {
+                "path": "src/validation/host-capability.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "502bbdee9728b7257838b84f0f507d22ef93bc3bd8e61faed6d13df7b1bea949",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "b46bb8ca3b398df55e0cdcbdc21ddb7e92368f1ee1697b7771a2a9bd39224611"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/process-adapter.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "62d6c188c8bb0c79a820700ac4a13850d953c1783659f82231be7894fbd560ff",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "2906a2934062d4e23f27cf34e223669039ad8b92aca1de252e63e72e4f25cdbe"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/process-entry.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "0f45666ac5b6e1270b10fafaae2760790082bad97d65a6890560810d636d385a",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3e081939858363713afc5914d21016cbc05965270912ef06e1a56cc239e75b60"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "eaaa37690183f11e1360e549ed4a2f7ed4407c55461505c3849009e3bf66eeda"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "d218f4dc571d9e7f613a0ac39299229681c7d0ae74af0023fa0c7977694dc7cd"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "56543c4499231bf9792131318834d60eaa6839b115477fbd0eb44da23d14dc36"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "098f47366c1d2b029b8e3b29ea5600a226d9af23",
+            "subject": "refactor(01-08): wire executable validation entry",
+            "changes": [
+              {
+                "path": "src/validation/process-entry.test.ts",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "d7574cc5f13e8917ce54c28a1dcec352f8a5407c53c97819a98db04fc9ecf360",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "9e170dadc407336a34a2cffaacdab6049ab1897217995d35870dba8a696ba700"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "d1305eb637d6e21fc4c32ca82da7d16796af556a40cd360bc27cd4078dbd96d8"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "2b52a7c12cefe5b2f6743de1937b7efed4e263af5f92f89124d3d9242579a088"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "6f5090649c7467d55ea9610a91a787f8bbcae63bb192f2e2b54cc708b42aa3e2"
+                  }
+                ]
+              },
+              {
+                "path": "src/validation/process-entry.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "5def58f38da2194ff021f7d199cd8d76a5fcc20d17b73445b915725f9ead9d33",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "30d27cd3c176c71881070f703bdeba8c4de7c14ebd7554291290cfd1d2ee3a7d"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "f3c26dc8e66652ccca7efbad13c5a1c966798650",
+            "subject": "docs(01-08): complete production validation host plan",
+            "changes": [
+              {
+                "path": ".planning/ROADMAP.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "3525a058c7b62c53d4f3abd5024557318776163f528103f9690146d0975b676e",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "d9cdc4018f4c15efd9b943c07cdbc1dcd65a77572012b9582cb9a31ea3f87230"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "4aa4b572e92e620077f01ac0fe5bb3d8eec8bd1676e3186353c9e06a864975e9"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "9cf96bd984c4f7ed8192fafc7b38adf0ce1f85b4368ecb23069900599903b9f7"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/STATE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "0575430f03492a32b21c77d77876a331247c9b74646af703d8f3086341663278",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "ac2471acaf1dcb366f57af95130e769e1e3e7f23e9044b38a95d6e2cbbce272f"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "e5db3c3d99ab8bfb039f59ed25184cae16df684c2ededae4f3d1b2e29b741799"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "3cdc436d4db8fdda47fa610e53f7e87fc49a27cae11d33fffb043c0a77af4cdd"
+                  },
+                  {
+                    "index": 3,
+                    "sha256": "2057ea9e9579493445bd5ff5f614d61889f124643f7bcf476853c97342cf929e"
+                  },
+                  {
+                    "index": 4,
+                    "sha256": "72bfe0319cf40f0fe1b8e7d783357844b7f3d4781376650ef55992f9b61fd60f"
+                  },
+                  {
+                    "index": 5,
+                    "sha256": "564637750f24fc0c07059912d367b5197a4ee8c0353de898900db43ff7646c84"
+                  },
+                  {
+                    "index": 6,
+                    "sha256": "d9e2b3c40168cf8d20b8427eb97788ce85ba0a46b623a06e0261381236e2ad10"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/STRUCTURE.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "3440bcd9e5536fc2182af5c2d34a57ac8a7068ecf2b4196de108cb1e7c7fb03d",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1dad71833769bd9ab87cb84289077983adbdf70430b654ccd479dd64e866ddf0"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "ae4beb9651c17bbce50a9504027f38aa0c10c6c985054d21a21ae6c33aa0977b"
+                  },
+                  {
+                    "index": 2,
+                    "sha256": "06bd1d1744d492dbeff9eb1beae24ae9660b6311a7e83893de455b1cec916d57"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/codebase/TESTING.md",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "dd33c114e98b150b4e542ecc860ff2edc016729b0b4ed35642021e100fbcaa51",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "e18a354a308610359649c782b4342922d20517e76b204066539dc5bf73d311dc"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "990fcd1e1ba9181c33e55d8ae9e708f1913ab33e389d6b1ecc755c5c87385770"
+                  }
+                ]
+              },
+              {
+                "path": ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-08-SUMMARY.md",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "3b051e101daba217baa7ebf7b62d351445ec7865a8caf3e814ff77a2f111b348",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3df5f092935954950edeaefbc80c5879e0a2c5dbbfec3a414a135df0db2499cb"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".planning/ROADMAP.md",
+          ".planning/STATE.md",
+          ".planning/codebase/STRUCTURE.md",
+          ".planning/codebase/TESTING.md",
+          ".planning/phases/01-identity-cleanup-baseline-and-migration-map/01-08-SUMMARY.md",
+          "src/validation/host-capability.test.ts",
+          "src/validation/host-capability.ts",
+          "src/validation/process-adapter.test.ts",
+          "src/validation/process-adapter.ts",
+          "src/validation/process-entry.test.ts",
+          "src/validation/process-entry.ts"
+        ]
+      },
+      {
+        "plan": "01-09",
+        "commits": [
+          {
+            "commit": "7e890a6bf2cfe27d476c030a994aa9f63c4ab07f",
+            "subject": "test(01-09): specify validation script and privacy gates",
+            "changes": [
+              {
+                "path": "test/integration/privacy-boundaries.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "e54e24c362bff9984511c3afcfadf9ee04f4dd1af4eb61120a2fcbb5d7fdd4e3",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "3d63acce25f581b9d95da90a390b9b0aa0d02846918bb124f51f2b977946d0a8"
+                  }
+                ]
+              },
+              {
+                "path": "test/integration/validation-scripts.test.ts",
+                "oldPath": null,
+                "status": "A",
+                "patchSha256": "06b012aec140ac011924f83b7827c0ef98bf9ff307fd4c4683b7f948a363138b",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "4c9f4258dffb3545c92ea46750cb4ea39d5b5c7afae8644dff6efa0405f2eccf"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "commit": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+            "subject": "feat(01-09): wire stable validation scripts",
+            "changes": [
+              {
+                "path": ".gitignore",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "352baf38118e1a3fc214caceda01605e2a2c5be6987afea1161f969b950f5cd9",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "2e76e3e76856736d7b31200d4bde45ff9d8afc9da604db124629416a69ba9f23"
+                  }
+                ]
+              },
+              {
+                "path": "biome.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "eb7b273a51d5a92ec6b7156a63fae045b5a4f619066fc9a3bf84426c15e2e096",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "f327aa54888bc9f5b85491959caf42ec65aeba170b9b6f035f577c78b9be0983"
+                  }
+                ]
+              },
+              {
+                "path": "package.json",
+                "oldPath": null,
+                "status": "M",
+                "patchSha256": "0aa9d3538c30a1188a1373232de314d46e8e0032276cea679c92bf20793465a0",
+                "hunks": [
+                  {
+                    "index": 0,
+                    "sha256": "1f6b83f97be058d041c9692dc4ed61b251f9d6dbf0de53526ddd3cd57fd6c0b4"
+                  },
+                  {
+                    "index": 1,
+                    "sha256": "9c5987910ac41ee84e961d10e135a632e8f6d4f62f2cb99bec4d1d9642ad452d"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "paths": [
+          ".gitignore",
+          "biome.json",
+          "package.json",
+          "test/integration/privacy-boundaries.test.ts",
+          "test/integration/validation-scripts.test.ts"
+        ]
+      }
+    ],
+    "overlaps": [
+      {
+        "path": ".gitignore",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": " M",
+          "index": " ",
+          "worktree": "M"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "fc3100ac1c95cec304ff149ece58a6087b97dde18729b5679df9904091eb852c"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-09",
+            "commit": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+            "path": ".gitignore",
+            "status": "M",
+            "patchSha256": "352baf38118e1a3fc214caceda01605e2a2c5be6987afea1161f969b950f5cd9",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "2e76e3e76856736d7b31200d4bde45ff9d8afc9da604db124629416a69ba9f23"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".planning/STATE.md",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": " M",
+          "index": " ",
+          "worktree": "M"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "2e66cde1bb3b9551562db90575b43ff522564325f73882265953fbbdc7ad240c"
+          },
+          {
+            "index": 1,
+            "kind": "text-hunk",
+            "sha256": "f29e4d16e5aa5a3a447e060d0cc27d59849675e15c6edf0d831edd56b1f4882a"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-01",
+            "commit": "84aa4952f59332f7959fa7268d5a28a9daa16312",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "3c744e5e7d5007fbe18dc54415a86992a716314e00fc0c0bcb0f88d5342fa69b",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "1e19704b79da10be96cf0f8587e3a32889b5c2cd244d27b418312e520ade41c3"
+              },
+              {
+                "index": 1,
+                "sha256": "b02a913bce9e05f8dc90d58fc0649786d99700b792cb1ac8957850352400f791"
+              },
+              {
+                "index": 2,
+                "sha256": "711d748044512385f5963f4c48410f6e6b9800fa00893e073de02299582eb199"
+              },
+              {
+                "index": 3,
+                "sha256": "dc6e4e1bff71516f6e8179f051132b58a6457cc879f043a8095e0e338361da0a"
+              },
+              {
+                "index": 4,
+                "sha256": "0f26699a3295d71a6b822427f83a24028dc0fe6e240ddae2d3f52cff3b2f2de8"
+              },
+              {
+                "index": 5,
+                "sha256": "93ddaf05b2969364e8695c25cd519829409008c79bb4bf98f7fd64f3a8ffca80"
+              },
+              {
+                "index": 6,
+                "sha256": "ec7e33d7b73f706bd8286ec01a5657011f7a376a8c3b78ca4c6c7544d4cb2b96"
+              },
+              {
+                "index": 7,
+                "sha256": "895e39a741160c37b72ace0eb77365d1773282c403612469a5b45f7813d6fc93"
+              },
+              {
+                "index": 8,
+                "sha256": "7e659801faeb33de3e6ed32b1b5b305df5922fc059ba85cb29984b764e165e29"
+              }
+            ]
+          },
+          {
+            "plan": "01-02",
+            "commit": "f2cf885dd89594224fe16ce5cc6fb5eabcf67984",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "d93c8450178471511abd0b1bda71b476e081e33f414fd12768617489c16c55fd",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "a5fd93ecf8765f252989f9c8024f145dc25d4100c12da8d5c6af50ecc1267639"
+              },
+              {
+                "index": 1,
+                "sha256": "509ec4e10a5b3eb7595795771670fe0ac81ad53330ed76cb1363c8f771291fca"
+              },
+              {
+                "index": 2,
+                "sha256": "bd82e4771fb8d3192f1d6110fa3c7e2faec882654069ffad2c56f5280e3d0ff5"
+              },
+              {
+                "index": 3,
+                "sha256": "4dd90e2166a9fcfdd2a35532526ea17e313c60d6e6e15ff48a4f51ff04ed03e9"
+              },
+              {
+                "index": 4,
+                "sha256": "1382995ae701626370ba6b50ba599cfd0573b9551454792e4d641aac4ef36c34"
+              },
+              {
+                "index": 5,
+                "sha256": "9a3669b39b4d6a2044730707be836cbe90ce9b9b30fe552c7079aae06a435660"
+              },
+              {
+                "index": 6,
+                "sha256": "766bd1e1c65ccfc1127c7e1f6f5028e8217ee8fc6fe012cca9a14137a52185d3"
+              }
+            ]
+          },
+          {
+            "plan": "01-03",
+            "commit": "0d673f105dbc891006daacaff50a6f47783c1a24",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "c77ae04938de0bac69cd399d2ab441c6c2966baa313faabcc28ccc50c19f0fe9",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "7666b11a708f7eded91badb53b01e243e88bd38e187396cea7fc093100af5076"
+              },
+              {
+                "index": 1,
+                "sha256": "d0e97d1750a1be82dec4c888153ddc6e0554ad45f00bd05227a6b3404e81a753"
+              },
+              {
+                "index": 2,
+                "sha256": "01fe39ad49cb27bed5f0b38033d3f564a3666de4baa2e22c03596fa0f731db41"
+              },
+              {
+                "index": 3,
+                "sha256": "fa8a220f6901832dcd9804b375a60be1182361e9fec370e130e8b627b47c5197"
+              },
+              {
+                "index": 4,
+                "sha256": "2a71a51dd117915216a1ee9f257c13f9418c1c4f1eae1593f617130cea2be288"
+              },
+              {
+                "index": 5,
+                "sha256": "b2b24ca024fc98d99bbc29453f60ffc22856cf84cc94c8a6f7ad667326f0ec53"
+              },
+              {
+                "index": 6,
+                "sha256": "1b120e73f8ef1078cad5bab2fa0829a3a79ef081279c361c5d207bdb78f0bee5"
+              }
+            ]
+          },
+          {
+            "plan": "01-04",
+            "commit": "2bd0e8f12f52704f96d5cf6e63cae4a91ef81338",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "7109488db8a919cf8e9dcdb01b6db06e6a8dfbf74c0c6e36904291600b059910",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "bdea3f01b235eb6e6b38ccec3921f08c2445ef9ec4bb0dad73f49e9e159164a5"
+              },
+              {
+                "index": 1,
+                "sha256": "395cca56081d425df7c8a5f12fe036aa997aca77b8bc99aa69f491e42916739c"
+              },
+              {
+                "index": 2,
+                "sha256": "efd6e02f6e471b72ee934b21ef64567b3a7fe4d9882853a09ed1f26487354d86"
+              },
+              {
+                "index": 3,
+                "sha256": "b55b1b25e30ae2acd22b1610b427e564ff56ea11227dd2b47db1bf4ed9b8b204"
+              },
+              {
+                "index": 4,
+                "sha256": "5afc01ac9922460f0625d4a1e0bf1421638c6cde36beeeee009ce44e3f9215c1"
+              },
+              {
+                "index": 5,
+                "sha256": "e54460add0dfee303db6a43c2a7824075a6d64b0b774b7ceb9a8146b318b9b4d"
+              },
+              {
+                "index": 6,
+                "sha256": "86a1467164daaf77baed6a4422cda53dc1bfd1681eb4a16e22c840641330efca"
+              }
+            ]
+          },
+          {
+            "plan": "01-05",
+            "commit": "5aaf09acf1996f5eee57fa37da00c497f24f00ca",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "2271371f3dcab4db891ce029c80f7525bbee553879ae1a4e7c5bc5c574da9762",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "ff01e21a7e3a130403223ab9cda1bedd0b33a543b878176f9240910d9c1e197b"
+              },
+              {
+                "index": 1,
+                "sha256": "339643e80505a3e1719febec725d55bf5084f532b611be05f4693198bad60a17"
+              },
+              {
+                "index": 2,
+                "sha256": "becff9b016d4fd9b15cbbbec4565e946a3071ca369b9d78e53c088d8cbb2790f"
+              },
+              {
+                "index": 3,
+                "sha256": "58c89d3a514da917beb8c63716024066ea797b6d9ebc2edb5e2f86e29b79dba0"
+              },
+              {
+                "index": 4,
+                "sha256": "4b3bd2058686ca970ccc27f97a5cb7220b3f77402ead61e023e2b45ca236e7c9"
+              },
+              {
+                "index": 5,
+                "sha256": "5c1e09ed3186c2e6f98d729887ab53b469981766de9c5c65df28ffd10a00ed20"
+              },
+              {
+                "index": 6,
+                "sha256": "452851e902f03ca0fd9c9a6588c9532927eb02ea547fcc66a0b00df1efa4a003"
+              }
+            ]
+          },
+          {
+            "plan": "01-06",
+            "commit": "eb50d1c13ffb0be95e4869b2c64befabb2f22605",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "346a207a412047f1e179a0eb0e164ac936130691752d387a55709b7b006f7d9d",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "36595fc65a9cf9205f0095b10871f1194dc7b1c1dd9b57b76267eb9350eea915"
+              },
+              {
+                "index": 1,
+                "sha256": "07f7036892c77f6f12c8daf7cb7b713858b1cbc348e6c058a72da1fab5a0d3d7"
+              },
+              {
+                "index": 2,
+                "sha256": "a78ddcc6baae40885e1132c32ab60129003072e1cceb133f9134efc3e71ffb95"
+              },
+              {
+                "index": 3,
+                "sha256": "482677257e2e83f5d200886efc253360db13c6214249ceadbc3862646461caa0"
+              },
+              {
+                "index": 4,
+                "sha256": "051dc1139357aed22390254abe7930ac9870b0c0de2062b088e7267e0b5e20c4"
+              },
+              {
+                "index": 5,
+                "sha256": "d501359cbf9ec93640be58181333831be702ef12f4d514847b55871ed6a21289"
+              },
+              {
+                "index": 6,
+                "sha256": "523888faa015d1cae5bf9a8d8765c6a599052f65c7d798d80efeee5d8f4f6808"
+              }
+            ]
+          },
+          {
+            "plan": "01-07",
+            "commit": "2a92b961b6b26387bd8a4af1bc07c64031dd7375",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "fc426a6af5857ee58fac7b0b254d48b04105b2c42ff0cd90c1437bf4851ad381",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "1dbe97209ef315f1c96381fdc5c6bbe0d98038b414a39f3675c1c63a89c830c4"
+              },
+              {
+                "index": 1,
+                "sha256": "42ca1077c6e335afa0a017c67003523c674853e455ade395620b2a589a636a6a"
+              },
+              {
+                "index": 2,
+                "sha256": "c9b9db348ee2bfc371afba6cefb7bede57cf209280cfab6282d50188d25a8af3"
+              },
+              {
+                "index": 3,
+                "sha256": "aa363a0a1c791caf347a943ac244380ace3865e2490e98a7d093c37def83533f"
+              },
+              {
+                "index": 4,
+                "sha256": "5608b5684875211f10f696db4b5874c6df5433bd68e0360856e7eb700d500c67"
+              },
+              {
+                "index": 5,
+                "sha256": "b35eed911ee56c31e5734b908ad90af04eb0a4dd70be8c6008bf3fee21fb1479"
+              },
+              {
+                "index": 6,
+                "sha256": "76356c4f93c3f743bcfcfdeb9035d1be9cdfead6933a6a44e2a743d1eb3187fd"
+              }
+            ]
+          },
+          {
+            "plan": "01-08",
+            "commit": "f3c26dc8e66652ccca7efbad13c5a1c966798650",
+            "path": ".planning/STATE.md",
+            "status": "M",
+            "patchSha256": "0575430f03492a32b21c77d77876a331247c9b74646af703d8f3086341663278",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "ac2471acaf1dcb366f57af95130e769e1e3e7f23e9044b38a95d6e2cbbce272f"
+              },
+              {
+                "index": 1,
+                "sha256": "e5db3c3d99ab8bfb039f59ed25184cae16df684c2ededae4f3d1b2e29b741799"
+              },
+              {
+                "index": 2,
+                "sha256": "3cdc436d4db8fdda47fa610e53f7e87fc49a27cae11d33fffb043c0a77af4cdd"
+              },
+              {
+                "index": 3,
+                "sha256": "2057ea9e9579493445bd5ff5f614d61889f124643f7bcf476853c97342cf929e"
+              },
+              {
+                "index": 4,
+                "sha256": "72bfe0319cf40f0fe1b8e7d783357844b7f3d4781376650ef55992f9b61fd60f"
+              },
+              {
+                "index": 5,
+                "sha256": "564637750f24fc0c07059912d367b5197a4ee8c0353de898900db43ff7646c84"
+              },
+              {
+                "index": 6,
+                "sha256": "d9e2b3c40168cf8d20b8427eb97788ce85ba0a46b623a06e0261381236e2ad10"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "biome.json",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": " M",
+          "index": " ",
+          "worktree": "M"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "2c996d0c97fef17b9600e406f6d1075cdd2d99f5ab7e3e454c6b5e709d9f7991"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-09",
+            "commit": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+            "path": "biome.json",
+            "status": "M",
+            "patchSha256": "eb7b273a51d5a92ec6b7156a63fae045b5a4f619066fc9a3bf84426c15e2e096",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "f327aa54888bc9f5b85491959caf42ec65aeba170b9b6f035f577c78b9be0983"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "package.json",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": " M",
+          "index": " ",
+          "worktree": "M"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "0b1abe0b1aeedd7366138a9e5271d6d2595a85a9d4153eb3cbae90fd43d5bd31"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-02",
+            "commit": "6e3deeadb7ce366ce78437499bde17d619c858c7",
+            "path": "package.json",
+            "status": "M",
+            "patchSha256": "b4fc3127f743c3f8d5ef2a34ab372f27c63a936dc4f084fbd90da0a0a819ffd6",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "4af517a5df997bd7e7ff16f61109ddc957877d5ca1902eab0da6859e2caa1fc5"
+              },
+              {
+                "index": 1,
+                "sha256": "7ac390b6102d827162d7fad5304470a9f691e14a6b5cbe1264874508e46d6ce2"
+              },
+              {
+                "index": 2,
+                "sha256": "ae3e4e950c2af65ec76f649eb7c2314664f00421daea22226746f8e518a5f9f8"
+              }
+            ]
+          },
+          {
+            "plan": "01-03",
+            "commit": "e7e1d2a953f5a4e4b8b6a3916606b5b02dee1aa0",
+            "path": "package.json",
+            "status": "M",
+            "patchSha256": "f7ac0091f80f7c3c16c972c7e8cfe5f157c5cda48f7ee1be64ccc482673fd17d",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "bd85d0b747feed03130722bc2816199c8b995a12486491a1e187cc5105d5874c"
+              }
+            ]
+          },
+          {
+            "plan": "01-09",
+            "commit": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+            "path": "package.json",
+            "status": "M",
+            "patchSha256": "0aa9d3538c30a1188a1373232de314d46e8e0032276cea679c92bf20793465a0",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "1f6b83f97be058d041c9692dc4ed61b251f9d6dbf0de53526ddd3cd57fd6c0b4"
+              },
+              {
+                "index": 1,
+                "sha256": "9c5987910ac41ee84e961d10e135a632e8f6d4f62f2cb99bec4d1d9642ad452d"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/app-oneshot.tsx",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": "??",
+          "index": "?",
+          "worktree": "?"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "untracked-file",
+            "sha256": "eabd0fdfca97de38c68bf2f9636f0ef37d9d11e94fd968aedb37a31bcc42fa2a"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-02",
+            "commit": "b8ed8a4d661c3b64a35464c3b0106a1d92ff0cff",
+            "path": "src/app-oneshot.tsx",
+            "status": "A",
+            "patchSha256": "2da707acf334e8d2f0658d97a0f3593e6e483c0946afedea1f9a50f59c59c7de",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "72daee5b62b8ca7545a95dbfe94ba5a82878d479a5c39e35cee0b578f3e98226"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/cli.tsx",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": " M",
+          "index": " ",
+          "worktree": "M"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "text-hunk",
+            "sha256": "cd0817a1f16620256550bab5244bf0992cfc8a8094bfeeb91c1d3ffaafefe386"
+          },
+          {
+            "index": 1,
+            "kind": "text-hunk",
+            "sha256": "43ccf4331d57234d3e2a918d94a866bf2150aa7fce7983e0317cd119c91263a8"
+          },
+          {
+            "index": 2,
+            "kind": "text-hunk",
+            "sha256": "13760694cd35a28b17d8e39a55a684e05afc6f3a2858f9e009c3c27133774e24"
+          },
+          {
+            "index": 3,
+            "kind": "text-hunk",
+            "sha256": "4728557afbb92a45a91560c7478e1b7adb8868de3dca9d488d0af1dbe47babf7"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-01",
+            "commit": "4813b935b51c47200dc147780ea36c728c1eb57d",
+            "path": "src/cli.tsx",
+            "status": "M",
+            "patchSha256": "b1f7e8eb422f4f180dbea2654759926c36ccb0470f1525085380f274be30921c",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "35ac43f81afbc96f6a630dd45d839f92c32742125b3c77fed745148e958b5253"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/lib/config.test.ts",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": "??",
+          "index": "?",
+          "worktree": "?"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "untracked-file",
+            "sha256": "e05567626d9077ca6c4567eb02c25221ac65e1c85387dfc00d508c6355688e37"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-03",
+            "commit": "63d6dbdc23dfd4661c984d8f0794e5637dd746e2",
+            "path": "src/lib/config.test.ts",
+            "status": "A",
+            "patchSha256": "1ae8fbf09fb2568acbb2d339d85fe41548e0eae3962c06959e6529507ccee02d",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "156f2d78efb66f3acc93692f0b53ef1732391daf855c7331beae97ee573194be"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/lib/config.ts",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": "??",
+          "index": "?",
+          "worktree": "?"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "untracked-file",
+            "sha256": "cb8131533b0ea676b26d03f91f872644ea079bf7d5b37d0e18bea167b3552a09"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-03",
+            "commit": "63d6dbdc23dfd4661c984d8f0794e5637dd746e2",
+            "path": "src/lib/config.ts",
+            "status": "A",
+            "patchSha256": "095952782ace7f4d241a83b64ed86f5ce7ce5d850b5fafbcd9f3f45023ae3082",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "8d18e197bbc036831d5a611897940bf8e355ee866831c64eac59f6a14f4b6e6b"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/lib/conversation.ts",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": "??",
+          "index": "?",
+          "worktree": "?"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "untracked-file",
+            "sha256": "65f6f1186f715adae2e8976450d594c6ec8aa0e04789967ac21acb45b82a9b74"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-02",
+            "commit": "b8ed8a4d661c3b64a35464c3b0106a1d92ff0cff",
+            "path": "src/lib/conversation.ts",
+            "status": "A",
+            "patchSha256": "d58c53066e36dcd13477e92f5fe82be77fc98191dc6ff3940f0713a6004f5af0",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "3befdff7aa9363a52ff209ae2166226fce0791c150f5bacc19c98c89e85fa2d3"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/repl.tsx",
+        "operatorOwnership": "operator-preexisting",
+        "operatorStatus": {
+          "porcelain": "??",
+          "index": "?",
+          "worktree": "?"
+        },
+        "operatorStagedHunks": [],
+        "operatorUnstagedHunks": [
+          {
+            "index": 0,
+            "kind": "untracked-file",
+            "sha256": "3b22656dc926a8372694c61811bfdad42250307c14f7dcc3557ab6d49a561b77"
+          }
+        ],
+        "phase1Hunks": [
+          {
+            "plan": "01-02",
+            "commit": "b8ed8a4d661c3b64a35464c3b0106a1d92ff0cff",
+            "path": "src/repl.tsx",
+            "status": "A",
+            "patchSha256": "11419723ddfb61181f742c4193abe747a86c725c0e7556ff3f80a56779cf82f2",
+            "hunks": [
+              {
+                "index": 0,
+                "sha256": "bdcf3ca811340bf63a1e72103c62e22c651f3aedacb37a1ff8314e9c6188cac6"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "pendingFinalTask": {
+      "plan": "01-09",
+      "baseHead": "befdc3a2bf37f895e2dae3fddd505478ab46e09a",
+      "paths": [
+        {
+          "path": "fixtures/phase-1/validation/adapter-tools.json",
+          "status": "A",
+          "patchSha256": "b2b1057752b3d4ebc84d9b72414fd55c97b6a746baffe93be56b8bcdcbbd9430",
+          "hunks": [
+            {
+              "index": 0,
+              "sha256": "a4dfaa0dbb432c990a647ce47cff15f841d55b951f0ca36436cc18765aa5e350"
+            }
+          ],
+          "contentSha256": "a44b6b017e9986be1181f8b3c19f3625e1cefea4afb80e5b1417ec0ff7e10650"
+        },
+        {
+          "path": "lib/data/schema-gate.test.ts",
+          "status": "M",
+          "patchSha256": "2684558c69f55f18859c888b17efe902906f36c2cb1833eff5abd4b27a4a51c7",
+          "hunks": [
+            {
+              "index": 0,
+              "sha256": "5a87eeed75f2430c98d6a7be9b11dd74ea411aa7ff46aba56b897d06b1eb5b2b"
+            }
+          ],
+          "contentSha256": "1d0aa4e7f68e4d49d133eea48486dbbeccbacdf269d036961ad1230e9730f17a"
+        },
+        {
+          "path": "test/integration/privacy-boundaries.test.ts",
+          "status": "M",
+          "patchSha256": "da62b50c220614d39e07d001aea93b9a7858039bfeab8098bdbef2eb9d225150",
+          "hunks": [
+            {
+              "index": 0,
+              "sha256": "b247381c8b8b638ceef714373aa14270eec8123c1b308f289a73cc53cb65a417"
+            },
+            {
+              "index": 1,
+              "sha256": "959d6ba754ce642da72f3bb8aa44e606c06f594de5a4cb2aa0a2c05c41c456f4"
+            },
+            {
+              "index": 2,
+              "sha256": "276812c2af2952ff735edaf11d733b9b976823d108dd9f1ee626f9609b1a66b0"
+            }
+          ],
+          "contentSha256": "277fc6ffe5393ad5a91ec93f22efe30e7e5028cb2533b15876d14ece1de9c514"
+        },
+        {
+          "path": "test/integration/validation-scripts.test.ts",
+          "status": "M",
+          "patchSha256": "59bff7bb78adf0908b2db74fed37e90fef592819814bc5cf45febd51c66d720f",
+          "hunks": [
+            {
+              "index": 0,
+              "sha256": "b23b8ad721313bccc8d42a29cc341d22e220adab3471c3030a6ad77ce1602166"
+            },
+            {
+              "index": 1,
+              "sha256": "61d85d2c82950cd439f011baca2e613e5cb49bcc72e23bf7f80df2da8ddbff6c"
+            }
+          ],
+          "contentSha256": "4ed99a918632c421805cbfa3c731ba2beddb9daae2fe12403418fe29b15c488c"
+        }
+      ],
+      "self": {
+        "path": "migration/phase-1-change-scope.v1.json",
+        "ownership": "phase-1",
+        "policy": "append-only final ownership record"
+      }
+    },
+    "productionSourceDeletions": []
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "source": "FIXTURE",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "supabase_rls_policy_template",
+        "description": "Synthetic schema-only fixture for deterministic validation tests.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tableName": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": ["authenticated", "anon", "service_role"]
+            },
+            "operation": {
+              "type": "string",
+              "enum": ["select", "insert", "update", "delete"]
+            }
+          },
+          "required": ["tableName", "role", "operation"],
+          "additionalProperties": false
+        }
+      }
+    }
+  ]
+}
